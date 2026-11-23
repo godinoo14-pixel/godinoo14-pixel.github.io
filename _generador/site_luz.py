@@ -1,6 +1,6 @@
 from gen import build
 S = dict(dir="gastoluz", name="GastoLuz", logo="Gasto<span>Luz</span>", acc="#0b7285",
-         base="https://godinoo14-pixel.github.io/gastoluz/",
+         base="https://gastoluz.es/", domain="gastoluz.es",
          tools=[("consumo-electrodomesticos", "Consumo de electrodomésticos", "Cuánto gasta al mes cada aparato de tu casa.", "Electrodomésticos"),
                 ("coste-aire-acondicionado", "Coste del aire acondicionado", "Lo que pagas por encender el aire o la bomba de calor.", "Aire acondicionado"),
                 ("potencia-contratada", "¿Qué potencia contratar?", "Calcula los kW que necesitas y evita pagar de más.", "Potencia"),

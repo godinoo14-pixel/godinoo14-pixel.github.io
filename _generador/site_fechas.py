@@ -1,13 +1,13 @@
 from gen import build
-S = dict(dir="diahabil", name="DíaHábil", logo="Día<span>Hábil</span>", acc="#5f3dc4",
-         base="https://godinoo14-pixel.github.io/diahabil/",
+S = dict(dir="calculadoradias", name="CalculadoraDías", logo="Calculadora<span>Días</span>", acc="#5f3dc4",
+         base="https://calculadoradias.es/", domain="calculadoradias.es",
          tools=[("dias-entre-fechas", "Días entre dos fechas", "Días naturales, semanas y meses entre dos fechas.", "Entre fechas"),
                 ("dias-habiles", "Calculadora de días hábiles", "Días laborables entre fechas, sin fines de semana ni festivos.", "Días hábiles"),
                 ("sumar-dias", "Sumar o restar días a una fecha", "Fecha final de un plazo en días naturales o hábiles.", "Sumar días"),
                 ("calcular-edad", "Calculadora de edad exacta", "Edad en años, meses y días, y días hasta tu cumpleaños.", ""),
                 ("cuantos-dias-faltan", "¿Cuántos días faltan para…?", "Cuenta atrás para Navidad, verano o cualquier fecha.", ""),
                 ("semana-del-ano", "¿En qué semana del año estamos?", "Número de semana ISO de cualquier fecha.", "")],
-         home_title="DíaHábil | Calculadoras de fechas: días hábiles, días entre fechas, edad",
+         home_title="CalculadoraDías | Calculadoras de fechas: días hábiles, días entre fechas, edad",
          home_desc="Calcula días hábiles, días entre dos fechas, plazos, tu edad exacta, cuenta atrás y la semana del año. Gratis y al momento.",
          home_h1="Calculadoras de fechas y plazos",
          home_intro='<p class="lead">Cuenta días naturales y hábiles, calcula plazos, tu edad exacta o cuántos días faltan para cualquier fecha. Todo funciona en tu navegador, sin registros.</p>',
@@ -23,7 +23,7 @@ const today=new Date();document.querySelectorAll('input[type=date][data-today]')
 FEST = """<label for="f">Festivos a excluir (opcional, uno por línea, dd/mm/aaaa)</label><textarea id="f" rows="3" placeholder="06/12/2026&#10;08/12/2026&#10;25/12/2026"></textarea>"""
 
 P = []
-P.append(("dias-entre-fechas", "Calcular días entre dos fechas | DíaHábil",
+P.append(("dias-entre-fechas", "Calcular días entre dos fechas | CalculadoraDías",
 "Calcula cuántos días, semanas y meses hay entre dos fechas. Incluye opción de contar el último día.",
 """<p class="lead">Elige dos fechas y te decimos cuántos días naturales hay entre ellas, en semanas y meses.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha inicial</label><input id="a" type="date" data-today></div>
@@ -36,7 +36,7 @@ P.append(("dias-entre-fechas", "Calcular días entre dos fechas | DíaHábil",
 None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b)return;let n=Math.abs(diff(a,b))+(document.getElementById('inc').checked?1:0);
 show('r','Entre las dos fechas hay:<b class="big">'+nf(n,0)+' días</b>'+nf(n/7,1)+' semanas · '+nf(n/30.4375,1)+' meses · '+nf(n*24,0)+' horas');}"""))
 
-P.append(("dias-habiles", "Calculadora de días hábiles entre dos fechas | DíaHábil",
+P.append(("dias-habiles", "Calculadora de días hábiles entre dos fechas | CalculadoraDías",
 "Cuenta los días hábiles o laborables entre dos fechas excluyendo fines de semana y los festivos que tú indiques.",
 """<p class="lead">Calcula los días laborables entre dos fechas, ambas incluidas, quitando fines de semana y festivos.</p>
 <div class="card"><div class="row"><div><label for="a">Desde</label><input id="a" type="date" data-today></div>
@@ -51,7 +51,7 @@ None, DATEJS + """function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>
 for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){t++;const g=d.getDay();if(g==0||(m==2&&g==6)){w++;continue;}if(h.has(iso(d))){f++;continue;}n++;}
 show('r','Días hábiles:<b class="big">'+n+'</b>Total días: '+t+' · Fines de semana: '+w+' · Festivos excluidos: '+f);}"""))
 
-P.append(("sumar-dias", "Sumar o restar días a una fecha (naturales o hábiles) | DíaHábil",
+P.append(("sumar-dias", "Sumar o restar días a una fecha (naturales o hábiles) | CalculadoraDías",
 "Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para calcular plazos.",
 """<p class="lead">Calcula la fecha de vencimiento de un plazo sumando o restando días naturales o hábiles.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha de inicio</label><input id="a" type="date" data-today></div>
@@ -66,7 +66,7 @@ None, DATEJS + """function calc(){const a=pd('a');if(!a)return;let n=Math.round(
 if(document.getElementById('t').value=='n'){d.setDate(d.getDate()+s*n);}else{const h=hol();let c=0;while(c<n){d.setDate(d.getDate()+s);const g=d.getDay();if(g==0||g==6||h.has(iso(d)))continue;c++;}}
 show('r','Fecha resultante:<b class="big">'+fmt(d)+'</b>');}"""))
 
-P.append(("calcular-edad", "Calculadora de edad exacta: años, meses y días | DíaHábil",
+P.append(("calcular-edad", "Calculadora de edad exacta: años, meses y días | CalculadoraDías",
 "Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento, y cuántos días faltan para tu próximo cumpleaños.",
 """<p class="lead">Introduce tu fecha de nacimiento y descubre tu edad exacta y cuánto queda para tu cumpleaños.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha de nacimiento</label><input id="a" type="date" value="2000-01-01"></div>
@@ -80,7 +80,7 @@ if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m
 let nx=new Date(b.getFullYear(),a.getMonth(),a.getDate());if(nx<b)nx.setFullYear(b.getFullYear()+1);
 show('r','Tienes:<b class="big">'+y+' años</b>'+y+' años, '+m+' meses y '+d+' días · '+nf(diff(a,b),0)+' días vividos<br>Faltan <b>'+diff(b,nx)+' días</b> para tu cumpleaños ('+fmt(nx)+')');}"""))
 
-P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad, verano o cualquier fecha? | DíaHábil",
+P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad, verano o cualquier fecha? | CalculadoraDías",
 "Cuenta atrás: cuántos días faltan para Navidad, Nochevieja, el verano o la fecha que quieras.",
 """<p class="lead">Elige un evento o una fecha y te decimos cuántos días, semanas y fines de semana faltan.</p>
 <div class="card"><label for="e">Evento</label><select id="e" onchange="pre()"><option value="12-25">Navidad (25 de diciembre)</option><option value="12-31">Nochevieja (31 de diciembre)</option>
@@ -93,7 +93,7 @@ None, DATEJS + """function pre(){const e=document.getElementById('e').value;if(e
 function calc(){const b=pd('b');if(!b)return;const n=diff(today,b);let we=0;for(let d=new Date(today);d<b;d.setDate(d.getDate()+1))if(d.getDay()==6)we++;
 show('r',(n>=0?'Faltan:':'Pasaron:')+'<b class="big">'+Math.abs(n)+' días</b>'+nf(Math.abs(n)/7,1)+' semanas · '+we+' fines de semana · '+fmt(b));}pre();calc();"""))
 
-P.append(("semana-del-ano", "¿En qué semana del año estamos? Número de semana | DíaHábil",
+P.append(("semana-del-ano", "¿En qué semana del año estamos? Número de semana | CalculadoraDías",
 "Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana.",
 """<p class="lead">Número de semana según la norma ISO 8601, la que se usa en España y en la mayoría de Europa.</p>
 <div class="card"><label for="a">Fecha</label><input id="a" type="date" data-today><button onclick="calc()">Ver semana</button><div class="res" id="r"></div></div>

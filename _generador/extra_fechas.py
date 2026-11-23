@@ -11,7 +11,7 @@ S['tools'] += [("calculadora-vacaciones", "Calculadora de días de vacaciones", 
                ("calculadora-horas", "Calculadora de horas trabajadas", "Horas entre entrada y salida, descansos y total semanal.", ""),
                ("que-dia-de-la-semana", "¿Qué día de la semana fue o será?", "El día de la semana de cualquier fecha.", "")]
 
-P.append(("calculadora-vacaciones", "Calculadora de días de vacaciones: ¿cuántos me corresponden? | DíaHábil",
+P.append(("calculadora-vacaciones", "Calculadora de días de vacaciones: ¿cuántos me corresponden? | CalculadoraDías",
 "Calcula los días de vacaciones que te corresponden según el tiempo trabajado: proporcional a 30 días naturales o 22 laborables al año.",
 """<p class="lead">Calcula las vacaciones generadas según las fechas trabajadas en el año.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha de inicio</label><input id="a" type="date" value="2026-01-01"></div>
@@ -27,7 +27,7 @@ P.append(("calculadora-vacaciones", "Calculadora de días de vacaciones: ¿cuán
 None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b||b<a)return;const s=document.getElementById('d').value,an=s=='x'?v('dx'):parseFloat(s);const t=diff(a,b)+1,g=t/365*an;
 show('r','Vacaciones generadas:<b class="big">'+nf(g,1)+' días</b>Días trabajados: '+t+' · Pendientes de disfrutar: <b>'+nf(Math.max(0,g-v('u')),1)+'</b> ('+(s=='30'?'naturales':'laborables')+')');}"""))
 
-P.append(("calculadora-horas", "Calculadora de horas trabajadas: entrada, salida y descansos | DíaHábil",
+P.append(("calculadora-horas", "Calculadora de horas trabajadas: entrada, salida y descansos | CalculadoraDías",
 "Calcula las horas trabajadas entre la hora de entrada y la de salida, restando descansos, y el total semanal y mensual.",
 """<p class="lead">Pon tu hora de entrada, de salida y el descanso, y te sumamos las horas del día, la semana y el mes.</p>
 <div class="card"><div class="row"><div><label for="e">Entrada</label><input id="e" type="time" value="09:00"></div><div><label for="s">Salida</label><input id="s" type="time" value="18:00"></div>
@@ -43,7 +43,7 @@ function hm(x){x=Math.round(x);return Math.floor(x/60)+' h '+String(x%60).padSta
 function calc(){let d=mn('s')-mn('e');if(d<0)d+=1440;d-=v('p');d=Math.max(0,d);const w=d*v('dd'),m=w*52/12,ph=v('ph');
 show('r','Horas al día:<b class="big">'+hm(d)+'</b>('+nf(d/60,2)+' h) · Semana: <b>'+hm(w)+'</b> · Mes: <b>'+nf(m/60,1)+' h</b>'+(ph>0?'<br>Ingresos: '+eur(d/60*ph)+'/día · '+eur(m/60*ph)+'/mes':''));}"""))
 
-P.append(("que-dia-de-la-semana", "¿Qué día de la semana fue o será? Calculadora | DíaHábil",
+P.append(("que-dia-de-la-semana", "¿Qué día de la semana fue o será? Calculadora | CalculadoraDías",
 "Descubre en qué día de la semana cae cualquier fecha: tu cumpleaños, una boda, un festivo o el día en que naciste.",
 """<p class="lead">Elige una fecha y te decimos qué día de la semana fue o será, y cómo cae en los próximos años.</p>
 <div class="card"><label for="a">Fecha</label><input id="a" type="date" value="2027-12-25"><button onclick="calc()">Ver día</button><div class="res" id="r"></div></div>

@@ -7,8 +7,7 @@ def amz(q, label):
     return f'<a class="afl" href="{u}" rel="sponsored nofollow noopener" target="_blank">{label}</a>'
 def ext(u, label):
     return f'<a class="afl" href="{u}" rel="sponsored nofollow noopener" target="_blank">{label}</a>'
-NETWORK = [("Numeria", "https://godinoo14-pixel.github.io/"), ("CocheCuentas", "https://godinoo14-pixel.github.io/cochecuentas/"),
-           ("DíaHábil", "https://godinoo14-pixel.github.io/diahabil/"), ("GastoLuz", "https://godinoo14-pixel.github.io/gastoluz/")]
+NETWORK = [("CocheCuentas", "https://cochecuentas.es/"), ("CalculadoraDías", "https://calculadoradias.es/"), ("GastoLuz", "https://gastoluz.es/")]
 OWNER = "Juan Pedro Godino Moreno"
 MAIL = 'el correo indicado en el <a href="/aviso-legal.html">aviso legal general del sitio</a>'
 
@@ -113,6 +112,7 @@ def build(site, pages):
     urls = [site['base']] + [site['base'] + p[0] + ".html" for p in pages]
     open(f"{d}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"<url><loc>{u}</loc><lastmod>2026-11-23</lastmod></url>\n" for u in urls) + "</urlset>\n")
-    pass  # robots.txt va en la raíz
-    #open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
+    open(f"{d}/CNAME", "w").write(site["domain"] + "\n")
+    open(f"{d}/.nojekyll", "w").write("")
+    open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
     #open(f"{d}/ads.txt", "w").write("google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0\n")

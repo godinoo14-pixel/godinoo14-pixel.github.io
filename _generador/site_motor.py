@@ -1,6 +1,6 @@
 from gen import build
 S = dict(dir="cochecuentas", name="CocheCuentas", logo="Coche<span>Cuentas</span>", acc="#d9480f",
-         base="https://godinoo14-pixel.github.io/cochecuentas/",
+         base="https://cochecuentas.es/", domain="cochecuentas.es",
          tools=[("etiqueta-dgt", "¿Qué etiqueta DGT tiene mi coche?", "Cero, ECO, C, B o sin etiqueta según combustible y año.", "Etiqueta DGT"),
                 ("coste-por-km", "Coste por kilómetro", "Cuánto te cuesta cada km y cada mes en combustible.", "Coste/km"),
                 ("electrico-vs-gasolina", "Eléctrico vs gasolina o diésel", "Cuánto ahorras al año pasándote al eléctrico.", "Eléctrico vs"),
