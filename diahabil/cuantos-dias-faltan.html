@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>¿Cuántos días faltan para Navidad, verano o cualquier fecha? | DíaHábil</title><meta name="description" content="Cuenta atrás: cuántos días faltan para Navidad, Nochevieja, el verano o la fecha que quieras."><link rel="canonical" href="https://godinoo14-pixel.github.io/diahabil/cuantos-dias-faltan.html">
+<meta property="og:title" content="¿Cuántos días faltan para Navidad, verano o cualquier fecha? | DíaHábil"><meta property="og:description" content="Cuenta atrás: cuántos días faltan para Navidad, Nochevieja, el verano o la fecha que quieras."><meta property="og:type" content="website"><meta property="og:url" content="https://godinoo14-pixel.github.io/diahabil/cuantos-dias-faltan.html">
+<meta name="theme-color" content="#5f3dc4"><link rel="stylesheet" href="style.css">
+<!-- ADSENSE: pega aquí el script de Google AdSense cuando te aprueben -->
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebPage", "name": "¿Cuántos días faltan para Navidad, verano o cualquier fecha? | DíaHábil", "description": "Cuenta atrás: cuántos días faltan para Navidad, Nochevieja, el verano o la fecha que quieras.", "url": "https://godinoo14-pixel.github.io/diahabil/cuantos-dias-faltan.html"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Cuántos días faltan para Navidad?", "acceptedAnswer": {"@type": "Answer", "text": "Elige «Navidad» en el desplegable y verás la cuenta atrás actualizada a hoy."}}, {"@type": "Question", "name": "¿Cuenta el día de hoy?", "acceptedAnswer": {"@type": "Answer", "text": "No: se cuentan los días que faltan desde hoy hasta la fecha elegida."}}]}]</script></head><body>
+<header><div class="w"><a class="logo" href="index.html">Día<span>Hábil</span></a><nav><a href="dias-entre-fechas.html">Entre fechas</a><a href="dias-habiles.html">Días hábiles</a><a href="sumar-dias.html">Sumar días</a></nav></div></header>
+<main class="w"><h1>¿Cuántos días faltan para Navidad, verano o cualquier fecha?</h1><p class="lead">Elige un evento o una fecha y te decimos cuántos días, semanas y fines de semana faltan.</p>
+<div class="card"><label for="e">Evento</label><select id="e" onchange="pre()"><option value="12-25">Navidad (25 de diciembre)</option><option value="12-31">Nochevieja (31 de diciembre)</option>
+<option value="01-06">Reyes (6 de enero)</option><option value="06-21">Verano (21 de junio)</option><option value="08-01">1 de agosto</option><option value="x">Otra fecha…</option></select>
+<label for="b">Fecha</label><input id="b" type="date"><button onclick="calc()">Ver cuenta atrás</button><div class="res" id="r"></div></div>
+<h2>Planifica con tiempo</h2><p>Saber cuántos días faltan ayuda a organizar compras, ahorro y vacaciones. Por ejemplo, si quieres ahorrar 300 € para Navidad, divide esa cantidad entre las semanas que faltan y sabrás cuánto apartar cada semana.</p>
+<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div><h2>Preguntas frecuentes</h2><div class="faq"><details><summary>¿Cuántos días faltan para Navidad?</summary><p>Elige «Navidad» en el desplegable y verás la cuenta atrás actualizada a hoy.</p></details><details><summary>¿Cuenta el día de hoy?</summary><p>No: se cuentan los días que faltan desde hoy hasta la fecha elegida.</p></details></div><h2>Otras calculadoras</h2><div class="grid"><a class="tool" href="dias-entre-fechas.html"><h3>Días entre dos fechas</h3><p>Días naturales, semanas y meses entre dos fechas.</p></a><a class="tool" href="dias-habiles.html"><h3>Calculadora de días hábiles</h3><p>Días laborables entre fechas, sin fines de semana ni festivos.</p></a><a class="tool" href="sumar-dias.html"><h3>Sumar o restar días a una fecha</h3><p>Fecha final de un plazo en días naturales o hábiles.</p></a><a class="tool" href="calcular-edad.html"><h3>Calculadora de edad exacta</h3><p>Edad en años, meses y días, y días hasta tu cumpleaños.</p></a><a class="tool" href="semana-del-ano.html"><h3>¿En qué semana del año estamos?</h3><p>Número de semana ISO de cualquier fecha.</p></a></div></main>
+<footer><div class="w"><p>© 2026 DíaHábil · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
+<a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
+<div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
+<script>
+const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const nf=(n,d=2)=>n.toLocaleString('es-ES',{maximumFractionDigits:d});
+const v=id=>parseFloat(String(document.getElementById(id).value).replace(',','.'))||0;
+function show(id,h){const r=document.getElementById(id);r.innerHTML=h;r.style.display='block';}
+(function(){let s=null;try{s=localStorage.getItem('ck')}catch(e){}const b=document.getElementById('ck');if(!s)b.style.display='block';
+function set(x){try{localStorage.setItem('ck',x)}catch(e){}b.style.display='none';}
+document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr').onclick=()=>set('0');})();
+
+const pd=id=>{const s=document.getElementById(id).value;if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const diff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();t.split(/[\s,;]+/).forEach(x=>{const m=x.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
+const today=new Date();document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(today));
+function pre(){const e=document.getElementById('e').value;if(e=='x')return;const [m,d]=e.split('-').map(Number);let t=new Date(today.getFullYear(),m-1,d);if(diff(today,t)<0)t.setFullYear(t.getFullYear()+1);document.getElementById('b').value=iso(t);}
+function calc(){const b=pd('b');if(!b)return;const n=diff(today,b);let we=0;for(let d=new Date(today);d<b;d.setDate(d.getDate()+1))if(d.getDay()==6)we++;
+show('r',(n>=0?'Faltan:':'Pasaron:')+'<b class="big">'+Math.abs(n)+' días</b>'+nf(Math.abs(n)/7,1)+' semanas · '+we+' fines de semana · '+fmt(b));}pre();calc();
+</script></body></html>

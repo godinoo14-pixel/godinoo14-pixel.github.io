@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculadora de edad exacta: años, meses y días | DíaHábil</title><meta name="description" content="Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento, y cuántos días faltan para tu próximo cumpleaños."><link rel="canonical" href="https://godinoo14-pixel.github.io/diahabil/calcular-edad.html">
+<meta property="og:title" content="Calculadora de edad exacta: años, meses y días | DíaHábil"><meta property="og:description" content="Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento, y cuántos días faltan para tu próximo cumpleaños."><meta property="og:type" content="website"><meta property="og:url" content="https://godinoo14-pixel.github.io/diahabil/calcular-edad.html">
+<meta name="theme-color" content="#5f3dc4"><link rel="stylesheet" href="style.css">
+<!-- ADSENSE: pega aquí el script de Google AdSense cuando te aprueben -->
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebPage", "name": "Calculadora de edad exacta: años, meses y días | DíaHábil", "description": "Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento, y cuántos días faltan para tu próximo cumpleaños.", "url": "https://godinoo14-pixel.github.io/diahabil/calcular-edad.html"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Cómo se calcula la edad exacta?", "acceptedAnswer": {"@type": "Answer", "text": "Se restan los años completos cumplidos y luego los meses y días transcurridos desde el último cumpleaños."}}, {"@type": "Question", "name": "¿Cuántos días he vivido?", "acceptedAnswer": {"@type": "Answer", "text": "La calculadora te muestra también el total de días vividos hasta la fecha indicada."}}]}]</script></head><body>
+<header><div class="w"><a class="logo" href="index.html">Día<span>Hábil</span></a><nav><a href="dias-entre-fechas.html">Entre fechas</a><a href="dias-habiles.html">Días hábiles</a><a href="sumar-dias.html">Sumar días</a></nav></div></header>
+<main class="w"><h1>Calculadora de edad exacta: años, meses y días</h1><p class="lead">Introduce tu fecha de nacimiento y descubre tu edad exacta y cuánto queda para tu cumpleaños.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de nacimiento</label><input id="a" type="date" value="2000-01-01"></div>
+<div><label for="b">Calcular a fecha de</label><input id="b" type="date" data-today></div></div>
+<button onclick="calc()">Calcular edad</button><div class="res" id="r"></div></div>
+<h2>Curiosidades</h2><p>Si naciste un 29 de febrero, en los años no bisiestos legalmente cumples años el 1 de marzo en España. Y a los 10.000 días de vida tienes unos 27 años y 4 meses: buena excusa para una segunda fiesta.</p>
+<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div><h2>Preguntas frecuentes</h2><div class="faq"><details><summary>¿Cómo se calcula la edad exacta?</summary><p>Se restan los años completos cumplidos y luego los meses y días transcurridos desde el último cumpleaños.</p></details><details><summary>¿Cuántos días he vivido?</summary><p>La calculadora te muestra también el total de días vividos hasta la fecha indicada.</p></details></div><h2>Otras calculadoras</h2><div class="grid"><a class="tool" href="dias-entre-fechas.html"><h3>Días entre dos fechas</h3><p>Días naturales, semanas y meses entre dos fechas.</p></a><a class="tool" href="dias-habiles.html"><h3>Calculadora de días hábiles</h3><p>Días laborables entre fechas, sin fines de semana ni festivos.</p></a><a class="tool" href="sumar-dias.html"><h3>Sumar o restar días a una fecha</h3><p>Fecha final de un plazo en días naturales o hábiles.</p></a><a class="tool" href="cuantos-dias-faltan.html"><h3>¿Cuántos días faltan para…?</h3><p>Cuenta atrás para Navidad, verano o cualquier fecha.</p></a><a class="tool" href="semana-del-ano.html"><h3>¿En qué semana del año estamos?</h3><p>Número de semana ISO de cualquier fecha.</p></a></div></main>
+<footer><div class="w"><p>© 2026 DíaHábil · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
+<a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
+<div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
+<script>
+const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const nf=(n,d=2)=>n.toLocaleString('es-ES',{maximumFractionDigits:d});
+const v=id=>parseFloat(String(document.getElementById(id).value).replace(',','.'))||0;
+function show(id,h){const r=document.getElementById(id);r.innerHTML=h;r.style.display='block';}
+(function(){let s=null;try{s=localStorage.getItem('ck')}catch(e){}const b=document.getElementById('ck');if(!s)b.style.display='block';
+function set(x){try{localStorage.setItem('ck',x)}catch(e){}b.style.display='none';}
+document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr').onclick=()=>set('0');})();
+
+const pd=id=>{const s=document.getElementById(id).value;if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const diff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();t.split(/[\s,;]+/).forEach(x=>{const m=x.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
+const today=new Date();document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(today));
+function calc(){const a=pd('a'),b=pd('b');if(!a||!b||a>b)return;let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();
+if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}
+let nx=new Date(b.getFullYear(),a.getMonth(),a.getDate());if(nx<b)nx.setFullYear(b.getFullYear()+1);
+show('r','Tienes:<b class="big">'+y+' años</b>'+y+' años, '+m+' meses y '+d+' días · '+nf(diff(a,b),0)+' días vividos<br>Faltan <b>'+diff(b,nx)+' días</b> para tu cumpleaños ('+fmt(nx)+')');}
+</script></body></html>

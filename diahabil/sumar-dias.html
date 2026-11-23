@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sumar o restar días a una fecha (naturales o hábiles) | DíaHábil</title><meta name="description" content="Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para calcular plazos."><link rel="canonical" href="https://godinoo14-pixel.github.io/diahabil/sumar-dias.html">
+<meta property="og:title" content="Sumar o restar días a una fecha (naturales o hábiles) | DíaHábil"><meta property="og:description" content="Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para calcular plazos."><meta property="og:type" content="website"><meta property="og:url" content="https://godinoo14-pixel.github.io/diahabil/sumar-dias.html">
+<meta name="theme-color" content="#5f3dc4"><link rel="stylesheet" href="style.css">
+<!-- ADSENSE: pega aquí el script de Google AdSense cuando te aprueben -->
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebPage", "name": "Sumar o restar días a una fecha (naturales o hábiles) | DíaHábil", "description": "Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para calcular plazos.", "url": "https://godinoo14-pixel.github.io/diahabil/sumar-dias.html"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Qué fecha será dentro de 30 días?", "acceptedAnswer": {"@type": "Answer", "text": "Pon la fecha de hoy, 30 días y «sumar»: la calculadora te da el día exacto y el día de la semana."}}, {"@type": "Question", "name": "¿Un plazo de un mes es lo mismo que 30 días?", "acceptedAnswer": {"@type": "Answer", "text": "No. Los plazos en meses se cuentan de fecha a fecha (del 15 de enero al 15 de febrero), no como 30 días."}}]}]</script></head><body>
+<header><div class="w"><a class="logo" href="index.html">Día<span>Hábil</span></a><nav><a href="dias-entre-fechas.html">Entre fechas</a><a href="dias-habiles.html">Días hábiles</a><a href="sumar-dias.html">Sumar días</a></nav></div></header>
+<main class="w"><h1>Sumar o restar días a una fecha (naturales o hábiles)</h1><p class="lead">Calcula la fecha de vencimiento de un plazo sumando o restando días naturales o hábiles.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de inicio</label><input id="a" type="date" data-today></div>
+<div><label for="n">Número de días</label><input id="n" inputmode="numeric" value="30"></div>
+<div><label for="o">Operación</label><select id="o"><option value="1">Sumar</option><option value="-1">Restar</option></select></div>
+<div><label for="t">Tipo de días</label><select id="t"><option value="n">Naturales</option><option value="h">Hábiles (lunes a viernes)</option></select></div></div><label for="f">Festivos a excluir (opcional, uno por línea, dd/mm/aaaa)</label><textarea id="f" rows="3" placeholder="06/12/2026&#10;08/12/2026&#10;25/12/2026"></textarea>
+<button onclick="calc()">Calcular fecha</button><div class="res" id="r"></div></div>
+<h2>Cómo calcular un plazo</h2><p>Los plazos se empiezan a contar el día siguiente a la notificación o publicación. Por ejemplo, si te notifican el lunes y tienes 10 días hábiles, el primer día del plazo es el martes. Si el último día cae en festivo o fin de semana, el plazo se alarga al siguiente día hábil.</p>
+<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div><h2>Preguntas frecuentes</h2><div class="faq"><details><summary>¿Qué fecha será dentro de 30 días?</summary><p>Pon la fecha de hoy, 30 días y «sumar»: la calculadora te da el día exacto y el día de la semana.</p></details><details><summary>¿Un plazo de un mes es lo mismo que 30 días?</summary><p>No. Los plazos en meses se cuentan de fecha a fecha (del 15 de enero al 15 de febrero), no como 30 días.</p></details></div><h2>Otras calculadoras</h2><div class="grid"><a class="tool" href="dias-entre-fechas.html"><h3>Días entre dos fechas</h3><p>Días naturales, semanas y meses entre dos fechas.</p></a><a class="tool" href="dias-habiles.html"><h3>Calculadora de días hábiles</h3><p>Días laborables entre fechas, sin fines de semana ni festivos.</p></a><a class="tool" href="calcular-edad.html"><h3>Calculadora de edad exacta</h3><p>Edad en años, meses y días, y días hasta tu cumpleaños.</p></a><a class="tool" href="cuantos-dias-faltan.html"><h3>¿Cuántos días faltan para…?</h3><p>Cuenta atrás para Navidad, verano o cualquier fecha.</p></a><a class="tool" href="semana-del-ano.html"><h3>¿En qué semana del año estamos?</h3><p>Número de semana ISO de cualquier fecha.</p></a></div></main>
+<footer><div class="w"><p>© 2026 DíaHábil · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
+<a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
+<div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
+<script>
+const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const nf=(n,d=2)=>n.toLocaleString('es-ES',{maximumFractionDigits:d});
+const v=id=>parseFloat(String(document.getElementById(id).value).replace(',','.'))||0;
+function show(id,h){const r=document.getElementById(id);r.innerHTML=h;r.style.display='block';}
+(function(){let s=null;try{s=localStorage.getItem('ck')}catch(e){}const b=document.getElementById('ck');if(!s)b.style.display='block';
+function set(x){try{localStorage.setItem('ck',x)}catch(e){}b.style.display='none';}
+document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr').onclick=()=>set('0');})();
+
+const pd=id=>{const s=document.getElementById(id).value;if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const diff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();t.split(/[\s,;]+/).forEach(x=>{const m=x.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
+const today=new Date();document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(today));
+function calc(){const a=pd('a');if(!a)return;let n=Math.round(v('n')),s=v('o'),d=new Date(a);
+if(document.getElementById('t').value=='n'){d.setDate(d.getDate()+s*n);}else{const h=hol();let c=0;while(c<n){d.setDate(d.getDate()+s);const g=d.getDay();if(g==0||g==6||h.has(iso(d)))continue;c++;}}
+show('r','Fecha resultante:<b class="big">'+fmt(d)+'</b>');}
+</script></body></html>

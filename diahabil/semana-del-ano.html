@@ -1,0 +1,33 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>¿En qué semana del año estamos? Número de semana | DíaHábil</title><meta name="description" content="Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana."><link rel="canonical" href="https://godinoo14-pixel.github.io/diahabil/semana-del-ano.html">
+<meta property="og:title" content="¿En qué semana del año estamos? Número de semana | DíaHábil"><meta property="og:description" content="Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana."><meta property="og:type" content="website"><meta property="og:url" content="https://godinoo14-pixel.github.io/diahabil/semana-del-ano.html">
+<meta name="theme-color" content="#5f3dc4"><link rel="stylesheet" href="style.css">
+<!-- ADSENSE: pega aquí el script de Google AdSense cuando te aprueben -->
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "WebPage", "name": "¿En qué semana del año estamos? Número de semana | DíaHábil", "description": "Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana.", "url": "https://godinoo14-pixel.github.io/diahabil/semana-del-ano.html"}, {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "¿Cuántas semanas tiene un año?", "acceptedAnswer": {"@type": "Answer", "text": "52 o 53 semanas ISO, según en qué día de la semana empiece el año."}}, {"@type": "Question", "name": "¿Por qué Excel me da otro número?", "acceptedAnswer": {"@type": "Answer", "text": "La función NUM.DE.SEMANA de Excel por defecto empieza en domingo. Usa ISO.NUM.DE.SEMANA para obtener el mismo resultado que aquí."}}]}]</script></head><body>
+<header><div class="w"><a class="logo" href="index.html">Día<span>Hábil</span></a><nav><a href="dias-entre-fechas.html">Entre fechas</a><a href="dias-habiles.html">Días hábiles</a><a href="sumar-dias.html">Sumar días</a></nav></div></header>
+<main class="w"><h1>¿En qué semana del año estamos? Número de semana</h1><p class="lead">Número de semana según la norma ISO 8601, la que se usa en España y en la mayoría de Europa.</p>
+<div class="card"><label for="a">Fecha</label><input id="a" type="date" data-today><button onclick="calc()">Ver semana</button><div class="res" id="r"></div></div>
+<h2>Cómo funciona la semana ISO</h2><p>Las semanas empiezan en lunes y la semana 1 es la que contiene el primer jueves del año. Por eso los primeros días de enero pueden pertenecer a la última semana del año anterior, y algunos años tienen 53 semanas.</p>
+<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div><h2>Preguntas frecuentes</h2><div class="faq"><details><summary>¿Cuántas semanas tiene un año?</summary><p>52 o 53 semanas ISO, según en qué día de la semana empiece el año.</p></details><details><summary>¿Por qué Excel me da otro número?</summary><p>La función NUM.DE.SEMANA de Excel por defecto empieza en domingo. Usa ISO.NUM.DE.SEMANA para obtener el mismo resultado que aquí.</p></details></div><h2>Otras calculadoras</h2><div class="grid"><a class="tool" href="dias-entre-fechas.html"><h3>Días entre dos fechas</h3><p>Días naturales, semanas y meses entre dos fechas.</p></a><a class="tool" href="dias-habiles.html"><h3>Calculadora de días hábiles</h3><p>Días laborables entre fechas, sin fines de semana ni festivos.</p></a><a class="tool" href="sumar-dias.html"><h3>Sumar o restar días a una fecha</h3><p>Fecha final de un plazo en días naturales o hábiles.</p></a><a class="tool" href="calcular-edad.html"><h3>Calculadora de edad exacta</h3><p>Edad en años, meses y días, y días hasta tu cumpleaños.</p></a><a class="tool" href="cuantos-dias-faltan.html"><h3>¿Cuántos días faltan para…?</h3><p>Cuenta atrás para Navidad, verano o cualquier fecha.</p></a></div></main>
+<footer><div class="w"><p>© 2026 DíaHábil · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
+<a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
+<div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
+<script>
+const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
+const nf=(n,d=2)=>n.toLocaleString('es-ES',{maximumFractionDigits:d});
+const v=id=>parseFloat(String(document.getElementById(id).value).replace(',','.'))||0;
+function show(id,h){const r=document.getElementById(id);r.innerHTML=h;r.style.display='block';}
+(function(){let s=null;try{s=localStorage.getItem('ck')}catch(e){}const b=document.getElementById('ck');if(!s)b.style.display='block';
+function set(x){try{localStorage.setItem('ck',x)}catch(e){}b.style.display='none';}
+document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr').onclick=()=>set('0');})();
+
+const pd=id=>{const s=document.getElementById(id).value;if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const diff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();t.split(/[\s,;]+/).forEach(x=>{const m=x.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
+const today=new Date();document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(today));
+function wk(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return [Math.ceil(((t-y)/864e5+1)/7),t.getUTCFullYear()];}
+function calc(){const a=pd('a');if(!a)return;const [w,y]=wk(a),g=a.getDay()||7,l=new Date(a);l.setDate(a.getDate()-g+1);const s=new Date(l);s.setDate(l.getDate()+6);
+show('r','Semana:<b class="big">'+w+' de '+y+'</b>Del '+fmt(l)+' al '+fmt(s));}calc();
+</script></body></html>
