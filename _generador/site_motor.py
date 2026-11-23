@@ -1,0 +1,132 @@
+from gen import build
+S = dict(dir="cochecuentas", name="CocheCuentas", logo="Coche<span>Cuentas</span>", acc="#d9480f",
+         base="https://godinoo14-pixel.github.io/cochecuentas/",
+         tools=[("etiqueta-dgt", "¿Qué etiqueta DGT tiene mi coche?", "Cero, ECO, C, B o sin etiqueta según combustible y año.", "Etiqueta DGT"),
+                ("coste-por-km", "Coste por kilómetro", "Cuánto te cuesta cada km y cada mes en combustible.", "Coste/km"),
+                ("electrico-vs-gasolina", "Eléctrico vs gasolina o diésel", "Cuánto ahorras al año pasándote al eléctrico.", "Eléctrico vs"),
+                ("coste-anual-coche", "Coste anual real de un coche", "Seguro, impuesto, ITV, mantenimiento, combustible y pérdida de valor.", ""),
+                ("depreciacion-coche", "Calculadora de depreciación", "Cuánto valdrá tu coche dentro de X años.", ""),
+                ("coste-viaje-coche", "Coste de un viaje en coche", "Combustible y peajes de un trayecto, dividido entre ocupantes.", "")],
+         home_title="CocheCuentas | Calculadoras de coche: etiqueta DGT, coste por km, consumo",
+         home_desc="Calculadoras gratuitas para conductores en España: etiqueta DGT, coste por kilómetro, eléctrico vs gasolina, coste anual real y depreciación.",
+         home_h1="Calculadoras para tu coche",
+         home_intro='<p class="lead">Herramientas gratuitas y rápidas para saber cuánto te cuesta de verdad tu coche, qué etiqueta medioambiental le corresponde y si te compensa cambiarte al eléctrico. Hechas por un profesional del sector del automóvil.</p>',
+         home_extra='<h2>¿Por qué calcular el coste real de tu coche?</h2><p>La mayoría de conductores solo piensa en la letra o en el combustible, pero un coche también cuesta seguro, impuesto de circulación, ITV, neumáticos, revisiones y, sobre todo, la pérdida de valor. Sumarlo todo te ayuda a decidir si comprar, mantener o cambiar de coche con números en la mano.</p>')
+
+P = []
+P.append(("etiqueta-dgt", "¿Qué etiqueta DGT tiene mi coche? Calculadora 2026 | CocheCuentas",
+"Descubre qué etiqueta medioambiental de la DGT (0, ECO, C o B) le corresponde a tu coche según combustible y fecha de matriculación.",
+"""<p class="lead">Elige el tipo de motor y el año de matriculación para saber qué distintivo ambiental de la DGT le corresponde a tu turismo.</p>
+<div class="card"><label for="t">Tipo de motor</label><select id="t">
+<option value="bev">Eléctrico puro (BEV)</option><option value="phev40">Híbrido enchufable con 40 km o más de autonomía eléctrica</option>
+<option value="phev">Híbrido enchufable con menos de 40 km</option><option value="hev">Híbrido no enchufable (HEV o mild hybrid)</option>
+<option value="gas">Gas (GLP, GNC o GNL)</option><option value="g" selected>Gasolina</option><option value="d">Diésel</option></select>
+<label for="y">Año de matriculación</label><input id="y" type="number" inputmode="numeric" value="2012" min="1970" max="2026">
+<button onclick="calc()">Ver mi etiqueta</button><div class="res" id="r"></div></div>
+<p class="note">Cálculo orientativo para turismos según los criterios generales de la DGT. La etiqueta definitiva depende de la norma Euro que figura en la ficha técnica: compruébala con tu matrícula en la sede electrónica de la DGT.</p>
+<h2>Cómo se asignan las etiquetas</h2><table><tr><th>Etiqueta</th><th>Turismos</th></tr>
+<tr><td><b>0 emisiones</b></td><td>Eléctricos puros, de autonomía extendida e híbridos enchufables con 40 km o más de autonomía eléctrica.</td></tr>
+<tr><td><b>ECO</b></td><td>Híbridos no enchufables, enchufables con menos de 40 km y vehículos de gas.</td></tr>
+<tr><td><b>C</b></td><td>Gasolina matriculados desde 2006 y diésel desde 2014 (aprox.).</td></tr>
+<tr><td><b>B</b></td><td>Gasolina matriculados desde 2001 y diésel desde 2006 (aprox.).</td></tr>
+<tr><td><b>Sin etiqueta</b></td><td>Gasolina anteriores a 2001 y diésel anteriores a 2006.</td></tr></table>
+<h2>¿Para qué sirve la etiqueta?</h2><p>Las zonas de bajas emisiones (ZBE) de las ciudades usan el distintivo para decidir quién puede entrar, aparcar o pagar menos en zona regulada. Los coches sin etiqueta son los más afectados por las restricciones.</p>""",
+[("¿Dónde compruebo la etiqueta oficial de mi coche?", "En la sede electrónica de la DGT, introduciendo la matrícula. También aparece la norma Euro en la ficha técnica."),
+ ("¿Un mild hybrid tiene etiqueta ECO?", "Por lo general sí: la mayoría de microhíbridos de 48 V se homologan como híbridos y reciben etiqueta ECO. Confírmalo con la matrícula."),
+ ("¿Dónde se compra la pegatina?", "En oficinas de Correos, talleres autorizados y gestorías, presentando el permiso de circulación.")],
+"¿Qué etiqueta DGT tiene mi coche?",
+"""const L={'0':['0 EMISIONES','#1c7ed6'],'ECO':['ECO','#2f9e44'],'C':['C','#37b24d'],'B':['B','#f59f00'],'N':['SIN ETIQUETA','#868e96']};
+function calc(){const t=document.getElementById('t').value,y=v('y');let e;
+if(t=='bev'||t=='phev40')e='0';else if(t=='phev'||t=='hev'||t=='gas')e='ECO';
+else if(t=='g')e=y>=2006?'C':y>=2001?'B':'N';else e=y>=2014?'C':y>=2006?'B':'N';
+show('r','Tu coche probablemente tiene:<b class="big" style="color:'+L[e][1]+'">'+L[e][0]+'</b>'+(e=='N'?'Ojo con las zonas de bajas emisiones de tu ciudad.':''));}"""))
+
+P.append(("coste-por-km", "Calculadora de coste por kilómetro del coche | CocheCuentas",
+"Calcula cuánto te cuesta cada kilómetro, cada mes y cada año en combustible según el consumo de tu coche y el precio del litro.",
+"""<p class="lead">Mete el consumo de tu coche, el precio del combustible y los kilómetros que haces y verás cuánto gastas por km, al mes y al año.</p>
+<div class="card"><div class="row"><div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6,5"></div>
+<div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div></div>
+<label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"><button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
+<h2>Cómo se calcula</h2><p>Coste por km = consumo ÷ 100 × precio del litro. Si tu coche gasta 6,5 litros a los 100 km y el litro cuesta 1,55 €, cada kilómetro te sale a unos 0,10 €. El consumo real suele ser entre un 10 % y un 25 % mayor que el homologado, sobre todo en ciudad, así que usa el que marca tu ordenador de a bordo.</p>
+<h2>Trucos para gastar menos</h2><ul><li>Revisa la presión de los neumáticos cada mes.</li><li>Conduce en marchas largas y anticipa las frenadas.</li><li>Quita la baca o el cofre si no lo usas.</li><li>Compara precios de gasolineras: la diferencia puede superar los 15 céntimos por litro.</li></ul>""",
+[("¿Cuánto cuesta un kilómetro en coche de media?", "Solo en combustible, un turismo medio de gasolina gasta entre 0,08 y 0,12 € por km. Contando seguro, mantenimiento y depreciación, el coste total suele estar entre 0,25 y 0,45 € por km."),
+ ("¿Cómo sé el consumo real de mi coche?", "Llena el depósito, pon el parcial a cero y, en el siguiente repostaje, divide los litros repostados entre los km recorridos y multiplica por 100.")],
+None,
+"""function calc(){const c=v('c'),p=v('p'),k=v('k'),km=c/100*p;
+show('r','Coste por km:<b class="big">'+nf(km,3)+' €</b>Al mes: <b>'+eur(km*k/12)+'</b> · Al año: <b>'+eur(km*k)+'</b> · Litros/año: '+nf(c/100*k,0));}"""))
+
+P.append(("electrico-vs-gasolina", "Coche eléctrico vs gasolina o diésel: ¿cuánto ahorro? | CocheCuentas",
+"Compara el coste de recorrer kilómetros con un coche eléctrico frente a uno de gasolina o diésel y calcula tu ahorro anual.",
+"""<p class="lead">Calcula cuánto ahorrarías al año en energía cargando un coche eléctrico frente a repostar gasolina o diésel.</p>
+<div class="card"><div class="row"><div><label for="ce">Consumo eléctrico (kWh/100 km)</label><input id="ce" inputmode="decimal" value="17"></div>
+<div><label for="pe">Precio del kWh (€)</label><input id="pe" inputmode="decimal" value="0,12"></div>
+<div><label for="cc">Consumo combustión (L/100 km)</label><input id="cc" inputmode="decimal" value="6,5"></div>
+<div><label for="pc">Precio del litro (€)</label><input id="pc" inputmode="decimal" value="1,55"></div></div>
+<label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"><button onclick="calc()">Comparar</button><div class="res" id="r"></div></div>
+<p class="note">Pon el precio del kWh de tu tarifa. Cargando en casa por la noche con tarifa de discriminación horaria suele salir bastante más barato que en cargadores rápidos de carretera.</p>
+<h2>Lo que no entra en la cuenta</h2><p>El ahorro en energía es solo una parte. El eléctrico suele tener menos mantenimiento (sin aceite, filtros ni embrague), bonificaciones en el impuesto de circulación en muchos municipios y ventajas en zonas de bajas emisiones. En contra, el precio de compra suele ser mayor y el seguro puede ser algo más caro.</p>""",
+[("¿Cuánto cuesta cargar un coche eléctrico en casa?", "Multiplica la capacidad útil de la batería por el precio del kWh. Una batería de 60 kWh a 0,12 €/kWh cuesta unos 7,20 € de 0 a 100 %."),
+ ("¿Cuántos km necesito hacer para que compense?", "Cuantos más km hagas, antes recuperas la diferencia de precio de compra. Divide esa diferencia entre el ahorro anual que te da esta calculadora para ver en cuántos años lo amortizas.")],
+"Eléctrico vs gasolina: calculadora de ahorro",
+"""function calc(){const k=v('k'),e=v('ce')/100*v('pe'),c=v('cc')/100*v('pc'),a=(c-e)*k;
+show('r','Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Eléctrico: '+nf(e,3)+' €/km ('+eur(e*k)+'/año) · Combustión: '+nf(c,3)+' €/km ('+eur(c*k)+'/año)<br>En 5 años: <b>'+eur(a*5)+'</b>');}"""))
+
+P.append(("coste-anual-coche", "¿Cuánto cuesta mantener un coche al año? Calculadora | CocheCuentas",
+"Suma seguro, impuesto de circulación, ITV, mantenimiento, neumáticos, combustible, aparcamiento y depreciación para saber el coste real de tu coche.",
+"""<p class="lead">Rellena lo que pagas por cada concepto (puedes dejar en 0 lo que no aplique) y verás el coste real anual, mensual y por kilómetro.</p>
+<div class="card"><div class="row">
+<div><label for="a1">Seguro (€/año)</label><input id="a1" inputmode="decimal" value="450"></div>
+<div><label for="a2">Impuesto de circulación (€/año)</label><input id="a2" inputmode="decimal" value="120"></div>
+<div><label for="a3">ITV (€/año)</label><input id="a3" inputmode="decimal" value="45"></div>
+<div><label for="a4">Revisiones y averías (€/año)</label><input id="a4" inputmode="decimal" value="400"></div>
+<div><label for="a5">Neumáticos (€/año)</label><input id="a5" inputmode="decimal" value="150"></div>
+<div><label for="a6">Combustible (€/año)</label><input id="a6" inputmode="decimal" value="1500"></div>
+<div><label for="a7">Parking, peajes, lavados (€/año)</label><input id="a7" inputmode="decimal" value="300"></div>
+<div><label for="a8">Cuota de financiación (€/mes)</label><input id="a8" inputmode="decimal" value="0"></div>
+<div><label for="a9">Pérdida de valor (€/año)</label><input id="a9" inputmode="decimal" value="1500"></div>
+<div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div></div>
+<button onclick="calc()">Calcular coste real</button><div class="res" id="r"></div></div>
+<p class="note">¿No sabes cuánto pierde de valor tu coche? Usa la <a href="depreciacion-coche.html">calculadora de depreciación</a>. ¿Y el combustible? Sácalo con la de <a href="coste-por-km.html">coste por km</a>.</p>
+<h2>El gasto que nadie cuenta: la depreciación</h2><p>Para muchos coches nuevos o seminuevos, la pérdida de valor es el mayor gasto del año, por encima del combustible. Un coche de 25.000 € puede perder entre 3.000 y 5.000 € solo en su primer año. Por eso comprar un seminuevo de 2-3 años suele ser la opción más eficiente.</p>""",
+[("¿Cuánto cuesta de media mantener un coche en España?", "Depende mucho del coche y del uso, pero sumando todos los conceptos y la depreciación es habitual moverse entre 3.000 y 6.000 € al año para un turismo medio."),
+ ("¿Sale más barato el renting?", "El renting incluye seguro, mantenimiento e impuestos en la cuota y elimina el riesgo de depreciación. Compara su cuota mensual con el coste mensual que te da esta calculadora.")],
+None,
+"""function calc(){let t=0;for(let i=1;i<=9;i++){if(i==8)continue;t+=v('a'+i);}t+=v('a8')*12;const k=v('k')||1;
+show('r','Coste real al año:<b class="big">'+eur(t)+'</b>Al mes: <b>'+eur(t/12)+'</b> · Por km: <b>'+nf(t/k,3)+' €</b>');}"""))
+
+P.append(("depreciacion-coche", "Calculadora de depreciación de un coche: ¿cuánto valdrá? | CocheCuentas",
+"Estima cuánto valdrá tu coche dentro de unos años y cuánto dinero pierde cada año por depreciación.",
+"""<p class="lead">Calcula cuánto valdrá aproximadamente tu coche en el futuro y cuánto valor pierde cada año.</p>
+<div class="card"><div class="row"><div><label for="pv">Precio de compra (€)</label><input id="pv" inputmode="decimal" value="25000"></div>
+<div><label for="n">Años de propiedad</label><input id="n" inputmode="numeric" value="5"></div>
+<div><label for="r1">Pérdida el primer año (%)</label><input id="r1" inputmode="decimal" value="20"></div>
+<div><label for="r2">Pérdida años siguientes (% anual)</label><input id="r2" inputmode="decimal" value="12"></div></div>
+<button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
+<p class="note">Valores por defecto orientativos para un coche nuevo. Las marcas premium, los eléctricos y los modelos con poca demanda pueden depreciarse más rápido; los SUV y modelos muy demandados, más despacio. Si compras de segunda mano, usa un porcentaje de primer año más bajo (8-12 %).</p>
+<h2>Qué hace que un coche pierda menos valor</h2><ul><li>Kilometraje bajo para su edad.</li><li>Libro de mantenimiento sellado en la marca.</li><li>Colores neutros (blanco, gris, negro).</li><li>Etiqueta ECO o 0 y motores con demanda.</li><li>Un solo propietario y sin golpes.</li></ul>""",
+[("¿Cuánto pierde un coche nuevo al salir del concesionario?", "Como referencia general, entre un 15 % y un 25 % el primer año, y alrededor de un 40-50 % a los cinco años."),
+ ("¿Cuándo es mejor vender el coche?", "La curva se suaviza a partir del tercer o cuarto año. Vender justo antes de grandes mantenimientos (distribución, neumáticos) o del cambio de etiqueta suele ser buena idea.")],
+None,
+"""function calc(){let x=v('pv');const n=Math.round(v('n')),a=v('r1')/100,b=v('r2')/100;let h='<table><tr><th>Año</th><th>Valor</th><th>Pierde</th></tr>';
+for(let i=1;i<=n;i++){const p=x*(i==1?a:b);x-=p;h+='<tr><td>'+i+'</td><td>'+eur(x)+'</td><td>'+eur(p)+'</td></tr>';}
+const tot=v('pv')-x;show('r','Valor estimado en '+n+' años:<b class="big">'+eur(x)+'</b>Pérdida total: <b>'+eur(tot)+'</b> ('+nf(tot/v('pv')*100,1)+' %) · '+eur(tot/Math.max(n,1))+'/año'+h+'</table>');}"""))
+
+P.append(("coste-viaje-coche", "Calculadora del coste de un viaje en coche | CocheCuentas",
+"Calcula cuánto cuesta un viaje en coche en combustible y peajes, ida o ida y vuelta, y cuánto toca pagar a cada ocupante.",
+"""<p class="lead">Calcula el coste de tu viaje y cuánto tiene que poner cada uno.</p>
+<div class="card"><div class="row"><div><label for="d">Distancia (km, solo ida)</label><input id="d" inputmode="decimal" value="530"></div>
+<div><label for="iv">Trayecto</label><select id="iv"><option value="1">Solo ida</option><option value="2" selected>Ida y vuelta</option></select></div>
+<div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6"></div>
+<div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div>
+<div><label for="pe">Peajes y parking (€ total)</label><input id="pe" inputmode="decimal" value="0"></div>
+<div><label for="o">Ocupantes</label><input id="o" inputmode="numeric" value="2"></div></div>
+<button onclick="calc()">Calcular viaje</button><div class="res" id="r"></div></div>
+<h2>Consejos para el viaje</h2><p>En autopista, bajar de 130 a 110 km/h puede reducir el consumo alrededor de un 15 %. Reposta antes de entrar en la autopista: las estaciones de servicio en ruta suelen ser más caras. Y si vais varios, compartir gastos hace el coche casi siempre más barato que el tren o el avión.</p>""",
+[("¿Cómo se reparten los gastos de un viaje en coche?", "Lo habitual es sumar combustible, peajes y parking y dividirlo entre todos los ocupantes, conductor incluido."),
+ ("¿Cuánto cuesta ir de Madrid a Málaga en coche?", "Son unos 530 km. Con un consumo de 6 L/100 km y el litro a 1,55 €, sale por unos 49 € solo de ida en combustible.")],
+None,
+"""function calc(){const km=v('d')*v('iv'),l=km*v('c')/100,t=l*v('p')+v('pe'),o=Math.max(1,v('o'));
+show('r','Coste total del viaje:<b class="big">'+eur(t)+'</b>Por persona: <b>'+eur(t/o)+'</b> · '+nf(km,0)+' km · '+nf(l,1)+' litros');}"""))
+
+exec(open("extra_motor.py").read())
+build(S, P)
