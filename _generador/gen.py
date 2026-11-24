@@ -1,4 +1,5 @@
-import json, os, html, urllib.parse
+import json, os, html, urllib.parse, datetime
+TODAY = datetime.date.today().isoformat()
 # === CONFIGURACIÓN DE MONETIZACIÓN ===
 ADSENSE_CLIENT = "ca-pub-3194168303618877"   # p.ej. "ca-pub-1234567890123456" cuando AdSense te apruebe
 GA_ID = "GTM-5RTXD6QD"          # p.ej. "G-ABC123XYZ" (Google Analytics); se usa GA_IDS por dominio si está relleno
@@ -93,7 +94,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     return f"""<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
 <meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{url}">
-<meta property="og:site_name" content="{site['name']}"><meta property="og:locale" content="es_ES"><meta name="twitter:card" content="summary">
+<meta property="og:site_name" content="{site['name']}"><meta property="og:locale" content="es_ES"><meta property="og:image" content="{base}og/{slug}.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="{site['acc']}"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 {('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+ADSENSE_CLIENT+'" crossorigin="anonymous"></script>') if ADSENSE_CLIENT else "<!-- AdSense: rellena ADSENSE_CLIENT en gen.py -->"}
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script></head><body>
@@ -123,6 +124,27 @@ def legal(site):
     return [("aviso-legal", "Aviso legal | " + n, "Aviso legal de " + n, al),
             ("privacidad", "Política de privacidad | " + n, "Política de privacidad de " + n, pr),
             ("cookies", "Política de cookies | " + n, "Política de cookies de " + n, ck)]
+
+def og_images(site, items):
+    """Imagen 1200x630 para compartir en WhatsApp, Telegram, X y Facebook (og:image) de cada página."""
+    d = site['dir']; os.makedirs(f"{d}/og", exist_ok=True)
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as ex:
+        print("Aviso: sin playwright, no se generan imágenes og/", ex); return
+    e = html.escape
+    with sync_playwright() as pw:
+        b = pw.chromium.launch(); pg = b.new_page(viewport={"width": 1200, "height": 630})
+        for slug, t in items:
+            t = t.replace("<", "").replace(">", "")
+            fs = 78 if len(t) < 34 else 64 if len(t) < 52 else 54
+            pg.set_content(f"""<html><body style="margin:0;width:1200px;height:630px;background:{site['acc']};font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;display:flex">
+<div style="margin:48px;flex:1;background:#fff;border-radius:36px;padding:64px 72px;display:flex;flex-direction:column;justify-content:space-between">
+<div style="font-size:40px;font-weight:800;color:#1d2433">{site['logo'].replace('<span>', '<span style="color:' + site['acc'] + '">')}</div>
+<div style="font-size:{fs}px;font-weight:800;line-height:1.12;color:#1d2433">{e(t)}</div>
+<div style="font-size:30px;color:#4a5165">Calculadora gratis · {site['domain']}</div></div></body></html>""")
+            pg.screenshot(path=f"{d}/og/{slug}.png", type="png")
+        b.close()
 
 def build(site, pages):
     d = site['dir']
@@ -184,7 +206,8 @@ const rows=[];for(const [s,n] of P){{rows.push([n,s,(await g('p-'+s,150))||0]);r
     open(f"{d}/sobre-nosotros.html", "w").write(page(site, "sobre-nosotros", "Sobre nosotros | " + site['name'], "Quién está detrás de " + site['name'] + " y cómo hacemos nuestras calculadoras.", about, h1="Sobre " + site['name']))
     urls = [site['base']] + [site['base'] + p[0] + ".html" for p in pages] + [site['base'] + "sobre-nosotros.html"]
     open(f"{d}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-        + "".join(f"<url><loc>{u}</loc><lastmod>2026-11-23</lastmod></url>\n" for u in urls) + "</urlset>\n")
+        + "".join(f"<url><loc>{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+    og_images(site, [("index", site['home_h1'])] + [(p[0], p[5] if len(p) > 5 and p[5] else p[1].split(' | ')[0]) for p in pages] + [("sobre-nosotros", "Sobre " + site['name'])] + [(x[0], x[1].split(' | ')[0]) for x in legal(site)] + [("404", "Página no encontrada")])
     open(f"{d}/CNAME", "w").write(site["domain"] + "\n")
     open(f"{d}/.nojekyll", "w").write("")
     open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
