@@ -146,19 +146,24 @@ def build(site, pages):
 <script>
 const NS='{site['domain']}',P={json.dumps(pages_list, ensure_ascii=False)};
 const sleep=m=>new Promise(r=>setTimeout(r,m));
-async function g(k){{await sleep(380);try{{const r=await fetch('https://abacus.jasoncameron.dev/get/'+NS+'/'+k);if(!r.ok)return 0;return (await r.json()).value||0;}}catch(e){{return 0;}}}}
+let FAIL=0,OK=0;
+async function g(k,w){{await sleep(w||0);for(let t=0;t<2;t++){{try{{const c=new AbortController(),tm=setTimeout(()=>c.abort(),7000);const r=await fetch('https://abacus.jasoncameron.dev/get/'+NS+'/'+k,{{signal:c.signal,cache:'no-store'}});clearTimeout(tm);if(r.status==404){{OK++;return 0;}}if(r.ok){{OK++;return (await r.json()).value||0;}}}}catch(e){{}}await sleep(800);}}FAIL++;return null;}}
+const nn=x=>x===null?'—':x;
 const dk=d=>d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
 function box(t,v,s){{return '<div class="tool"><p>'+t+'</p><h3 style="font-size:1.6rem;margin:4px 0">'+v.toLocaleString('es-ES')+'</h3><p>'+(s||'')+'</p></div>';}}
 function nc(){{let on=false;try{{on=!!localStorage.getItem('nocount')}}catch(e){{}}document.getElementById('nc').textContent=on?'Tus visitas desde este navegador NO se cuentan.':'Tus visitas desde este navegador SÍ se cuentan.';document.getElementById('nb').textContent=on?'Volver a contarme':'No contar mis visitas en este navegador';}}
 document.getElementById('nb').onclick=()=>{{try{{localStorage.getItem('nocount')?localStorage.removeItem('nocount'):localStorage.setItem('nocount','1')}}catch(e){{}}nc();}};nc();
+document.getElementById('sum').innerHTML='<p class="note">Cargando visitas…</p>';
 (async()=>{{const days=[];for(let i=13;i>=0;i--){{const d=new Date();d.setDate(d.getDate()-i);days.push(d);}}
-const tot=await g('total');const vis=[],uni=[];
-for(const d of days){{vis.push(await g('d-'+dk(d)));}}
-const td=vis[13],yd=vis[12],w7=vis.slice(7).reduce((a,b)=>a+b,0);const u0=await g('u-'+dk(days[13]));
-document.getElementById('sum').innerHTML=box('Hoy',td,u0+' visitantes únicos')+box('Ayer',yd,'')+box('Últimos 7 días',w7,'')+box('Total',tot,'desde que se instaló el contador');
+const [tot,td,u0,yd]=await Promise.all([g('total'),g('d-'+dk(days[13]),150),g('u-'+dk(days[13]),300),g('d-'+dk(days[12]),450)]);
+document.getElementById('sum').innerHTML=box('Hoy',nn(td),nn(u0)+' visitantes únicos')+box('Ayer',nn(yd),'')+box('Últimos 7 días','…','')+box('Total',nn(tot),'desde que se instaló el contador');
+if(FAIL&&!OK){{document.getElementById('sum').insertAdjacentHTML('beforeend','<p class="note" style="grid-column:1/-1">El servicio del contador no responde ahora mismo. Vuelve a abrir esta página en unos minutos.</p>');}}
+const vis=(await Promise.all(days.slice(0,12).map((d,i)=>g('d-'+dk(d),i*200)))).concat([td,yd].reverse()).map(x=>x||0);
+vis[12]=yd||0;vis[13]=td||0;const w7=vis.slice(7).reduce((a,b)=>a+b,0);
+document.getElementById('sum').children[2].outerHTML=box('Últimos 7 días',w7,'');
 const mx=Math.max(1,...vis);document.getElementById('bars').innerHTML=vis.map((v,i)=>'<div title="'+days[i].toLocaleDateString('es-ES')+': '+v+'" style="flex:1;height:'+Math.max(3,Math.round(v/mx*100))+'%;background:{site['acc']};border-radius:3px 3px 0 0"></div>').join('');
 document.getElementById('bl').innerHTML='<span>'+days[0].toLocaleDateString('es-ES',{{day:'numeric',month:'short'}})+'</span><span>hoy</span>';
-const rows=[];for(const [s,n] of P){{rows.push([n,s,await g('p-'+s)]);rows.sort((a,b)=>b[2]-a[2]);document.getElementById('pg').innerHTML='<tr><th>Página</th><th>Visitas</th></tr>'+rows.map(r=>'<tr><td><a href="'+(r[1]=='index'?'./':r[1]+'.html')+'">'+r[0]+'</a></td><td>'+r[2].toLocaleString('es-ES')+'</td></tr>').join('');}}
+const rows=[];for(const [s,n] of P){{rows.push([n,s,(await g('p-'+s,150))||0]);rows.sort((a,b)=>b[2]-a[2]);document.getElementById('pg').innerHTML='<tr><th>Página</th><th>Visitas</th></tr>'+rows.map(r=>'<tr><td><a href="'+(r[1]=='index'?'./':r[1]+'.html')+'">'+r[0]+'</a></td><td>'+r[2].toLocaleString('es-ES')+'</td></tr>').join('');}}
 }})();
 </script></body></html>"""
     open(f"{d}/estadisticas.html", "w").write(stats)
