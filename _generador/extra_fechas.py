@@ -148,3 +148,43 @@ if(cD<180)h+='<br><b>Ojo:</b> para cobrar pensión contributiva necesitas al men
 const F=am(b,780),ex=cot(F)>=rq(F.getFullYear())[1]?780:r0[0],A=am(b,ex-24),cA=cot(A);
 if(A<D&&A>hoy)h+='<br><br>Jubilación anticipada voluntaria: '+(cA>=420?'desde el <b>'+fmt(A)+'</b> (a los '+ym(ex-24)+'), con la pensión reducida.':'necesitas 35 años cotizados en ese momento y tendrías unos '+ym(cA)+'.');
 show('r',h);}"""))
+
+# --- Calculadora de embarazo: semanas y fecha probable de parto ---
+S['tools'].insert(4, ("calculadora-embarazo", "Semanas de embarazo y fecha de parto", "En qué semana estás, fecha probable de parto y calendario de pruebas.", ""))
+S['aff']["calculadora-embarazo"] = amz("diario embarazo", "Diarios y agendas de embarazo") + amz("almohada embarazo", "Almohadas de embarazo")
+P.append(("calculadora-embarazo", "Calculadora de embarazo: semanas y fecha probable de parto | CalculadoraDías",
+"¿De cuántas semanas estás? Calcula la fecha probable de parto, el trimestre, los meses y el calendario de ecografías y pruebas a partir de tu última regla o de la ecografía.",
+"""<p class="lead">Pon el primer día de tu última regla (o la fecha de la ecografía) y te decimos de cuántas semanas estás, la fecha probable de parto y cuándo tocan las pruebas.</p>
+<div class="card"><label for="m">Calcular a partir de</label><select id="m" onchange="modo();calc()"><option value="f">Primer día de la última regla</option><option value="c">Fecha de concepción</option><option value="e">Una ecografía (semanas y días que te dieron)</option></select>
+<div class="row"><div><label for="a" id="al">Primer día de la última regla</label><input id="a" type="date"></div>
+<div id="bc"><label for="cl">Duración de tu ciclo (días)</label><input id="cl" inputmode="numeric" value="28"></div>
+<div id="be1" style="display:none"><label for="es">Semanas en esa ecografía</label><input id="es" inputmode="numeric" value="12"></div>
+<div id="be2" style="display:none"><label for="ed">Días adicionales</label><input id="ed" inputmode="numeric" value="3"></div></div>
+<button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
+<p class="note">Cálculo de fechas orientativo: la fecha que manda es la que te dé tu matrona o tu ginecólogo, normalmente corregida con la ecografía del primer trimestre. Solo un 4-5 % de los bebés nace justo el día de la fecha probable de parto.</p>
+<h2>Cómo se calcula la fecha probable de parto</h2><p>Se usa la <b>regla de Naegele</b>: fecha de la última regla + <b>280 días</b> (40 semanas). Supone un ciclo de 28 días con ovulación el día 14, así que si tus ciclos son más largos o más cortos se suma o resta la diferencia. Si conoces la fecha de concepción (o de transferencia en una FIV), se cuentan <b>266 días</b> desde ese día; en FIV con embrión de 5 días, 261 días desde la transferencia. Las semanas de embarazo se cuentan siempre desde la última regla, por eso en la semana 2 aún no hay embarazo.</p>
+<table><tr><th>Etapa</th><th>Semanas</th></tr><tr><td>Primer trimestre</td><td>1 a 13+6</td></tr><tr><td>Segundo trimestre</td><td>14 a 27+6</td></tr><tr><td>Tercer trimestre</td><td>28 al parto</td></tr><tr><td>Parto a término</td><td>37+0 a 41+6</td></tr></table>
+<p><b>Ejemplo:</b> si tu última regla empezó el 1 de marzo de 2027 y tus ciclos son de 28 días, la fecha probable de parto es el 6 de diciembre de 2027. Con ciclos de 32 días, se retrasa 4 días, al 10 de diciembre. El 1 de junio estarías de 13 semanas y 1 día, acabando el primer trimestre.</p>
+<h2>Calendario orientativo de pruebas</h2><p>Las fechas exactas dependen de tu comunidad y tu centro de salud, pero en la sanidad pública española el seguimiento suele incluir: analítica y cribado combinado del primer trimestre con ecografía entre las <b>semanas 11 y 14</b>, la ecografía morfológica hacia la <b>semana 20</b>, el test de O'Sullivan (glucosa) entre las <b>semanas 24 y 28</b>, la ecografía del tercer trimestre hacia la <b>semana 32-34</b> y el cultivo del estreptococo entre las <b>semanas 35 y 37</b>. La calculadora te da las fechas que corresponden a tu caso.</p>
+<p>¿Quieres saber cuántos días faltan exactamente o qué día de la semana caerá? Usa la <a href="cuantos-dias-faltan.html">cuenta atrás</a> o el <a href="que-dia-de-la-semana.html">día de la semana de cualquier fecha</a>.</p>""",
+[("¿Cómo sé de cuántas semanas estoy?", "Cuenta los días desde el primer día de tu última regla y divide entre 7: el cociente son las semanas y el resto, los días. Por ejemplo, 93 días son 13 semanas y 2 días (se escribe 13+2)."),
+ ("¿Cuántas semanas dura un embarazo?", "Unas 40 semanas (280 días) contando desde la última regla, que equivalen a unas 38 semanas desde la concepción. Se considera a término entre la semana 37 y la 41+6."),
+ ("¿Cuántos meses de embarazo son 20 semanas?", "Unos 4 meses y medio. Como los meses no tienen 4 semanas exactas, 40 semanas son algo más de 9 meses naturales contados desde la última regla."),
+ ("¿Es fiable la fecha probable de parto?", "Es una estimación: la mayoría de partos ocurre en las dos semanas anteriores o posteriores a esa fecha. La ecografía del primer trimestre es la forma más precisa de fecharla.")],
+"Calculadora de semanas de embarazo y fecha probable de parto",
+DATEJS + """const ad=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const sd=n=>Math.floor(n/7)+' semanas'+(n%7?' y '+(n%7)+(n%7>1?' días':' día'):'');
+function modo(){const m=document.getElementById('m').value;document.getElementById('al').textContent=m=='f'?'Primer día de la última regla':m=='c'?'Fecha de concepción':'Fecha de la ecografía';
+document.getElementById('bc').style.display=m=='f'?'':'none';document.getElementById('be1').style.display=m=='e'?'':'none';document.getElementById('be2').style.display=m=='e'?'':'none';}
+(function(){const e=document.getElementById('a');if(!e.value)e.value=iso(ad(new Date(),-93));})();
+function calc(){const m=document.getElementById('m').value,a=pd('a');if(!a)return;let f;
+if(m=='f'){const c=Math.min(45,Math.max(20,v('cl')||28));f=ad(a,c-28);}else if(m=='c')f=ad(a,-14);else f=ad(a,-(Math.round(v('es'))*7+Math.round(v('ed'))));
+const fpp=ad(f,280),h=new Date();h.setHours(0,0,0,0);const g=diff(f,h),q=diff(h,fpp);
+let r='Fecha probable de parto:<b class="big">'+fmt(fpp)+'</b>';
+if(g<0)r+='La fecha de la regla es posterior a hoy: revisa el dato.';
+else if(g<=300){const w=Math.floor(g/7),t=w<14?'primer':w<28?'segundo':'tercer';r+='Hoy estás de <b>'+sd(g)+'</b> ('+w+'+'+(g%7)+'), en el <b>'+t+' trimestre</b>, unos '+nf(g/30.44,1)+' meses.';
+r+=q>0?' Faltan <b>'+q+' días</b> para la fecha probable.':' Ya has superado la fecha probable de parto en '+(-q)+' días.';
+r+='<br>A término desde el <b>'+ad(f,259).toLocaleDateString('es-ES')+'</b> (semana 37).';}
+const T=[['Ecografía y cribado del 1.er trimestre',77,97],['Ecografía morfológica',133,146],["Test de O'Sullivan",168,195],['Ecografía del 3.er trimestre',224,237],['Cultivo de estreptococo',245,258]];
+r+='<table><tr><th>Prueba orientativa</th><th>Entre</th></tr>'+T.map(x=>'<tr><td>'+x[0]+'</td><td>'+ad(f,x[1]).toLocaleDateString('es-ES',{day:'numeric',month:'short'})+' y '+ad(f,x[2]).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+'</td></tr>').join('')+'</table>';
+show('r',r);}"""))

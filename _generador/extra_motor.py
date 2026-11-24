@@ -189,7 +189,8 @@ P.append(("impuesto-matriculacion", "Impuesto de matriculación 2026: calculador
 <div id="bu2" style="display:none"><label for="an">Antigüedad (años desde la 1.ª matriculación)</label><input id="an" inputmode="decimal" value="4"></div>
 <div><label for="co">Emisiones CO2 WLTP (g/km)</label><input id="co" inputmode="numeric" value="135"></div>
 <div><label for="ca">Comunidad donde lo matriculas</label><select id="ca">
-<option value="g">Andalucía, Aragón, Castilla y León, Castilla-La Mancha, Extremadura, Galicia, Madrid, La Rioja</option>
+<option value="g">Aragón, Castilla y León, Castilla-La Mancha, Extremadura, Galicia, Madrid, La Rioja</option>
+<option value="16.9">Andalucía</option>
 <option value="16">Asturias, Baleares, Cataluña o Comunidad Valenciana</option><option value="15.9">Región de Murcia</option><option value="15">Cantabria</option>
 <option value="c">Canarias</option><option value="0">Ceuta o Melilla</option></select></div>
 <div><label class="chk" style="margin-top:34px"><input type="checkbox" id="fn"><span>Familia numerosa (5 a 9 plazas)</span></label></div></div>
@@ -198,12 +199,12 @@ P.append(("impuesto-matriculacion", "Impuesto de matriculación 2026: calculador
 <h2>Tramos y tipos en 2026</h2><table><tr><th>CO2 WLTP</th><th>Península y Baleares</th><th>Canarias</th></tr>
 <tr><td>Hasta 120 g/km</td><td>0 %</td><td>0 %</td></tr><tr><td>Más de 120 y menos de 160</td><td>4,75 %</td><td>3,75 %</td></tr>
 <tr><td>De 160 a menos de 200</td><td>9,75 %</td><td>8,75 %</td></tr><tr><td>200 g/km o más</td><td>14,75 %*</td><td>13,75 %</td></tr></table>
-<p class="note">* En el último tramo, Asturias, Baleares, Cataluña y la Comunitat Valenciana aplican el 16 %, Murcia el 15,9 % y Cantabria el 15 %. En Ceuta y Melilla el tipo es 0 %. Fuente: artículo 70 de la Ley 38/1992 de Impuestos Especiales y leyes autonómicas de tributos cedidos.</p>
+<p class="note">* En el último tramo, Andalucía aplica el 16,9 %; Asturias, Baleares, Cataluña y la Comunitat Valenciana aplican el 16 %, Murcia el 15,9 % y Cantabria el 15 %. En Ceuta y Melilla el tipo es 0 %. Fuente: artículo 70 de la Ley 38/1992 de Impuestos Especiales y leyes autonómicas de tributos cedidos.</p>
 <h2>Cómo se calcula</h2><p>Impuesto = base imponible × tipo del tramo. En un <b>coche nuevo</b>, la base es el precio de venta sin IVA (incluidos extras y transporte, descontados los descuentos que aparezcan en factura). En un <b>coche usado importado</b> se paga sobre su valor de mercado: Hacienda toma el precio medio del modelo nuevo (Orden de precios medios de venta) y le aplica un porcentaje según los años: 100 % el primer año, 84 % hasta 2, 67 % hasta 3, 56 % hasta 4, 47 % hasta 5, 39 % hasta 6, 34 % hasta 7, 28 % hasta 8, 24 % hasta 9, 19 % hasta 10, 17 % hasta 11, 13 % hasta 12 y 10 % a partir de 12 años.</p>
 <p><b>Ejemplo:</b> un SUV de gasolina de 28.000 € sin IVA y 135 g/km cae en el tramo del 4,75 %: paga 1.330 € de impuesto de matriculación. Si emitiera 118 g/km pagaría 0 €; por eso, al elegir versión, unos pocos gramos de CO2 pueden ahorrarte más de mil euros.</p>
 <h2>Quién no paga o paga menos</h2><ul><li>Coches de hasta 120 g/km y eléctricos: 0 %.</li><li>Familias numerosas: base reducida al 50 % en vehículos de 5 a 9 plazas (con reconocimiento previo de Hacienda, modelo 05).</li><li>Personas con discapacidad, taxis, autoescuelas y empresas de alquiler: exentos con reconocimiento previo.</li><li>Traslado de residencia desde el extranjero: exento si cumples los requisitos de residencia y uso previo.</li><li>Coches de segunda mano ya matriculados en España: no pagan este impuesto, pagan el de transmisiones (ITP) al cambiar de dueño.</li></ul>
 <p class="note">Se declara con el <a href="https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GE03.shtml" rel="noopener" target="_blank">modelo 576 de la Agencia Tributaria</a> antes de matricular en la DGT. En un coche nuevo normalmente lo gestiona el concesionario y va incluido en el precio final.</p>""",
-[("¿Cuánto es el impuesto de matriculación de un coche?", "Depende de sus emisiones de CO2 WLTP: 0 % hasta 120 g/km, 4,75 % hasta 160, 9,75 % hasta 200 y 14,75 % a partir de 200 g/km (algo más en algunas comunidades), aplicado sobre el precio sin IVA."),
+[("¿Cuánto es el impuesto de matriculación de un coche?", "Depende de sus emisiones de CO2 WLTP: 0 % hasta 120 g/km, 4,75 % por encima de 120 y por debajo de 160, 9,75 % de 160 a 199 y 14,75 % desde 200 g/km (entre el 15 % y el 16,9 % en Andalucía, Asturias, Baleares, Cantabria, Cataluña, Murcia y Comunitat Valenciana), aplicado sobre el precio sin IVA."),
  ("¿Los coches eléctricos pagan impuesto de matriculación?", "No. Los eléctricos puros y, en general, cualquier coche con 120 g/km de CO2 o menos tributan al 0 %."),
  ("¿Un coche de segunda mano paga impuesto de matriculación?", "Solo si viene del extranjero y se matricula por primera vez en España. Si ya tenía matrícula española, al comprarlo pagas el impuesto de transmisiones patrimoniales (ITP), no el de matriculación."),
  ("¿Cómo se calcula el impuesto de matriculación de un coche importado?", "Sobre el valor de mercado que fija Hacienda: el precio medio del modelo nuevo multiplicado por el porcentaje de su antigüedad (por ejemplo, 47 % con 4 a 5 años), y a ese valor se le aplica el tipo de su tramo de CO2.")],
@@ -217,3 +218,43 @@ const b=co<=120?0:co<160?1:co<200?2:3;let T=[0,4.75,9.75,14.75];if(ca=='c')T=[0,
 const t=T[b],imp=base*t/100,TR=['hasta 120 g/km','de 121 a 159 g/km','de 160 a 199 g/km','200 g/km o más'];
 let sig='';if(b>0&&ca!='0'){const lim=[0,120,159,199][b];sig='<br>Con '+lim+' g/km bajarías al tramo del '+nf(T[b-1])+' %: pagarías '+eur(base*T[b-1]/100)+' ('+eur(imp-base*T[b-1]/100)+' menos).';}
 show('r','Impuesto de matriculación:<b class="big">'+eur(imp)+'</b>'+txt+'Tramo: <b>'+TR[b]+'</b> → tipo del <b>'+nf(t)+' %</b> sobre '+eur(base)+sig);}"""))
+
+# --- Multa por exceso de velocidad (Anexo IV RDL 6/2015 + márgenes Orden ICT/155/2020) ---
+S['tools'].insert(6, ("multa-exceso-velocidad", "Multa por exceso de velocidad", "Cuánto te multan y cuántos puntos pierdes, con el margen del radar ya descontado.", ""))
+S['aff']["multa-exceso-velocidad"] = amz("navegador gps coche avisador radares", "Navegadores GPS con aviso de límites") + amz("camara coche dashcam", "Cámaras para coche (dashcam)")
+P.append(("multa-exceso-velocidad", "Multa por exceso de velocidad: calculadora con margen del radar 2026 | CocheCuentas",
+"Calcula la multa y los puntos por exceso de velocidad según la tabla de la DGT: descuenta el margen de error del radar fijo o móvil y te dice si es grave, muy grave o delito.",
+"""<p class="lead">Pon el límite de la vía y la velocidad que marcó el radar. Descontamos el margen de error legal y te decimos la multa, los puntos y lo que pagarías con pronto pago.</p>
+<div class="card"><div class="row"><div><label for="l">Límite de la vía (km/h)</label><select id="l"><option>20</option><option>30</option><option>40</option><option selected>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>110</option><option>120</option></select></div>
+<div><label for="vm">Velocidad captada por el radar (km/h)</label><input id="vm" inputmode="numeric" value="78"></div></div>
+<label for="rt">Tipo de radar</label><select id="rt"><option value="5">Fijo o de tramo (margen 5 km/h o 5 %)</option><option value="7" selected>Móvil: coche, trípode, helicóptero o dron (7 km/h o 7 %)</option><option value="0">Sin margen (velocidad ya corregida en la multa)</option></select>
+<label for="vu">Tipo de vía</label><select id="vu"><option value="u">Urbana (dentro de poblado)</option><option value="i">Interurbana (carretera, autovía, autopista)</option></select>
+<button onclick="calc()">Calcular multa</button><div class="res" id="r"></div></div>
+<p class="note">En la notificación de la multa aparecen la velocidad medida y la «velocidad corregida» tras aplicar el margen: es esta última la que cuenta. Si ya la tienes, elige «Sin margen».</p>
+<h2>Tabla de multas por velocidad de la DGT</h2>
+<table><tr><th>Exceso sobre el límite</th><th>Vías de 20 a 50 km/h</th><th>Vías de 60 a 120 km/h</th><th>Multa</th><th>Puntos</th></tr>
+<tr><td>Grave</td><td>hasta +20</td><td>hasta +30</td><td>100 €</td><td>0</td></tr>
+<tr><td>Grave</td><td>+21 a +30</td><td>+31 a +50</td><td>300 €</td><td>2</td></tr>
+<tr><td>Grave</td><td>+31 a +40</td><td>+51 a +60</td><td>400 €</td><td>4</td></tr>
+<tr><td>Grave</td><td>+41 a +50</td><td>+61 a +70</td><td>500 €</td><td>6</td></tr>
+<tr><td>Muy grave</td><td>más de +50</td><td>más de +70</td><td>600 €</td><td>6</td></tr></table>
+<p class="note">Fuente: anexo IV del <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11722" rel="noopener" target="_blank">texto refundido de la Ley de Tráfico (RDL 6/2015)</a>. Superar el límite en más de 60 km/h en vía urbana o en más de 80 km/h en interurbana es delito (artículo 379 del Código Penal).</p>
+<h2>El margen de error de los radares</h2><p>Los cinemómetros tienen un margen de error legal (Orden ICT/155/2020) que se resta a la velocidad medida antes de aplicar la tabla. Para los radares en servicio con verificación periódica es de <b>5 km/h en los fijos y de tramo, y 7 km/h en los móviles, hasta 100 km/h</b>; por encima de 100 km/h se aplica un <b>5 % y un 7 %</b> respectivamente. La velocidad corregida se redondea a la baja.</p>
+<p><b>Ejemplo:</b> un radar móvil capta 78 km/h en una calle de 50. Margen: 7 km/h, velocidad corregida 71 km/h, es decir, 21 km/h de exceso. Eso son <b>300 € y 2 puntos</b>, o 150 € si pagas en los 20 días naturales siguientes a la notificación. Si el radar fuera fijo, la velocidad corregida sería 73 km/h y la multa la misma; a 76 km/h medidos con radar móvil (69 corregidos) solo serían 100 € y ningún punto.</p>
+<h2>Pronto pago y recursos</h2><p>Pagando en los <b>20 días naturales</b> desde la notificación la multa se reduce a la mitad, pero renuncias a presentar alegaciones y los puntos se pierden igual. Si crees que hay un error (matrícula, señalización o velocidad), puedes alegar en ese mismo plazo en la <a href="https://sede.dgt.gob.es/es/multas/" rel="noopener" target="_blank">sede electrónica de la DGT</a>.</p>
+<p>¿Te preocupa lo que gastas en carretera? Mira cuánto ahorras bajando de 120 a 110 con la calculadora de <a href="coste-por-km.html">coste por kilómetro</a> o calcula el <a href="coste-viaje-coche.html">coste de tu viaje</a>.</p>""",
+[("¿Cuánto es la multa por ir a 140 en una autovía de 120?", "Con radar fijo se descuenta un 5 % (7 km/h) y queda en 133 km/h; con radar móvil un 7 % (9,8 km/h) y queda en 130. Son 13 o 10 km/h de exceso: 100 € (50 € con pronto pago) y sin pérdida de puntos."),
+ ("¿A partir de cuántos km/h te quitan puntos?", "En vías de 60 km/h o más, a partir de 31 km/h por encima del límite (ya descontado el margen del radar). En vías de 50 km/h o menos, a partir de 21 km/h por encima."),
+ ("¿Cuál es el margen de error de los radares?", "Para radares en servicio, 5 km/h los fijos y de tramo y 7 km/h los móviles hasta 100 km/h; por encima de 100 km/h, el 5 % y el 7 %. Los radares nuevos en fase de pruebas tienen márgenes menores (3 km/h o 3 % y 5 km/h o 5 %)."),
+ ("¿Cuándo es delito el exceso de velocidad?", "Cuando superas el límite en más de 60 km/h en vía urbana o en más de 80 km/h en vía interurbana. Puede castigarse con prisión de 3 a 6 meses o multa, trabajos en beneficio de la comunidad y la retirada del carné de 1 a 4 años.")],
+"Calculadora de multas por exceso de velocidad",
+"""function calc(){const L=+document.getElementById('l').value,m=v('vm'),mg=+document.getElementById('rt').value,urb=document.getElementById('vu').value=='u';
+const marg=mg==0?0:(m>100?m*mg/100:mg),c=Math.floor(m-marg+1e-9),ex=c-L;
+if(ex<=0){show('r','Velocidad corregida: <b class="big">'+c+' km/h</b>No superas el límite de '+L+' km/h una vez descontado el margen de '+nf(marg,1)+' km/h: <b>no hay multa</b>.');return;}
+const B=L<=50?[20,30,40,50]:[30,50,60,70],F=[[100,0],[300,2],[400,4],[500,6],[600,6]];let i=0;while(i<4&&ex>B[i])i++;
+const f=F[i],del=ex>(urb?60:80),vc='Velocidad corregida: <b>'+c+' km/h</b> (margen de '+nf(marg,1)+' km/h) → <b>'+ex+' km/h</b> por encima del límite de '+L+'.';
+if(del){show('r','Resultado:<b class="big">Delito contra la seguridad vial</b>'+vc+'<br>Superar el límite en más de '+(urb?60:80)+' km/h en vía '+(urb?'urbana':'interurbana')+' no se sanciona con multa de tráfico sino por la vía penal (art. 379 del Código Penal): prisión de 3 a 6 meses o multa de 6 a 12 meses o trabajos en beneficio de la comunidad, y siempre retirada del carné de 1 a 4 años. No hay pronto pago.');return;}
+let h='Multa:<b class="big">'+eur(f[0])+(f[1]?' y '+f[1]+' puntos':' sin puntos')+'</b>'+vc+'<br>Infracción <b>'+(i==4?'muy grave':'grave')+'</b>. Con pronto pago: <b>'+eur(f[0]/2)+'</b>'+(f[1]?' (los puntos se pierden igual)':'')+'.';
+if(i<4){const sig=L+B[i]+1,med=mg==0?sig:Math.ceil(sig>100?sig/(1-mg/100):sig+mg);h+='<br>El siguiente tramo ('+eur(F[i+1][0])+') empieza en '+sig+' km/h corregidos'+(mg?', unos '+med+' km/h medidos':'')+'.';}
+if(i==4)h+='<br>A partir de '+(L+(urb?61:81))+' km/h corregidos sería delito (art. 379 del Código Penal).';
+show('r',h);}"""))

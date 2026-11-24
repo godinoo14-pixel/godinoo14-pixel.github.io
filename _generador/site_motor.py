@@ -118,22 +118,29 @@ None,
 for(let i=1;i<=n;i++){const p=x*(i==1?a:b);x-=p;h+='<tr><td>'+i+'</td><td>'+eur(x)+'</td><td>'+eur(p)+'</td></tr>';}
 const tot=v('pv')-x;show('r','Valor estimado en '+n+' años:<b class="big">'+eur(x)+'</b>Pérdida total: <b>'+eur(tot)+'</b> ('+nf(tot/v('pv')*100,1)+' %) · '+eur(tot/Math.max(n,1))+'/año'+h+'</table>');}"""))
 
-P.append(("coste-viaje-coche", "Calculadora del coste de un viaje en coche | CocheCuentas",
-"Calcula cuánto cuesta un viaje en coche en combustible y peajes, ida o ida y vuelta, y cuánto toca pagar a cada ocupante.",
+P.append(("coste-viaje-coche", "Calcular gasolina de un viaje: coste en coche y por persona | CocheCuentas",
+"Calcula cuánto gastas en gasolina o diésel en un viaje en coche, con el precio medio de hoy del Ministerio, peajes e ida y vuelta, y cuánto paga cada ocupante.",
 """<p class="lead">Calcula el coste de tu viaje y cuánto tiene que poner cada uno.</p>
 <div class="card"><div class="row"><div><label for="d">Distancia (km, solo ida)</label><input id="d" inputmode="decimal" value="530"></div>
 <div><label for="iv">Trayecto</label><select id="iv"><option value="1">Solo ida</option><option value="2" selected>Ida y vuelta</option></select></div>
+<div><label for="cb">Combustible</label><select id="cb" onchange="pz()"><option value="g95">Gasolina 95</option><option value="gA">Diésel (gasóleo A)</option><option value="glp">GLP (autogás)</option></select></div>
 <div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6"></div>
 <div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div>
 <div><label for="pe">Peajes y parking (€ total)</label><input id="pe" inputmode="decimal" value="0"></div>
 <div><label for="o">Ocupantes</label><input id="o" inputmode="numeric" value="2"></div></div>
 <button onclick="calc()">Calcular viaje</button><div class="res" id="r"></div></div>
-<h2>Consejos para el viaje</h2><p>En autopista, bajar de 130 a 110 km/h puede reducir el consumo alrededor de un 15 %. Reposta antes de entrar en la autopista: las estaciones de servicio en ruta suelen ser más caras. Y si vais varios, compartir gastos hace el coche casi siempre más barato que el tren o el avión.</p>""",
+<p class="note" id="pn">Precio orientativo. Mira el de tu zona en <a href="gasolineras-baratas.html">gasolineras más baratas cerca de ti</a>.</p>
+<h2>Cómo se calcula el gasto de gasolina de un viaje</h2><p>Litros = kilómetros × consumo ÷ 100. Coste = litros × precio del litro + peajes y parking. Usa el consumo real de tu coche (el del ordenador de a bordo o el que calculas al llenar el depósito), no el homologado: en autopista a 120 km/h suele ser un 10-20 % mayor que la cifra oficial.</p>
+<table><tr><th>Tipo de coche</th><th>Consumo real en autopista</th></tr><tr><td>Utilitario de gasolina</td><td>5,5 – 6,5 L/100 km</td></tr><tr><td>Compacto diésel</td><td>4,5 – 5,5 L/100 km</td></tr><tr><td>SUV de gasolina</td><td>6,5 – 8 L/100 km</td></tr><tr><td>Híbrido no enchufable</td><td>5 – 6 L/100 km</td></tr><tr><td>Furgoneta o monovolumen</td><td>7 – 9 L/100 km</td></tr></table>
+<h2>Consejos para el viaje</h2><p>En autopista, bajar de 130 a 110 km/h puede reducir el consumo alrededor de un 15 %. Reposta antes de entrar en la autopista: las estaciones de servicio en ruta suelen ser más caras. Y si vais varios, compartir gastos hace el coche casi siempre más barato que el tren o el avión. Respeta los límites: una multa por velocidad puede costar más que el viaje entero (<a href="multa-exceso-velocidad.html">calcula cuánto te multarían</a>).</p>""",
 [("¿Cómo se reparten los gastos de un viaje en coche?", "Lo habitual es sumar combustible, peajes y parking y dividirlo entre todos los ocupantes, conductor incluido."),
+ ("¿Cuánta gasolina gasta un coche en 100 km?", "Un turismo de gasolina actual gasta entre 5,5 y 7 litros cada 100 km en carretera, y un diésel entre 4,5 y 6. Multiplica por el precio del litro: a 1,50 €/L, 100 km cuestan entre 8 y 10 €."),
  ("¿Cuánto cuesta ir de Madrid a Málaga en coche?", "Son unos 530 km. Con un consumo de 6 L/100 km y el litro a 1,55 €, sale por unos 49 € solo de ida en combustible.")],
 None,
 """function calc(){const km=v('d')*v('iv'),l=km*v('c')/100,t=l*v('p')+v('pe'),o=Math.max(1,v('o'));
-show('r','Coste total del viaje:<b class="big">'+eur(t)+'</b>Por persona: <b>'+eur(t/o)+'</b> · '+nf(km,0)+' km · '+nf(l,1)+' litros');}"""))
+show('r','Coste total del viaje:<b class="big">'+eur(t)+'</b>Por persona: <b>'+eur(t/o)+'</b> · '+nf(km,0)+' km · '+nf(l,1)+' litros · '+eur(km>0?t/km*100:0)+' cada 100 km');}
+let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k]){document.getElementById('p').value=MED[k].toFixed(3).replace('.',',');}calc();}
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;pz();document.getElementById('pn').innerHTML='Precio: media de las gasolineras de España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Mira el de tu zona en <a href="gasolineras-baratas.html">gasolineras más baratas cerca de ti</a>.';}).catch(()=>{});"""))
 
 exec(open("extra_motor.py").read())
 build(S, P)

@@ -81,18 +81,31 @@ if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m
 let nx=new Date(b.getFullYear(),a.getMonth(),a.getDate());if(nx<b)nx.setFullYear(b.getFullYear()+1);
 show('r','Tienes:<b class="big">'+y+' años</b>'+y+' años, '+m+' meses y '+d+' días · '+nf(diff(a,b),0)+' días vividos<br>Faltan <b>'+diff(b,nx)+' días</b> para tu cumpleaños ('+fmt(nx)+')');}"""))
 
-P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad, verano o cualquier fecha? | CalculadoraDías",
-"Cuenta atrás: cuántos días faltan para Navidad, Nochevieja, el verano o la fecha que quieras.",
-"""<p class="lead">Elige un evento o una fecha y te decimos cuántos días, semanas y fines de semana faltan.</p>
-<div class="card"><label for="e">Evento</label><select id="e" onchange="pre()"><option value="12-25">Navidad (25 de diciembre)</option><option value="12-31">Nochevieja (31 de diciembre)</option>
-<option value="01-06">Reyes (6 de enero)</option><option value="06-21">Verano (21 de junio)</option><option value="08-01">1 de agosto</option><option value="x">Otra fecha…</option></select>
-<label for="b">Fecha</label><input id="b" type="date"><button onclick="calc()">Ver cuenta atrás</button><div class="res" id="r"></div></div>
-<h2>Planifica con tiempo</h2><p>Saber cuántos días faltan ayuda a organizar compras, ahorro y vacaciones. Por ejemplo, si quieres ahorrar 300 € para Navidad, divide esa cantidad entre las semanas que faltan y sabrás cuánto apartar cada semana.</p>""",
-[("¿Cuántos días faltan para Navidad?", "Elige «Navidad» en el desplegable y verás la cuenta atrás actualizada a hoy."),
- ("¿Cuenta el día de hoy?", "No: se cuentan los días que faltan desde hoy hasta la fecha elegida.")],
-None, DATEJS + """function pre(){const e=document.getElementById('e').value;if(e=='x')return;const [m,d]=e.split('-').map(Number);let t=new Date(today.getFullYear(),m-1,d);if(diff(today,t)<0)t.setFullYear(t.getFullYear()+1);document.getElementById('b').value=iso(t);}
-function calc(){const b=pd('b');if(!b)return;const n=diff(today,b);let we=0;for(let d=new Date(today);d<b;d.setDate(d.getDate()+1))if(d.getDay()==6)we++;
-show('r',(n>=0?'Faltan:':'Pasaron:')+'<b class="big">'+Math.abs(n)+' días</b>'+nf(Math.abs(n)/7,1)+' semanas · '+we+' fines de semana · '+fmt(b));}pre();calc();"""))
+P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad? Cuenta atrás en directo | CalculadoraDías",
+"Cuenta atrás en directo: cuántos días, horas y minutos faltan para Navidad, Nochebuena, la Lotería, Nochevieja, Reyes, Semana Santa, el verano o la fecha que quieras.",
+"""<p class="lead">Elige un evento o cualquier fecha y verás la cuenta atrás en directo: días, horas, minutos, semanas y fines de semana que faltan.</p>
+<div class="card"><label for="e">Evento</label><select id="e" onchange="pre()"><option value="12-25">Navidad (25 de diciembre)</option><option value="12-24">Nochebuena (24 de diciembre)</option><option value="12-22">Sorteo de la Lotería de Navidad (22 de diciembre)</option><option value="12-31">Nochevieja (31 de diciembre)</option>
+<option value="01-06">Reyes (6 de enero)</option><option value="bf">Black Friday</option><option value="02-14">San Valentín (14 de febrero)</option><option value="ss">Semana Santa (Jueves Santo)</option><option value="06-21">Verano (21 de junio)</option><option value="08-01">1 de agosto</option><option value="x">Otra fecha…</option></select>
+<label for="b">Fecha</label><input id="b" type="date" onchange="document.getElementById('e').value='x';calc()"><button onclick="calc()">Ver cuenta atrás</button><div class="res" id="r" aria-live="off"></div></div>
+<h2>Próximas fechas señaladas</h2><table id="tb"></table>
+<h2>Cómo contamos los días</h2><p>Contamos los días naturales completos desde hoy hasta la fecha elegida, sin incluir el día de hoy: si hoy es 24 de noviembre, a Navidad le faltan 31 días. Las horas y minutos se cuentan hasta las 00:00 del día del evento, en la hora de tu dispositivo. Los fines de semana son los sábados que quedan por delante. La Semana Santa y el Black Friday cambian cada año: la Semana Santa depende de la primera luna llena de primavera (el Domingo de Resurrección cae entre el 22 de marzo y el 25 de abril) y el Black Friday es el viernes siguiente al cuarto jueves de noviembre.</p>
+<p><b>Ejemplo práctico:</b> si quieres ahorrar 300 € para los regalos de Navidad y faltan 4 semanas, tendrás que apartar 75 € cada semana. Si necesitas contar solo días laborables (por ejemplo, para un plazo o para saber cuántos días de trabajo quedan antes de vacaciones), usa la calculadora de <a href="dias-habiles.html">días hábiles</a>; y para los festivos y puentes del año que viene, el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>.</p>""",
+[("¿Cuántos días faltan para Navidad?", "Depende del día en que lo consultes: la calculadora lo muestra al abrirla, en días, horas y minutos hasta el 25 de diciembre. Desde el 1 de diciembre faltan 24 días, y desde el 24 de noviembre, 31."),
+ ("¿Cuándo es la Semana Santa de 2027?", "En 2027 el Jueves Santo es el 25 de marzo, el Viernes Santo el 26 y el Domingo de Resurrección el 28 de marzo. El Lunes de Pascua (29 de marzo) es festivo en algunas comunidades."),
+ ("¿Cuenta el día de hoy?", "No: se cuentan los días que faltan desde hoy hasta la fecha elegida. Si la fecha es mañana, falta 1 día."),
+ ("¿Cuándo es el sorteo de la Lotería de Navidad?", "Se celebra cada año el 22 de diciembre por la mañana. Elige «Sorteo de la Lotería de Navidad» en el desplegable para ver cuánto falta.")],
+None, DATEJS + """function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),n=Math.floor((h+l-7*m+114)/31),p=(h+l-7*m+114)%31+1;return new Date(y,n-1,p);}
+function evd(e,y){if(e=='ss'){const t=easter(y);t.setDate(t.getDate()-3);return t;}if(e=='bf'){const t=new Date(y,10,1);const th=(4-t.getDay()+7)%7+1+21;return new Date(y,10,th+1);}const [m,d]=e.split('-').map(Number);return new Date(y,m-1,d);}
+function next(e){let t=evd(e,today.getFullYear());if(diff(today,t)<0)t=evd(e,today.getFullYear()+1);return t;}
+function pre(){const e=document.getElementById('e').value;if(e=='x')return;document.getElementById('b').value=iso(next(e));calc();}
+let TM=null;function calc(){const b=pd('b');if(!b)return;const n=diff(today,b);let we=0;for(let d=new Date(today);d<b;d.setDate(d.getDate()+1))if(d.getDay()==6)we++;
+const nm=document.getElementById('e'),lb=nm.value=='x'?fmt(b):nm.options[nm.selectedIndex].text.replace(/ \\(.*\\)/,'');
+const tick=()=>{const ms=b-new Date();if(ms<=0||n<0)return '';const s=Math.floor(ms/1000);return '<br>Cuenta atrás: <b>'+Math.floor(s/86400)+' d '+String(Math.floor(s%86400/3600)).padStart(2,'0')+' h '+String(Math.floor(s%3600/60)).padStart(2,'0')+' min '+String(s%60).padStart(2,'0')+' s</b>';};
+const base=(n>0?'Faltan para '+lb+':':n==0?'¡Es hoy!':'Pasaron:')+'<b class="big">'+Math.abs(n)+' días</b>'+nf(Math.abs(n)/7,1)+' semanas · '+we+' fines de semana · '+fmt(b);
+show('r',base+tick());clearInterval(TM);TM=setInterval(()=>{const r=document.getElementById('r');r.innerHTML=base+tick();},1000);}
+const EV=[['12-22','Lotería de Navidad'],['12-24','Nochebuena'],['12-25','Navidad'],['12-31','Nochevieja'],['01-06','Reyes'],['02-14','San Valentín'],['ss','Jueves Santo'],['06-21','Verano'],['bf','Black Friday']].map(x=>[x[1],next(x[0])]).sort((a,b)=>a[1]-b[1]);
+document.getElementById('tb').innerHTML='<tr><th>Fecha</th><th>Día</th><th>Faltan</th></tr>'+EV.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1].toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'long',year:'numeric'})+'</td><td><b>'+diff(today,x[1])+' días</b></td></tr>').join('');
+pre();"""))
 
 P.append(("semana-del-ano", "¿En qué semana del año estamos? Número de semana | CalculadoraDías",
 "Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana.",
