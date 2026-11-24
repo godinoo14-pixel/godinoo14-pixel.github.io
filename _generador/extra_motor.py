@@ -121,4 +121,5 @@ function guarda(p){try{let l=JSON.parse(localStorage.getItem('hist')||'[]').filt
 function pinta(){try{const l=JSON.parse(localStorage.getItem('hist')||'[]');const c=document.getElementById('rec');if(!c)return;c.innerHTML=l.length?'Últimas consultas: '+l.map(p=>'<a href="#" data-p="'+p+'" onclick="usar(this.dataset.p);return false">'+p+'</a>').join(' '):'';}catch(e){}}
 function otra(){document.getElementById('m').value='';document.getElementById('r').style.display='none';document.getElementById('inf').style.display='none';document.getElementById('m').focus();}
 function usar(p){document.getElementById('m').value=p;calc();}
+try{const q=new URLSearchParams(location.search).get('m');if(q)document.getElementById('m').value=q;}catch(e){}
 pinta();"""))
