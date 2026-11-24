@@ -1,6 +1,6 @@
 import json, os, html, urllib.parse
 # === CONFIGURACIÓN DE MONETIZACIÓN ===
-ADSENSE_CLIENT = ""   # p.ej. "ca-pub-1234567890123456" cuando AdSense te apruebe
+ADSENSE_CLIENT = "ca-pub-3194168303618877"   # p.ej. "ca-pub-1234567890123456" cuando AdSense te apruebe
 AMAZON_TAG = ""       # p.ej. "cochecuentas-21" (tu ID de Amazon Afiliados)
 def amz(q, label):
     u = "https://www.amazon.es/s?k=" + urllib.parse.quote_plus(q) + ("&tag=" + AMAZON_TAG if AMAZON_TAG else "")
