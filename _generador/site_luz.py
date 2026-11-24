@@ -66,8 +66,8 @@ None, """const T=[2.3,3.45,4.6,5.75,6.9,8.05,9.2,10.35,11.5,14.49];
 function calc(){let w=0;document.querySelectorAll('.chk').forEach(l=>{const c=l.querySelector('[type=checkbox]'),n=l.querySelector('[type=number]');if(c.checked)w+=parseFloat(n.value)||0;});
 const kw=w/1000,r=T.find(t=>t>=kw*1.1)||T[T.length-1];show('r','Potencia recomendada:<b class="big">'+nf(r,2)+' kW</b>Consumo simultáneo: '+nf(kw,2)+' kW (+10 % de margen) · Coste aprox. del término de potencia: <b>'+eur(r*v('p'))+'/año</b>');}"""))
 
-P.append(("calculadora-kwh", "Calculadora de vatios a kWh y euros | GastoLuz",
-"Convierte vatios (W) a kilovatios hora (kWh) y calcula cuánto cuesta en euros según las horas de uso.",
+P.append(("calculadora-kwh", "Pasar vatios a kWh y euros: calculadora de consumo eléctrico | GastoLuz",
+"Convierte vatios (W) a kilovatios hora (kWh) y calcula cuánto te cuesta en euros cualquier aparato según las horas que lo usas. Con ejemplos y la fórmula explicada.",
 """<p class="lead">Convierte la potencia de cualquier aparato en energía consumida y euros.</p>
 <div class="card"><div class="row"><div><label for="w">Potencia (W)</label><input id="w" inputmode="decimal" value="1000"></div>
 <div><label for="h">Horas</label><input id="h" inputmode="decimal" value="1"></div></div>
@@ -103,18 +103,24 @@ h+=cop>1?'<br>Con resistencias eléctricas, el mismo calor costaría unos '+eur(
 show('r',h);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||!H.length)return;const av=H.reduce((s,x)=>s+x[1],0)/H.length;document.getElementById('p').value=av.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio: media del PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' según Red Eléctrica ('+av.toFixed(3).replace('.',',')+' €/kWh). Si tienes tarifa fija, pon el precio del kWh de tu contrato. <a href="precio-luz-hoy.html">Ver horas más baratas</a>.';calc();}).catch(()=>{});"""))
 
-P.append(("ahorro-led", "Ahorro al cambiar bombillas a LED: calculadora | GastoLuz",
-"Calcula cuánto ahorras al año sustituyendo bombillas incandescentes o halógenas por LED y en cuánto tiempo se amortizan.",
-"""<p class="lead">Calcula el ahorro anual y el tiempo de amortización de cambiar tus bombillas a LED.</p>
+P.append(("ahorro-led", "¿Cuánto ahorro con bombillas LED? Calculadora de ahorro al año | GastoLuz",
+"Calcula cuánto ahorras al año cambiando bombillas incandescentes o halógenas por LED, cuántos kWh dejas de gastar y en cuántos meses se amortizan.",
+"""<p class="lead">Pon cuántas bombillas tienes, su potencia y las horas que están encendidas: te decimos cuánto ahorras al año con LED y en cuántos meses recuperas lo que cuestan.</p>
 <div class="card"><div class="row"><div><label for="n">Número de bombillas</label><input id="n" inputmode="numeric" value="10"></div>
 <div><label for="o">Potencia bombilla actual (W)</label><input id="o" inputmode="decimal" value="60"></div>
 <div><label for="l">Potencia LED equivalente (W)</label><input id="l" inputmode="decimal" value="9"></div><div><label for="h">Horas al día</label><input id="h" inputmode="decimal" value="4"></div>
 <div><label for="pr">Precio de cada LED (€)</label><input id="pr" inputmode="decimal" value="3"></div><div><label for="p">Precio kWh (€)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
 <button onclick="calc()">Calcular ahorro</button><div class="res" id="r"></div></div>
 <h2>Equivalencias habituales</h2><table><tr><th>Incandescente</th><th>Halógena</th><th>LED</th></tr><tr><td>40 W</td><td>28 W</td><td>5-6 W</td></tr><tr><td>60 W</td><td>42 W</td><td>8-9 W</td></tr><tr><td>100 W</td><td>70 W</td><td>13-15 W</td></tr></table>
-<p>Fíjate en los lúmenes (lm), no en los vatios: una bombilla de 806 lm ilumina como una incandescente de 60 W.</p>""",
-[("¿Cuánto se ahorra con LED?", "Alrededor de un 80-85 % respecto a una incandescente y un 75-80 % respecto a una halógena."),
- ("¿Cuánto dura una bombilla LED?", "Entre 15.000 y 25.000 horas, frente a unas 1.000 de una incandescente.")],
+<p>Fíjate en los lúmenes (lm), no en los vatios: una bombilla de 806 lm ilumina como una incandescente de 60 W.</p>
+<h2>Cómo se calcula el ahorro</h2><p>Ahorro anual (kWh) = número de bombillas × (vatios actuales − vatios LED) × horas al día × 365 ÷ 1.000. Multiplicado por el precio del kWh da los euros que dejas de pagar, y dividiendo lo que cuestan las LED entre ese ahorro sale el tiempo de amortización.</p>
+<p><b>Ejemplo:</b> 10 bombillas incandescentes de 60 W encendidas 4 horas al día gastan 876 kWh al año. Con LED de 9 W bajan a 131 kWh: ahorras 745 kWh, unos <b>112 € al año</b> a 0,15 €/kWh. Si cada LED cuesta 3 €, los 30 € se recuperan en algo más de <b>3 meses</b>. Cambiando halógenas de 42 W el ahorro es menor (unos 72 € al año), pero la amortización sigue siendo de pocos meses.</p>
+<h2>Dónde se nota más</h2><ul><li>En las luces que más horas pasan encendidas: salón, cocina, pasillos y exteriores.</li><li>En los focos halógenos GU10 de techo, que suelen ser muchos y de 35-50 W cada uno.</li><li>En los adornos: las guirnaldas LED gastan hasta un 90 % menos. Calcula cuánto cuestan las tuyas con la calculadora de <a href="consumo-luces-navidad.html">consumo de las luces de Navidad</a>.</li></ul>
+<p>Para ver qué más puedes recortar, prueba la calculadora de <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a> o pasa cualquier potencia a euros con la de <a href="calculadora-kwh.html">vatios a kWh</a>.</p>""",
+[("¿Cuánto se ahorra con LED?", "Alrededor de un 80-85 % respecto a una incandescente y un 75-80 % respecto a una halógena. Una sola bombilla de 60 W cambiada por una LED de 9 W, encendida 4 horas al día, ahorra unos 11 € al año a 0,15 €/kWh."),
+ ("¿Cuánto dura una bombilla LED?", "Entre 15.000 y 25.000 horas, frente a unas 1.000 de una incandescente. Usada 4 horas al día, una LED puede durar más de 10 años."),
+ ("¿Qué bombilla LED equivale a una de 60 W?", "Una LED de unos 806 lúmenes, que suele consumir entre 8 y 9 W. Para sustituir una de 100 W busca unos 1.521 lúmenes (13-15 W)."),
+ ("¿Compensa cambiar las halógenas por LED?", "Sí. Una halógena de 42 W cambiada por una LED de 9 W ahorra el 79 % de su consumo y la inversión se recupera en pocos meses si está encendida varias horas al día.")],
 None, """function calc(){const n=v('n'),kwh=n*(v('o')-v('l'))*v('h')*365/1000,a=kwh*v('p'),inv=n*v('pr');
 show('r','Ahorro al año:<b class="big">'+eur(a)+'</b>'+nf(kwh,0)+' kWh menos · Inversión: '+eur(inv)+' · Se amortiza en <b>'+(a>0?nf(inv/a*12,1)+' meses':'—')+'</b>');}"""))
 

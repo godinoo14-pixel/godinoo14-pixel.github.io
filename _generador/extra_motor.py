@@ -17,8 +17,8 @@ S['tools'] += [("equivalencia-neumaticos", "Equivalencia de neumáticos", "¿Pue
                ("renting-vs-compra", "Renting vs compra", "Qué te sale más barato: renting o comprar el coche.", ""),
                ("cuota-financiacion-coche", "Cuota de financiación de un coche", "Cuota mensual, intereses y coste total del préstamo.", "")]
 
-P.append(("equivalencia-neumaticos", "Calculadora de equivalencia de neumáticos | CocheCuentas",
-"Compara dos medidas de neumático: diferencia de diámetro, error del velocímetro y si la equivalencia es aceptable (±3 %).",
+P.append(("equivalencia-neumaticos", "Equivalencia de neumáticos: calculadora de medidas y velocímetro | CocheCuentas",
+"¿Puedo montar otra medida de rueda? Compara dos neumáticos (por ejemplo 205/55 R16 y 225/45 R17): diferencia de diámetro, error del velocímetro y si entra en el ±3 % aceptado.",
 """<p class="lead">Compara la medida original con la que quieres montar. Tienes los datos en el flanco: por ejemplo 205/55 R16.</p>
 <div class="card"><b>Medida original</b><div class="row"><div><label for="a1">Ancho (mm)</label><input id="a1" inputmode="numeric" value="205"></div><div><label for="b1">Perfil (%)</label><input id="b1" inputmode="numeric" value="55"></div></div><label for="c1">Llanta (pulgadas)</label><input id="c1" inputmode="numeric" value="16">
 <b style="display:block;margin-top:16px">Medida nueva</b><div class="row"><div><label for="a2">Ancho (mm)</label><input id="a2" inputmode="numeric" value="225"></div><div><label for="b2">Perfil (%)</label><input id="b2" inputmode="numeric" value="45"></div></div><label for="c2">Llanta (pulgadas)</label><input id="c2" inputmode="numeric" value="17">
@@ -258,3 +258,44 @@ let h='Multa:<b class="big">'+eur(f[0])+(f[1]?' y '+f[1]+' puntos':' sin puntos'
 if(i<4){const sig=L+B[i]+1,med=mg==0?sig:Math.ceil(sig>100?sig/(1-mg/100):sig+mg);h+='<br>El siguiente tramo ('+eur(F[i+1][0])+') empieza en '+sig+' km/h corregidos'+(mg?', unos '+med+' km/h medidos':'')+'.';}
 if(i==4)h+='<br>A partir de '+(L+(urb?61:81))+' km/h corregidos sería delito (art. 379 del Código Penal).';
 show('r',h);}"""))
+
+# --- Impuesto de circulación (IVTM, art. 95 RDL 2/2004) y caballos fiscales (anexo V RD 2822/1998) ---
+S['tools'].insert(6, ("impuesto-circulacion", "Impuesto de circulación y caballos fiscales", "Calcula los CV fiscales de tu coche y cuánto pagarás de IVTM según tu ayuntamiento.", ""))
+S['aff']["impuesto-circulacion"] = SEG + amz("soporte etiqueta dgt parabrisas", "Porta-etiquetas DGT")
+P.append(("impuesto-circulacion", "Impuesto de circulación: calculadora con caballos fiscales (IVTM) | CocheCuentas",
+"Calcula los caballos fiscales de tu coche a partir de la cilindrada o los kW y cuánto pagarás de impuesto de circulación (IVTM): cuota legal mínima y máxima, coeficiente de tu ayuntamiento y bonificaciones.",
+"""<p class="lead">Con la cilindrada y el número de cilindros (o los kW si es eléctrico) calculamos los caballos fiscales con la fórmula oficial y lo que pagarás de impuesto de circulación según el coeficiente de tu ayuntamiento.</p>
+<div class="card"><label for="mo">Tipo de motor</label><select id="mo" onchange="modo();calc()"><option value="4">Gasolina o diésel (4 tiempos)</option><option value="2">Motor de 2 tiempos</option><option value="e">Eléctrico</option><option value="c">Ya sé los caballos fiscales</option></select>
+<div class="row" id="rc"><div><label for="cc">Cilindrada (cm³)</label><input id="cc" inputmode="numeric" value="1498"></div><div><label for="ci">Número de cilindros</label><input id="ci" inputmode="numeric" value="4"></div></div>
+<div id="re" style="display:none"><label for="kw">Potencia efectiva (kW)</label><input id="kw" inputmode="decimal" value="70"><p class="note">Es la potencia máxima sostenida (30 minutos) que figura en la ficha técnica, no la potencia de pico que anuncia la marca.</p></div>
+<div id="rf" style="display:none"><label for="cf">Caballos fiscales (CVF)</label><input id="cf" inputmode="decimal" value="11,5"><p class="note">Aparecen en la ficha técnica del vehículo (tarjeta ITV) como potencia fiscal.</p></div>
+<div class="row"><div><label for="co">Coeficiente de tu ayuntamiento (1 a 2)</label><input id="co" inputmode="decimal" value="2"></div>
+<div><label for="bo">Bonificación de tu ayuntamiento</label><select id="bo"><option value="0">Ninguna</option><option value="50">50 %</option><option value="75">75 % (habitual en eléctricos)</option><option value="100">100 % (históricos)</option></select></div></div>
+<button onclick="calc()">Calcular impuesto</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">El coeficiente lo fija cada ayuntamiento en su ordenanza fiscal del impuesto sobre vehículos de tracción mecánica: la ley permite entre 1 (cuota mínima) y 2 (el doble). Si en tu ordenanza aparece directamente la tabla en euros, elige la fila de tus caballos fiscales.</p>
+<h2>Tarifas mínimas del impuesto de circulación (turismos)</h2>
+<table><tr><th>Caballos fiscales</th><th>Cuota mínima (coef. 1)</th><th>Cuota máxima (coef. 2)</th></tr>
+<tr><td>Menos de 8</td><td>12,62 €</td><td>25,24 €</td></tr><tr><td>De 8 a 11,99</td><td>34,08 €</td><td>68,16 €</td></tr>
+<tr><td>De 12 a 15,99</td><td>71,94 €</td><td>143,88 €</td></tr><tr><td>De 16 a 19,99</td><td>89,61 €</td><td>179,22 €</td></tr><tr><td>20 o más</td><td>112,00 €</td><td>224,00 €</td></tr></table>
+<p class="note">Fuente: artículo 95 del <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2004-4214" rel="noopener" target="_blank">texto refundido de la Ley de Haciendas Locales (RDL 2/2004)</a>. Las ordenanzas pueden bonificar hasta el 75 % según el carburante o el motor y hasta el 100 % a los vehículos con 25 años o más.</p>
+<h2>Cómo se calculan los caballos fiscales</h2><p>La fórmula oficial está en el anexo V del <a href="https://www.boe.es/buscar/act.php?id=BOE-A-1999-1826" rel="noopener" target="_blank">Reglamento General de Vehículos</a>. Para motores de 4 tiempos: <b>CVF = 0,08 × (0,785 × D² × R)<sup>0,6</sup> × N</b>, donde D es el diámetro del cilindro y R la carrera del pistón en centímetros, y N el número de cilindros. Como 0,785 × D² × R es la cilindrada de cada cilindro, basta con dividir la cilindrada total entre el número de cilindros. En motores de 2 tiempos el coeficiente es 0,11, y en eléctricos <b>CVF = potencia efectiva en kW ÷ 5,152</b>. El resultado se redondea a la baja con dos decimales.</p>
+<p><b>Ejemplo:</b> un 1.5 gasolina de 4 cilindros (1.498 cm³) tiene 374,5 cm³ por cilindro: 0,08 × 374,5<sup>0,6</sup> × 4 = <b>11,20 CVF</b>, en el tramo de 8 a 11,99. Paga entre 34,08 € y 68,16 € según el ayuntamiento. El mismo coche con un motor de 1.598 cm³ pasaría a 11,64 CVF y seguiría en el mismo tramo; un 2.0 de 4 cilindros (1.995 cm³) ya tiene 13,30 CVF y paga entre 71,94 € y 143,88 €.</p>
+<h2>Quién paga y cuándo</h2><p>Paga quien figure como titular del coche el <b>1 de enero</b>, aunque lo venda en febrero. Solo se prorratea por trimestres en el año de la primera matriculación y en el de la baja definitiva. ¿Vas a comprar? Calcula también el <a href="impuesto-matriculacion.html">impuesto de matriculación</a>, el <a href="coste-anual-coche.html">coste anual real del coche</a> o consulta la <a href="etiqueta-dgt.html">etiqueta DGT por matrícula</a>, que en muchas ciudades da derecho a bonificaciones.</p>""",
+[("¿Cuánto se paga de impuesto de circulación?", "Depende de los caballos fiscales y del ayuntamiento. Para turismos, entre 12,62 € y 25,24 € al año con menos de 8 CVF, y entre 112 € y 224 € con 20 CVF o más. La mayoría de coches de 1.2 a 1.6 están en el tramo de 8 a 11,99 CVF: entre 34,08 € y 68,16 €."),
+ ("¿Cómo calculo los caballos fiscales de mi coche?", "Con la fórmula del Reglamento General de Vehículos: 0,08 × (cilindrada ÷ cilindros)^0,6 × cilindros para motores de 4 tiempos. En eléctricos se divide la potencia efectiva en kW entre 5,152. También vienen en la ficha técnica."),
+ ("¿Los coches eléctricos pagan impuesto de circulación?", "Sí, pero la ley permite a los ayuntamientos bonificar hasta el 75 % según el motor o el carburante, y muchas ciudades, como Madrid o Barcelona, lo aplican a los eléctricos. Revisa la ordenanza fiscal de tu municipio."),
+ ("¿Quién paga el impuesto de circulación si vendo el coche?", "El que era titular el 1 de enero paga el año entero. La ley solo prorratea por trimestres en el año de la primera matriculación y en el de la baja definitiva, así que en una venta se suele pactar el reparto entre comprador y vendedor.")],
+"Calculadora del impuesto de circulación y los caballos fiscales",
+"""function modo(){const m=document.getElementById('mo').value;document.getElementById('rc').style.display=(m=='4'||m=='2')?'':'none';document.getElementById('re').style.display=m=='e'?'':'none';document.getElementById('rf').style.display=m=='c'?'':'none';}
+function calc(){const m=document.getElementById('mo').value;let cvf,how='';
+if(m=='e'){cvf=v('kw')/5.152;how=nf(v('kw'),1)+' kW ÷ 5,152';}
+else if(m=='c'){cvf=v('cf');}
+else{const cc=v('cc'),n=Math.max(1,Math.round(v('ci')));cvf=(m=='2'?0.11:0.08)*Math.pow(cc/n,0.6)*n;how=(m=='2'?'0,11':'0,08')+' × ('+nf(cc,0)+' ÷ '+n+')<sup>0,6</sup> × '+n;}
+cvf=Math.floor(cvf*100+1e-6)/100;if(!(cvf>0)){show('r','Revisa los datos del motor.');return;}
+const T=[[8,12.62,'menos de 8'],[12,34.08,'de 8 a 11,99'],[16,71.94,'de 12 a 15,99'],[20,89.61,'de 16 a 19,99'],[1e9,112,'20 o más']];
+let i=0;while(cvf>=T[i][0])i++;const b=T[i][1],co=Math.min(2,Math.max(1,v('co')||1)),bo=+document.getElementById('bo').value,c=b*co*(1-bo/100);
+let h='Impuesto de circulación al año:<b class="big">'+eur(c)+'</b>Potencia fiscal: <b>'+nf(cvf,2)+' CVF</b>'+(how?' ('+how+')':'')+' → tramo <b>'+T[i][2]+'</b> caballos fiscales.';
+h+='<br>Según el ayuntamiento, entre <b>'+eur(b)+'</b> (coeficiente 1) y <b>'+eur(b*2)+'</b> (coeficiente 2). Con coeficiente '+nf(co,2)+(bo?' y bonificación del '+bo+' %':'')+': '+eur(c)+'.';
+if(i<4){const lim=T[i][0];h+='<br>A partir de '+nf(lim,0)+' CVF cambiarías al tramo siguiente ('+eur(T[i+1][1]*co*(1-bo/100))+' con tu coeficiente).';}
+show('r',h);}
+modo();"""))

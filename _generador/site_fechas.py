@@ -23,8 +23,8 @@ const today=new Date();document.querySelectorAll('input[type=date][data-today]')
 FEST = """<label for="f">Festivos a excluir (opcional, uno por línea, dd/mm/aaaa)</label><textarea id="f" rows="3" placeholder="06/12/2026&#10;08/12/2026&#10;25/12/2026"></textarea>"""
 
 P = []
-P.append(("dias-entre-fechas", "Calcular días entre dos fechas | CalculadoraDías",
-"Calcula cuántos días, semanas y meses hay entre dos fechas. Incluye opción de contar el último día.",
+P.append(("dias-entre-fechas", "Días entre dos fechas: calculadora de días, semanas y meses | CalculadoraDías",
+"Calcula al instante cuántos días hay entre dos fechas, y su equivalencia en semanas, meses y años. Con opción de incluir el último día. Gratis, sin registro y fiable en años bisiestos.",
 """<p class="lead">Elige dos fechas y te decimos cuántos días naturales hay entre ellas, en semanas y meses.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha inicial</label><input id="a" type="date" data-today></div>
 <div><label for="b">Fecha final</label><input id="b" type="date" value="2026-12-31"></div></div>
@@ -52,8 +52,8 @@ function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>b)[a,b]=[b,a];cons
 for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){t++;const g=d.getDay();if(g==0||(m==2&&g==6)){w++;continue;}if(h.has(iso(d))){f++;continue;}n++;}
 show('r','Días hábiles:<b class="big">'+n+'</b>Total días: '+t+' · Fines de semana: '+w+' · Festivos excluidos: '+f);}"""))
 
-P.append(("sumar-dias", "Sumar o restar días a una fecha (naturales o hábiles) | CalculadoraDías",
-"Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para calcular plazos.",
+P.append(("sumar-dias", "Sumar días a una fecha: naturales o hábiles, para plazos | CalculadoraDías",
+"Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para plazos de contratos, devoluciones, recursos y entregas.",
 """<p class="lead">Calcula la fecha de vencimiento de un plazo sumando o restando días naturales o hábiles.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha de inicio</label><input id="a" type="date" data-today></div>
 <div><label for="n">Número de días</label><input id="n" inputmode="numeric" value="30"></div>
@@ -89,11 +89,11 @@ P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad? Cuenta a
 <label for="b">Fecha</label><input id="b" type="date" onchange="document.getElementById('e').value='x';calc()"><button onclick="calc()">Ver cuenta atrás</button><div class="res" id="r" aria-live="off"></div></div>
 <h2>Próximas fechas señaladas</h2><table id="tb"></table>
 <h2>Cómo contamos los días</h2><p>Contamos los días naturales completos desde hoy hasta la fecha elegida, sin incluir el día de hoy: si hoy es 24 de noviembre, a Navidad le faltan 31 días. Las horas y minutos se cuentan hasta las 00:00 del día del evento, en la hora de tu dispositivo. Los fines de semana son los sábados que quedan por delante. La Semana Santa y el Black Friday cambian cada año: la Semana Santa depende de la primera luna llena de primavera (el Domingo de Resurrección cae entre el 22 de marzo y el 25 de abril) y el Black Friday es el viernes siguiente al cuarto jueves de noviembre.</p>
-<p><b>Ejemplo práctico:</b> si quieres ahorrar 300 € para los regalos de Navidad y faltan 4 semanas, tendrás que apartar 75 € cada semana. Si necesitas contar solo días laborables (por ejemplo, para un plazo o para saber cuántos días de trabajo quedan antes de vacaciones), usa la calculadora de <a href="dias-habiles.html">días hábiles</a>; y para los festivos y puentes del año que viene, el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>.</p>""",
+<p><b>Ejemplo práctico:</b> si quieres ahorrar 300 € para los regalos de Navidad y faltan 4 semanas, tendrás que apartar 75 € cada semana. Si necesitas contar solo días laborables (por ejemplo, para un plazo o para saber cuántos días de trabajo quedan antes de vacaciones), usa la calculadora de <a href="dias-habiles.html">días hábiles</a>. Si juegas a la Lotería, mira <a href="premio-loteria-navidad.html">cuánto te quedaría del premio tras Hacienda</a> y hasta cuándo puedes cobrarlo; y para los festivos y puentes del año que viene, el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>.</p>""",
 [("¿Cuántos días faltan para Navidad?", "Depende del día en que lo consultes: la calculadora lo muestra al abrirla, en días, horas y minutos hasta el 25 de diciembre. Desde el 1 de diciembre faltan 24 días, y desde el 24 de noviembre, 31."),
  ("¿Cuándo es la Semana Santa de 2027?", "En 2027 el Jueves Santo es el 25 de marzo, el Viernes Santo el 26 y el Domingo de Resurrección el 28 de marzo. El Lunes de Pascua (29 de marzo) es festivo en algunas comunidades."),
  ("¿Cuenta el día de hoy?", "No: se cuentan los días que faltan desde hoy hasta la fecha elegida. Si la fecha es mañana, falta 1 día."),
- ("¿Cuándo es el sorteo de la Lotería de Navidad?", "Se celebra cada año el 22 de diciembre por la mañana. Elige «Sorteo de la Lotería de Navidad» en el desplegable para ver cuánto falta.")],
+ ("¿Cuándo es el sorteo de la Lotería de Navidad?", "Se celebra cada año el 22 de diciembre por la mañana. Elige «Sorteo de la Lotería de Navidad» en el desplegable para ver cuánto falta, y si te toca, calcula con nuestra calculadora del premio de la Lotería cuánto se queda Hacienda.")],
 None, DATEJS + """function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),n=Math.floor((h+l-7*m+114)/31),p=(h+l-7*m+114)%31+1;return new Date(y,n-1,p);}
 function evd(e,y){if(e=='ss'){const t=easter(y);t.setDate(t.getDate()-3);return t;}if(e=='bf'){const t=new Date(y,10,1);const th=(4-t.getDay()+7)%7+1+21;return new Date(y,10,th+1);}const [m,d]=e.split('-').map(Number);return new Date(y,m-1,d);}
 function next(e){let t=evd(e,today.getFullYear());if(diff(today,t)<0)t=evd(e,today.getFullYear()+1);return t;}
@@ -107,8 +107,8 @@ const EV=[['12-22','Lotería de Navidad'],['12-24','Nochebuena'],['12-25','Navid
 document.getElementById('tb').innerHTML='<tr><th>Fecha</th><th>Día</th><th>Faltan</th></tr>'+EV.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1].toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'long',year:'numeric'})+'</td><td><b>'+diff(today,x[1])+' días</b></td></tr>').join('');
 pre();"""))
 
-P.append(("semana-del-ano", "¿En qué semana del año estamos? Número de semana | CalculadoraDías",
-"Consulta el número de semana del año (ISO 8601) de hoy o de cualquier fecha, con el lunes y domingo de esa semana.",
+P.append(("semana-del-ano", "¿En qué semana estamos? Número de semana del año hoy (ISO) | CalculadoraDías",
+"Mira en qué número de semana del año estamos hoy (norma ISO 8601, la que usan los calendarios en España) o en cualquier otra fecha, con el lunes y el domingo de esa semana.",
 """<p class="lead">Número de semana según la norma ISO 8601, la que se usa en España y en la mayoría de Europa.</p>
 <div class="card"><label for="a">Fecha</label><input id="a" type="date" data-today><button onclick="calc()">Ver semana</button><div class="res" id="r"></div></div>
 <h2>Cómo funciona la semana ISO</h2><p>Las semanas empiezan en lunes y la semana 1 es la que contiene el primer jueves del año. Por eso los primeros días de enero pueden pertenecer a la última semana del año anterior, y algunos años tienen 53 semanas.</p>""",

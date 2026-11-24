@@ -48,8 +48,8 @@ None,
 """function calc(){const kp=v('kp'),pr=kp*v('hs'),c=v('c'),au=Math.min(pr*v('au')/100,c),exd=pr-au,ah=au*v('p')+Math.min(exd*v('ex'),(c-au)*v('p')),inv=kp*v('ci');
 show('r','Ahorro estimado al año:<b class="big">'+eur(ah)+'</b>Producción: '+nf(pr,0)+' kWh/año · Placas: <b>'+Math.ceil(kp*1000/v('wp'))+'</b> · Inversión: '+eur(inv)+'<br>Amortización: <b>'+(ah>0?nf(inv/ah,1)+' años':'—')+'</b> · Cubre el '+nf(Math.min(100,pr/c*100),0)+' % de tu consumo');}"""))
 
-P.append(("coste-ducha-termo", "¿Cuánto cuesta una ducha con termo eléctrico? Calculadora | GastoLuz",
-"Calcula cuánto cuesta cada ducha con termo eléctrico en luz y agua, y el gasto mensual de toda la familia.",
+P.append(("coste-ducha-termo", "¿Cuánto cuesta una ducha con termo eléctrico? Luz y agua | GastoLuz",
+"Calcula cuánto cuesta cada ducha con termo eléctrico en luz y agua y lo que gasta tu familia al mes. En invierno, con el agua más fría, el gasto sube: compruébalo aquí.",
 """<p class="lead">Calcula lo que pagas en luz y agua por cada ducha y al mes.</p>
 <div class="card"><div class="row"><div><label for="m">Minutos por ducha</label><input id="m" inputmode="decimal" value="8"></div><div><label for="q">Caudal (litros/min)</label><input id="q" inputmode="decimal" value="9"></div>
 <div><label for="tf">Agua fría (°C)</label><input id="tf" inputmode="decimal" value="15"></div><div><label for="tc">Temperatura de la ducha (°C)</label><input id="tc" inputmode="decimal" value="38"></div>
@@ -165,3 +165,48 @@ const R=[['Freidora de aire',a],['Horno',h]];if(v('tm')>0)R.push(['Microondas',m
 const c=x=>nf(x*p*100,1)+' cént.';
 show('r','Freidora de aire:<b class="big">'+c(a)+' por receta</b>'+(h>0?'Gasta un <b>'+nf((1-a/h)*100,0)+' % menos</b> que el horno: ahorras <b>'+eur((h-a)*p*w)+' al año</b> cocinando '+nf(v('vs'),0)+' veces por semana.':'')+'<table><tr><th>Aparato</th><th>kWh</th><th>Por receta</th><th>Al año</th></tr>'+R.map(x=>'<tr><td>'+(x[1]==mn?'<b>'+x[0]+'</b>':x[0])+'</td><td>'+nf(x[1],2)+'</td><td>'+c(x[1])+'</td><td>'+eur(x[1]*p*w)+'</td></tr>').join('')+'</table>');}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||!H.length)return;const av=H.reduce((s,x)=>s+x[1],0)/H.length;document.getElementById('pr').value=av.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio: media del PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' según Red Eléctrica ('+av.toFixed(3).replace('.',',')+' €/kWh, impuestos aparte). Si tienes tarifa fija, cambia el precio por el de tu contrato. <a href="precio-luz-hoy.html">Ver precio por horas</a>.';calc();}).catch(()=>{});"""))
+
+# --- Consumo de las luces de Navidad con el PVPC de las horas en que se encienden ---
+S['tools'].insert(2, ("consumo-luces-navidad", "Consumo de las luces de Navidad", "Lo que cuestan tus guirnaldas y adornos al día y en toda la Navidad, con el precio de la luz por horas.", ""))
+S['aff']["consumo-luces-navidad"] = amz("luces navidad led temporizador", "Luces LED con temporizador") + amz("enchufe temporizador programable", "Enchufes con temporizador") + ENCH
+P.append(("consumo-luces-navidad", "Consumo de las luces de Navidad: cuánto gastan al día y al mes | GastoLuz",
+"Calcula cuánto cuestan tus luces de Navidad LED o tradicionales con el precio de la luz de las horas en que las enciendes (PVPC de hoy), por día y en toda la temporada.",
+"""<p class="lead">Pon cuántos adornos tienes, a qué hora los enciendes y cuántas horas. Calculamos el coste con el precio real de esas horas (PVPC de hoy, impuestos incluidos) y lo que ahorras con LED y temporizador.</p>
+<div class="card"><b>Tus luces</b><p class="note" style="margin:2px 0 6px">Cantidad · vatios de cada uno (mira la etiqueta del transformador o la caja)</p><div id="it"></div>
+<div class="row"><div><label for="hi">Hora de encendido</label><select id="hi"></select></div>
+<div><label for="hh">Horas encendidas al día</label><input id="hh" inputmode="decimal" value="5"></div>
+<div><label for="dd">Días de Navidad</label><input id="dd" inputmode="numeric" value="37"></div>
+<div><label for="ta">Tarifa</label><select id="ta" onchange="calc()"><option value="p">PVPC (precio por horas)</option><option value="f">Precio fijo</option></select></div></div>
+<label for="pf">Precio fijo del kWh si no tienes PVPC (€/kWh, sin impuestos)</label><input id="pf" inputmode="decimal" value="0,13">
+<button onclick="calc()">Calcular coste</button><div class="res" id="r" aria-live="polite"></div>
+<p class="note" id="pn">Precio PVPC: cargando el de hoy de Red Eléctrica…</p></div>
+<h2>Cuánto consumen los adornos más habituales</h2><table><tr><th>Adorno</th><th>Potencia típica</th><th>5 h al día durante 37 días</th></tr>
+<tr><td>Guirnalda LED de 100 luces</td><td>4 – 6 W</td><td>≈ 0,9 kWh</td></tr>
+<tr><td>Guirnalda de bombillitas incandescentes (100)</td><td>35 – 45 W</td><td>≈ 7,4 kWh</td></tr>
+<tr><td>Cortina LED de balcón o ventana</td><td>15 – 30 W</td><td>≈ 4,1 kWh</td></tr>
+<tr><td>Figura o reno luminoso LED</td><td>20 – 40 W</td><td>≈ 5,6 kWh</td></tr>
+<tr><td>Proyector LED o láser de fachada</td><td>5 – 10 W</td><td>≈ 1,4 kWh</td></tr></table>
+<h2>Cómo se calcula</h2><p>Consumo (kWh) = vatios totales × horas ÷ 1.000. Con <b>PVPC</b> el precio cambia cada hora, así que sumamos hora a hora el precio publicado por Red Eléctrica para las horas en que tienes las luces encendidas, y añadimos el impuesto eléctrico (5,11 %) y el IVA (21 %). Las luces de Navidad suelen encenderse al anochecer, que coincide con las horas más caras del día, por eso el coste por kWh sale mayor que la media diaria.</p>
+<p><b>Ejemplo:</b> un árbol con 2 guirnaldas LED (5 W cada una) y una cortina LED en el balcón (24 W) suman 34 W. Encendidas 5 horas al día son 0,17 kWh: con un precio de 0,30 €/kWh en esas horas, unos 6 céntimos al día con impuestos y <b>poco más de 2 € en toda la Navidad</b>. Si fueran guirnaldas incandescentes de 40 W, solo esas dos costarían unas cuatro veces más.</p>
+<h2>Trucos para que no se note en la factura</h2><ul><li><b>Pásate al LED</b>: gasta hasta un 90 % menos que las bombillitas de toda la vida y apenas se calienta.</li><li><b>Usa temporizador</b>: dejarlas encendidas toda la noche multiplica el gasto por cuatro o cinco sin que nadie las vea.</li><li>Comprueba que las de exterior tengan protección <b>IP44</b> o superior y no conectes muchas guirnaldas en cadena a la misma regleta.</li></ul>
+<p>Mira a qué horas está más cara la luz en el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>, calcula el resto de la casa con el <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a> o compara bombillas con el <a href="ahorro-led.html">ahorro al cambiar a LED</a>. Y si este invierno usas radiadores, revisa el <a href="coste-calefaccion-electrica.html">coste de la calefacción eléctrica</a>.</p>""",
+[("¿Cuánto gastan las luces de Navidad al mes?", "Muy poco si son LED: un árbol con un par de guirnaldas de 5 W encendidas 5 horas al día gasta unos 1,5 kWh al mes: alrededor de 50 céntimos con impuestos. Con guirnaldas incandescentes de 40 W el gasto se multiplica por ocho."),
+ ("¿Cuánto consume una tira de luces LED de Navidad?", "Una guirnalda LED de 100 luces consume entre 4 y 6 W, es decir, unos 0,005 kWh por hora: alrededor de 2 céntimos por cada 10 horas encendida."),
+ ("¿Gasta más dejar las luces de Navidad encendidas toda la noche?", "Sí: el consumo es proporcional a las horas. Pasar de 5 a 24 horas al día multiplica el gasto casi por cinco. Un enchufe con temporizador evita olvidos."),
+ ("¿Las luces de Navidad suben mucho la factura de la luz?", "Con LED, normalmente menos de 3 € en toda la temporada. Lo que de verdad sube la factura en invierno es la calefacción eléctrica y el termo, no los adornos.")],
+"Calculadora del consumo de las luces de Navidad",
+"""const IT=[['Guirnalda LED (100 luces)',2,5],['Guirnalda incandescente (100 luces)',0,40],['Cortina LED de balcón o ventana',1,24],['Figura luminosa LED',0,30],['Proyector LED de fachada',0,8],['Otros adornos',0,10]];
+document.getElementById('it').innerHTML=IT.map((x,i)=>'<div class="chk"><input type="number" min="0" id="q'+i+'" value="'+x[1]+'" aria-label="Cantidad de '+x[0]+'" oninput="calc()"><span>'+x[0]+'</span><input type="number" min="0" id="w'+i+'" value="'+x[2]+'" aria-label="Vatios de '+x[0]+'" oninput="calc()" style="width:76px"> W</div>').join('');
+const hs=document.getElementById('hi');for(let h=0;h<24;h++)hs.insertAdjacentHTML('beforeend','<option value="'+h+'"'+(h==18?' selected':'')+'>'+String(h).padStart(2,'0')+':00</option>');hs.onchange=calc;
+let HP=null;const TX=1.0511269632*1.21;
+function pr(ini,hrs){if(document.getElementById('ta').value=='f'||!HP)return v('pf');let s=0,n=0;for(let k=0;k<Math.ceil(hrs);k++){const w=Math.min(1,hrs-k);s+=HP[(ini+k)%24]*w;n+=w;}return n?s/n:v('pf');}
+function calc(){let W=0,Wi=0;IT.forEach((x,i)=>{const q=v('q'+i),w=v('w'+i);W+=q*w;if(i==0)Wi+=q*40;else if(i==2)Wi+=q*150;else Wi+=q*w;});
+const ini=+hs.value,h=Math.min(24,v('hh')),d=v('dd'),p=pr(ini,h)*TX,kd=W*h/1000,cd=kd*p,ct=cd*d;
+if(W<=0){show('r','Añade al menos un adorno con sus vatios.');return;}
+const p24=pr(0,24)*TX,c24=W*24/1000*p24*d,cin=Wi*h/1000*p*d;
+let t='Toda la Navidad ('+nf(d,0)+' días):<b class="big">'+eur(ct)+'</b>'+nf(W,0)+' W en total · '+nf(kd,3)+' kWh al día · <b>'+eur(cd)+' al día</b> a '+nf(p,3)+' €/kWh con impuestos.';
+if(c24>ct*1.05)t+='<br>Si las dejaras encendidas las 24 horas: '+eur(c24)+' (<b>'+eur(c24-ct)+' más</b>). Un temporizador lo evita.';
+if(Wi>W*1.05)t+='<br>Con guirnaldas y cortinas incandescentes en vez de LED pagarías unos '+eur(cin)+': el LED te ahorra <b>'+eur(cin-ct)+'</b>.';
+show('r',t);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)return;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' por horas según Red Eléctrica. Con tarifa de precio fijo, elige «Precio fijo» y pon el de tu contrato. <a href="precio-luz-hoy.html">Ver todas las horas</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='No se ha podido cargar el PVPC de hoy: usamos el precio fijo indicado.';});"""))

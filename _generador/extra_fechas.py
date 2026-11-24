@@ -188,3 +188,49 @@ r+='<br>A término desde el <b>'+ad(f,259).toLocaleDateString('es-ES')+'</b> (se
 const T=[['Ecografía y cribado del 1.er trimestre',77,97],['Ecografía morfológica',133,146],["Test de O'Sullivan",168,195],['Ecografía del 3.er trimestre',224,237],['Cultivo de estreptococo',245,258]];
 r+='<table><tr><th>Prueba orientativa</th><th>Entre</th></tr>'+T.map(x=>'<tr><td>'+x[0]+'</td><td>'+ad(f,x[1]).toLocaleDateString('es-ES',{day:'numeric',month:'short'})+' y '+ad(f,x[2]).toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'})+'</td></tr>').join('')+'</table>';
 show('r',r);}"""))
+
+# --- Lotería de Navidad y del Niño: premio neto tras Hacienda (gravamen especial: 20 % sobre lo que pasa de 40.000 € por décimo) ---
+S['tools'].insert(1, ("premio-loteria-navidad", "Premio de la Lotería de Navidad y del Niño", "Cuánto te queda tras Hacienda, hasta cuándo puedes cobrar y dónde.", "Lotería"))
+S['aff']["premio-loteria-navidad"] = amz("cartera porta decimos loteria", "Fundas para guardar décimos") + amz("agenda 2027", "Agendas 2027")
+P.append(("premio-loteria-navidad", "Calculadora Lotería de Navidad 2026: premio neto tras Hacienda | CalculadoraDías",
+"Calcula el premio neto de tu décimo o participación de la Lotería de Navidad (22 de diciembre) o del Niño: retención del 20 % a partir de 40.000 €, fecha límite para cobrar y dónde hacerlo.",
+"""<p class="lead">Elige el sorteo, el premio y lo que juegas de ese número (un décimo son 20 €). Te decimos cuánto se queda Hacienda, lo que cobras limpio y hasta qué día puedes cobrarlo.</p>
+<div class="card"><label for="so">Sorteo</label><select id="so" onchange="lista()"><option value="n">Lotería de Navidad · martes 22 de diciembre de 2026</option><option value="k">Lotería del Niño · miércoles 6 de enero de 2027</option></select>
+<label for="pz">Premio</label><select id="pz" onchange="calc()"></select>
+<div class="row"><div><label for="ju">Lo que juegas de ese número (€)</label><input id="ju" inputmode="decimal" value="20"></div>
+<div><label for="ot">Premio por décimo si eliges «Otro importe» (€)</label><input id="ot" inputmode="decimal" value="1000"></div></div>
+<p class="note">Un décimo entero = 20 €. Una participación de 5 € es la cuarta parte de un décimo; dos décimos del mismo número = 40 €.</p>
+<button onclick="calc()">Calcular premio neto</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo tributa el premio</h2><p>Los premios de Loterías y Apuestas del Estado pagan un <b>gravamen especial del 20 %</b>, pero solo sobre la parte del premio que supera los <b>40.000 € por décimo</b>. Si juegas una fracción, la parte exenta se reduce en la misma proporción: con una participación de 5 € (un cuarto de décimo) tienes exentos 10.000 €. La retención se aplica al cobrar y es definitiva: no tienes que volver a pagar por el premio en la declaración de la renta.</p>
+<p><b>Fórmula:</b> premio bruto = premio por décimo × (lo jugado ÷ 20). Impuesto = 20 % × (premio bruto − 40.000 × lo jugado ÷ 20), si sale positivo.</p>
+<table><tr><th>Lotería de Navidad (por décimo)</th><th>Bruto</th><th>Hacienda</th><th>Te queda</th></tr>
+<tr><td>Primer premio («el Gordo»)</td><td>400.000 €</td><td>72.000 €</td><td><b>328.000 €</b></td></tr>
+<tr><td>Segundo premio</td><td>125.000 €</td><td>17.000 €</td><td><b>108.000 €</b></td></tr>
+<tr><td>Tercer premio</td><td>50.000 €</td><td>2.000 €</td><td><b>48.000 €</b></td></tr>
+<tr><td>Cuarto premio (hay 2)</td><td>20.000 €</td><td>0 €</td><td><b>20.000 €</b></td></tr>
+<tr><td>Quinto premio (hay 8)</td><td>6.000 €</td><td>0 €</td><td><b>6.000 €</b></td></tr>
+<tr><td>Aproximaciones al 1.º / 2.º / 3.º</td><td>2.000 / 1.250 / 960 €</td><td>0 €</td><td>íntegro</td></tr>
+<tr><td>Pedrea, centenas y dos últimas cifras</td><td>100 €</td><td>0 €</td><td>100 €</td></tr>
+<tr><td>Reintegro (última cifra del Gordo)</td><td>20 €</td><td>0 €</td><td>20 €</td></tr></table>
+<p><b>Ejemplo:</b> compartes un décimo del Gordo a medias con tu pareja (10 € cada uno). A cada uno le corresponden 200.000 €, con 20.000 € exentos: Hacienda retiene el 20 % de 180.000 €, es decir 36.000 €, y cada uno cobra <b>164.000 €</b>.</p>
+<h2>Plazos y dónde cobrar</h2><p>Hay <b>tres meses</b> para cobrar desde el día siguiente al sorteo: los premios de Navidad 2026 se pueden cobrar hasta el <b>22 de marzo de 2027</b> y los del Niño, hasta el <b>6 de abril de 2027</b>. Después, el dinero pasa al Estado. Los premios de menos de 2.000 € por décimo se cobran en cualquier administración de lotería; los mayores, en las entidades bancarias colaboradoras de Loterías y Apuestas del Estado. Firma el décimo por detrás y hazle una foto en cuanto sepas que tiene premio. Comprueba siempre los números con la lista oficial en la web de <a href="https://www.loteriasyapuestas.es/" rel="noopener" target="_blank">Loterías y Apuestas del Estado</a>.</p>
+<p>¿Cuánto queda para el sorteo? Míralo en la <a href="cuantos-dias-faltan.html">cuenta atrás para la Lotería y Navidad</a>, y organiza los días libres de 2027 con el <a href="calendario-laboral-2027.html">calendario laboral y los puentes</a>.</p>""",
+[("¿Cuánto se queda Hacienda del Gordo de Navidad?", "De un décimo de 20 € premiado con el Gordo (400.000 €) los primeros 40.000 € están exentos y el resto paga el 20 %: Hacienda retiene 72.000 € y cobras 328.000 €."),
+ ("¿Los premios de menos de 40.000 € pagan impuestos?", "No. Un premio de hasta 40.000 € por décimo está exento y se cobra íntegro. Ojo: si juegas una participación, el mínimo exento se reduce en proporción a lo que juegas."),
+ ("¿Hasta cuándo se puede cobrar la Lotería de Navidad 2026?", "Tienes tres meses desde el día siguiente al sorteo del 22 de diciembre de 2026, es decir, hasta el 22 de marzo de 2027. Los premios del Niño (6 de enero de 2027) caducan el 6 de abril de 2027."),
+ ("¿Tengo que declarar el premio en la renta?", "No. La retención del 20 % que se practica al cobrar es el gravamen especial definitivo y el premio no se suma al resto de ingresos del IRPF.")],
+"Calculadora del premio de la Lotería de Navidad y del Niño",
+"""const PZ={n:[['Primer premio (el Gordo)',400000],['Segundo premio',125000],['Tercer premio',50000],['Cuarto premio',20000],['Quinto premio',6000],['Aproximación al primer premio',2000],['Aproximación al segundo premio',1250],['Aproximación al tercer premio',960],['Pedrea, centena o dos últimas cifras',100],['Reintegro',20],['Otro importe',0]],
+k:[['Primer premio',200000],['Segundo premio',75000],['Tercer premio',25000],['Aproximación al primer premio',1200],['Aproximación al segundo premio',610],['Terminación de 4 cifras',350],['Terminación de 3 cifras',100],['Terminación de 2 cifras',40],['Reintegro',20],['Otro importe',0]]};
+const SD={n:[new Date(2026,11,22),new Date(2027,2,22),'22 de marzo de 2027'],k:[new Date(2027,0,6),new Date(2027,3,6),'6 de abril de 2027']};
+function lista(){const s=document.getElementById('so').value;document.getElementById('pz').innerHTML=PZ[s].map((x,i)=>'<option value="'+i+'">'+x[0]+(x[1]?' · '+x[1].toLocaleString('es-ES')+' € el décimo':'')+'</option>').join('');calc();}
+function calc(){const s=document.getElementById('so').value,p=PZ[s][+document.getElementById('pz').value||0],pd=p[1]||v('ot'),j=v('ju'),f=j/20;
+if(j<=0||pd<=0){show('r','Escribe lo que juegas y el importe del premio.');return;}
+const br=pd*f,ex=40000*f,tx=Math.max(0,br-ex)*0.2,ne=br-tx,hoy=new Date();hoy.setHours(0,0,0,0);
+const ds=Math.round((SD[s][0]-hoy)/864e5),ok=Math.round((SD[s][1]-hoy)/864e5);
+let h='Cobras limpio:<b class="big">'+eur(ne)+'</b>Premio bruto: <b>'+eur(br)+'</b> ('+nf(f,2)+(f==1?' décimo':' décimos')+' × '+eur(pd)+')<br>';
+h+=tx>0?'Exento: '+eur(ex)+' · Retención del 20 % sobre '+eur(br-ex)+': <b>'+eur(tx)+'</b>':'<b>Sin impuestos</b>: no supera los '+eur(ex)+' exentos que corresponden a lo que juegas.';
+h+='<br>'+(br/f<2000?'Se cobra en cualquier administración de lotería.':'Más de 2.000 € por décimo: se cobra en las entidades bancarias colaboradoras.');
+h+='<br>'+(ds>0?'Faltan <b>'+ds+' días</b> para el sorteo. ':'')+'Fecha límite para cobrar: <b>'+SD[s][2]+'</b>'+(ds<=0&&ok>=0?' (quedan '+ok+' días)':'')+'.';
+show('r',h);}
+lista();"""))

@@ -48,8 +48,8 @@ catch(e){show('r','No hemos podido consultar ahora mismo. Inténtalo de nuevo en
 if(!N[v]){show('r','No encontramos la matrícula <b>'+raw+'</b> en el registro. Revisa que esté bien escrita.');return;}
 show('r','La matrícula <b>'+raw+'</b> tiene:<b class="big" style="color:'+N[v][1]+'">'+N[v][0]+'</b>'+N[v][2]);}"""))
 
-P.append(("coste-por-km", "Calculadora de coste por kilómetro del coche | CocheCuentas",
-"Calcula cuánto te cuesta cada kilómetro, cada mes y cada año en combustible según el consumo de tu coche y el precio del litro.",
+P.append(("coste-por-km", "Coste por kilómetro de tu coche: calculadora de gasolina y diésel | CocheCuentas",
+"¿Cuánto te cuesta cada kilómetro? Pon el consumo de tu coche y el precio del litro y verás el gasto en combustible por km, al mes y al año. Gratis y al instante.",
 """<p class="lead">Mete el consumo de tu coche, el precio del combustible y los kilómetros que haces y verás cuánto gastas por km, al mes y al año.</p>
 <div class="card"><div class="row"><div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6,5"></div>
 <div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div></div>
@@ -93,7 +93,7 @@ P.append(("coste-anual-coche", "¿Cuánto cuesta mantener un coche al año? Calc
 <div><label for="a9">Pérdida de valor (€/año)</label><input id="a9" inputmode="decimal" value="1500"></div>
 <div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div></div>
 <button onclick="calc()">Calcular coste real</button><div class="res" id="r"></div></div>
-<p class="note">¿No sabes cuánto pierde de valor tu coche? Usa la <a href="depreciacion-coche.html">calculadora de depreciación</a>. ¿Y el combustible? Sácalo con la de <a href="coste-por-km.html">coste por km</a>.</p>
+<p class="note">¿No sabes cuánto pierde de valor tu coche? Usa la <a href="depreciacion-coche.html">calculadora de depreciación</a>. ¿Y el combustible? Sácalo con la de <a href="coste-por-km.html">coste por km</a>. Y para el impuesto de tu ayuntamiento, usa la del <a href="impuesto-circulacion.html">impuesto de circulación</a>.</p>
 <h2>El gasto que nadie cuenta: la depreciación</h2><p>Para muchos coches nuevos o seminuevos, la pérdida de valor es el mayor gasto del año, por encima del combustible. Un coche de 25.000 € puede perder entre 3.000 y 5.000 € solo en su primer año. Por eso comprar un seminuevo de 2-3 años suele ser la opción más eficiente.</p>""",
 [("¿Cuánto cuesta de media mantener un coche en España?", "Depende mucho del coche y del uso, pero sumando todos los conceptos y la depreciación es habitual moverse entre 3.000 y 6.000 € al año para un turismo medio."),
  ("¿Sale más barato el renting?", "El renting incluye seguro, mantenimiento e impuestos en la cuota y elimina el riesgo de depreciación. Compara su cuota mensual con el coste mensual que te da esta calculadora.")],
@@ -101,8 +101,8 @@ None,
 """function calc(){let t=0;for(let i=1;i<=9;i++){if(i==8)continue;t+=v('a'+i);}t+=v('a8')*12;const k=v('k')||1;
 show('r','Coste real al año:<b class="big">'+eur(t)+'</b>Al mes: <b>'+eur(t/12)+'</b> · Por km: <b>'+nf(t/k,3)+' €</b>');}"""))
 
-P.append(("depreciacion-coche", "Calculadora de depreciación de un coche: ¿cuánto valdrá? | CocheCuentas",
-"Estima cuánto valdrá tu coche dentro de unos años y cuánto dinero pierde cada año por depreciación.",
+P.append(("depreciacion-coche", "Depreciación de un coche: calcula cuánto valdrá dentro de X años | CocheCuentas",
+"Calcula cuánto valdrá tu coche dentro de 1, 3 o 5 años y cuánto dinero pierde cada año. Hecha por un tasador profesional: útil para vender, comprar o elegir entre nuevo y seminuevo.",
 """<p class="lead">Calcula cuánto valdrá aproximadamente tu coche en el futuro y cuánto valor pierde cada año.</p>
 <div class="card"><div class="row"><div><label for="pv">Precio de compra (€)</label><input id="pv" inputmode="decimal" value="25000"></div>
 <div><label for="n">Años de propiedad</label><input id="n" inputmode="numeric" value="5"></div>
