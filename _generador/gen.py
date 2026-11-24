@@ -29,7 +29,7 @@ button{margin-top:16px;width:100%;padding:13px;border:0;border-radius:10px;backg
 table{width:100%;border-collapse:collapse;font-size:.95rem}td,th{padding:8px;border-bottom:1px solid #e5e7ef;text-align:left}
 footer{margin-top:48px;background:#fff;border-top:1px solid #e5e7ef;padding:22px 0;font-size:.85rem;color:#6b7185}footer a{margin-right:12px;color:#6b7185}
 #ck{position:fixed;bottom:0;left:0;right:0;background:#1d2433;color:#fff;padding:14px 16px;font-size:.88rem;display:none;z-index:9}#ck button{width:auto;margin:8px 8px 0 0;padding:8px 16px;font-size:.9rem}#ck .no{background:#4a5165}
-.note{font-size:.85rem;color:#6b7185}.affbox div{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.afl{display:inline-block;padding:9px 14px;border:1px solid ACC;border-radius:999px;text-decoration:none;font-weight:600;font-size:.92rem}""".replace("ACCBG", acc + "14").replace("ACC", acc)
+.note{font-size:.85rem;color:#6b7185}.upd{font-size:.82rem;color:#6b7185;margin:-2px 0 6px}.share{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0;font-size:.9rem;color:#4a5165}.share a{padding:7px 12px;border-radius:999px;background:#fff;border:1px solid #e5e7ef;text-decoration:none;font-weight:600}.affbox div{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.afl{display:inline-block;padding:9px 14px;border:1px solid ACC;border-radius:999px;text-decoration:none;font-weight:600;font-size:.92rem}""".replace("ACCBG", acc + "14").replace("ACC", acc)
 
 JS_BASE = """const eur=n=>n.toLocaleString('es-ES',{style:'currency',currency:'EUR'});
 const nf=(n,d=2)=>n.toLocaleString('es-ES',{maximumFractionDigits:d});
@@ -43,7 +43,18 @@ document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr
 def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     base = site['base']
     url = base + ("" if slug == "index" else slug + ".html")
-    ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": title, "description": desc, "url": url}]
+    is_tool = slug not in ("index", "aviso-legal", "privacidad", "cookies", "404", "sobre-nosotros")
+    ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": title, "description": desc, "url": url, "inLanguage": "es-ES", "dateModified": "2026-11-24"}]
+    if slug == "index":
+        ld.append({"@context": "https://schema.org", "@type": "WebSite", "name": site['name'], "url": base, "inLanguage": "es-ES"})
+    else:
+        ld.append({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": site['name'], "item": base},
+            {"@type": "ListItem", "position": 2, "name": (h1 or title.split(' | ')[0]), "item": url}]})
+    if is_tool:
+        ld.append({"@context": "https://schema.org", "@type": "WebApplication", "name": (h1 or title.split(' | ')[0]), "url": url,
+                   "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "inLanguage": "es-ES",
+                   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}})
     if faqs:
         ld.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs]})
@@ -56,23 +67,31 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     a = site.get('aff', {}).get(slug)
     aff = f'<div class="card affbox"><b>Te puede interesar</b><div>{a}</div><p class="note">Enlaces patrocinados: si compras a través de ellos podemos recibir una comisión sin coste para ti.</p></div>' if a else ''
     net = ' · '.join(f'<a href="{u}">{n}</a>' for n, u in NETWORK if n != site['name'])
+    upd = '<p class="upd">Actualizado: noviembre de 2026 · Gratis y sin registro</p>' if is_tool else ''
+    q = urllib.parse.quote
+    share = (f'<div class="share"><span>¿Te ha sido útil? Compártela:</span>'
+             f'<a href="https://wa.me/?text={q(title.split(" | ")[0] + " " + url)}" rel="noopener" target="_blank">WhatsApp</a>'
+             f'<a href="https://t.me/share/url?url={q(url)}&text={q(title.split(" | ")[0])}" rel="noopener" target="_blank">Telegram</a>'
+             f'<a href="https://twitter.com/intent/tweet?url={q(url)}&text={q(title.split(" | ")[0])}" rel="noopener" target="_blank">X</a></div>') if is_tool else ''
     navl = "".join(f'<a href="{t[0]}.html">{t[3]}</a>' for t in site['tools'][:3])
     e = html.escape
     return f"""<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
 <meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc)}"><meta property="og:type" content="website"><meta property="og:url" content="{url}">
-<meta name="theme-color" content="{site['acc']}"><link rel="stylesheet" href="style.css">
+<meta property="og:site_name" content="{site['name']}"><meta property="og:locale" content="es_ES"><meta name="twitter:card" content="summary">
+<meta name="theme-color" content="{site['acc']}"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css">
 {('<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+ADSENSE_CLIENT+'" crossorigin="anonymous"></script>') if ADSENSE_CLIENT else "<!-- AdSense: rellena ADSENSE_CLIENT en gen.py -->"}
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script></head><body>
 <header><div class="w"><a class="logo" href="index.html">{site['logo']}</a><nav>{navl}</nav></div></header>
-<main class="w"><h1>{h1 or title.split(' | ')[0]}</h1>{body}
+<main class="w"><h1>{h1 or title.split(' | ')[0]}</h1>{upd}{body}{share}
 {aff}<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div>{faqh}{rel}</main>
 <footer><div class="w"><p>© 2026 {site['name']} · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
-<p>Más calculadoras gratis: {net}</p><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
+<p>Más calculadoras gratis: {net}</p><a href="sobre-nosotros.html">Sobre nosotros</a><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
 <div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
 <script>
 {JS_BASE}
 {extra_js}
+if(typeof calc==='function'){{try{{const r=document.getElementById('r');if(r&&r.style.display!=='block')calc();}}catch(e){{}}}}
 </script></body></html>"""
 
 def legal(site):
@@ -109,7 +128,13 @@ def build(site, pages):
         open(f"{d}/{slug}.html", "w").write(page(site, slug, t, ds, b))
     open(f"{d}/404.html", "w").write(page(site, "404", "Página no encontrada | " + site['name'], "Página no encontrada",
                                           '<p>Esta página no existe. <a href="index.html">Vuelve al inicio</a>.</p>'))
-    urls = [site['base']] + [site['base'] + p[0] + ".html" for p in pages]
+    letter = site['name'][0]
+    open(f"{d}/favicon.svg", "w").write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="{site["acc"]}"/><text x="32" y="44" font-family="Arial,sans-serif" font-size="36" font-weight="700" fill="#fff" text-anchor="middle">{letter}</text></svg>')
+    about = site.get('about', f"<p>{site['name']} es un proyecto independiente de calculadoras gratuitas en español. Cada herramienta funciona en tu navegador, sin registro y sin guardar tus datos.</p>") + \
+        "<h2>Cómo hacemos las calculadoras</h2><p>Partimos de fórmulas conocidas y de fuentes oficiales cuando las hay, explicamos el cálculo en cada página y revisamos las herramientas con regularidad. Los resultados son orientativos: para decisiones importantes, confírmalos con un profesional.</p>" + \
+        "<h2>¿Has visto un error?</h2><p>Si algún resultado no te cuadra o echas en falta una calculadora, cuéntanoslo: mejoramos las webs cada semana.</p>"
+    open(f"{d}/sobre-nosotros.html", "w").write(page(site, "sobre-nosotros", "Sobre nosotros | " + site['name'], "Quién está detrás de " + site['name'] + " y cómo hacemos nuestras calculadoras.", about, h1="Sobre " + site['name']))
+    urls = [site['base']] + [site['base'] + p[0] + ".html" for p in pages] + [site['base'] + "sobre-nosotros.html"]
     open(f"{d}/sitemap.xml", "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         + "".join(f"<url><loc>{u}</loc><lastmod>2026-11-23</lastmod></url>\n" for u in urls) + "</urlset>\n")
     open(f"{d}/CNAME", "w").write(site["domain"] + "\n")

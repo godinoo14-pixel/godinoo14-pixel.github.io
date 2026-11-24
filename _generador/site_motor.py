@@ -7,6 +7,7 @@ S = dict(dir="cochecuentas", name="CocheCuentas", logo="Coche<span>Cuentas</span
                 ("coste-anual-coche", "Coste anual real de un coche", "Seguro, impuesto, ITV, mantenimiento, combustible y pérdida de valor.", ""),
                 ("depreciacion-coche", "Calculadora de depreciación", "Cuánto valdrá tu coche dentro de X años.", ""),
                 ("coste-viaje-coche", "Coste de un viaje en coche", "Combustible y peajes de un trayecto, dividido entre ocupantes.", "")],
+         about="<p>CocheCuentas lo crea un asesor comercial y tasador con años de experiencia en concesionarios oficiales y compraventas de vehículos. Las calculadoras nacen de las preguntas que los clientes hacen a diario: cuánto cuesta de verdad un coche, si compensa el eléctrico, cuánto valdrá dentro de unos años o qué etiqueta le corresponde.</p>",
          home_title="CocheCuentas | Calculadoras de coche: etiqueta DGT, coste por km, consumo",
          home_desc="Calculadoras gratuitas para conductores en España: etiqueta DGT, coste por kilómetro, eléctrico vs gasolina, coste anual real y depreciación.",
          home_h1="Calculadoras para tu coche",
