@@ -7,8 +7,8 @@ S = dict(dir="gastoluz", name="GastoLuz", logo="Gasto<span>Luz</span>", acc="#0b
                 ("calculadora-kwh", "Calculadora de vatios a kWh", "Pasa vatios a kWh y a euros.", ""),
                 ("coste-calefaccion-electrica", "Coste de la calefacción eléctrica", "Radiador, calefactor o estufa: cuánto cuesta el invierno.", ""),
                 ("ahorro-led", "Ahorro al cambiar a LED", "Cuánto ahorras sustituyendo bombillas antiguas.", "")],
-         home_title="GastoLuz | Calcula el consumo eléctrico de tu casa y cuánto pagas",
-         home_desc="Calculadoras de consumo eléctrico: electrodomésticos, aire acondicionado, calefacción, potencia contratada, vatios a kWh y ahorro LED.",
+         home_title="Precio de la luz hoy y calculadoras de consumo eléctrico | GastoLuz",
+         home_desc="Precio de la luz hoy por horas (PVPC), simulador de tu factura y cuánto gastan tus electrodomésticos, la calefacción o el aire. Calcula y ahorra en tu recibo.",
          home_h1="Calcula cuánto gastas en luz",
          home_intro='<p class="lead">Descubre qué aparatos disparan tu factura, qué potencia necesitas contratar y cuánto puedes ahorrar. Cambia el precio del kWh por el de tu factura para un resultado exacto.</p>',
          home_extra='<h2>Dónde ver el precio del kWh</h2><p>En tu factura aparece el <b>término de energía</b> en €/kWh (a veces dividido en punta, llano y valle) y el <b>término de potencia</b> en €/kW y día. Nuestras calculadoras usan 0,15 €/kWh como referencia, pero puedes poner el tuyo en cada una.</p>')

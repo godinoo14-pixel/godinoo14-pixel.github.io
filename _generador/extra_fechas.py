@@ -110,3 +110,41 @@ h+='</div><p style="margin-top:14px"><a class="afl" href="dias-habiles.html?f='+
 document.getElementById('r2').innerHTML=h;}
 function fmt(d){return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});}
 pinta();"""))
+
+# --- Calculadora de jubilación ---
+S['tools'].insert(3, ("calculadora-jubilacion", "¿Cuándo me jubilo?", "Fecha exacta de tu jubilación ordinaria y anticipada según tu edad y lo cotizado.", ""))
+S['aff']["calculadora-jubilacion"] = amz("libro planificar jubilacion", "Libros para planificar la jubilación") + amz("agenda 2027", "Agendas 2027")
+P.append(("calculadora-jubilacion", "Calculadora de jubilación: ¿cuándo me jubilo? Fecha exacta 2027 | CalculadoraDías",
+"Calcula el día exacto en que podrás jubilarte según tu fecha de nacimiento y los años cotizados: 65 o 67 años con las reglas de 2027, jubilación anticipada y cuenta atrás.",
+"""<p class="lead">Pon tu fecha de nacimiento y lo que llevas cotizado y te decimos el día en que podrás jubilarte, a qué edad y cuánto te falta.</p>
+<div class="card"><label for="a">Fecha de nacimiento</label><input id="a" type="date" value="1962-05-15">
+<div class="row"><div><label for="cy">Años cotizados hasta hoy</label><input id="cy" inputmode="numeric" value="36"></div>
+<div><label for="cm">Meses adicionales</label><input id="cm" inputmode="numeric" value="0"></div></div>
+<label for="s">¿Seguirás cotizando hasta jubilarte?</label><select id="s"><option value="1">Sí, sigo trabajando o cobrando paro contributivo</option><option value="0">No, ya no cotizo</option></select>
+<button onclick="calc()">Calcular mi jubilación</button><div class="res" id="r"></div></div>
+<p class="note">Los años cotizados los ves en tu <a href="https://portal.seg-social.gob.es/wps/portal/importass/importass/tramites/informeVidaLaboral" rel="noopener" target="_blank">informe de vida laboral</a> (sección «Total de días cotizados»: divide entre 365). Cálculo orientativo con las reglas generales de la Ley General de la Seguridad Social; no incluye jubilaciones especiales (profesiones con coeficientes reductores, discapacidad) ni la jubilación activa o demorada.</p>
+<h2>Cómo se calcula la edad de jubilación</h2><p>Desde 2013 la edad ordinaria sube poco a poco hasta los 67 años, salvo para quien ha cotizado mucho. En <b>2027 termina la transición</b>: podrás jubilarte a los <b>65 años si acumulas 38 años y 6 meses cotizados</b>; si no, a los <b>67</b>. Lo que cuenta es la regla del año en que te jubilas y lo cotizado en ese momento, así que alguien que cumple los 65 sin llegar a 38,5 años puede jubilarse antes de los 67 justo el día en que complete ese periodo.</p>
+<table><tr><th>Año</th><th>Edad con menos cotizado</th><th>A los 65 si tienes</th></tr>
+<tr><td>2024</td><td>66 años y 6 meses</td><td>38 años</td></tr><tr><td>2025</td><td>66 años y 8 meses</td><td>38 años y 3 meses</td></tr>
+<tr><td>2026</td><td>66 años y 10 meses</td><td>38 años y 3 meses</td></tr><tr><td>2027 y siguientes</td><td>67 años</td><td>38 años y 6 meses</td></tr></table>
+<h2>Jubilación anticipada</h2><p>La <b>voluntaria</b> permite adelantar hasta 2 años la edad que te corresponda si tienes al menos 35 años cotizados; la <b>involuntaria</b> (por despido o cierre), hasta 4 años con 33 cotizados. En ambos casos la pensión se reduce con un coeficiente por cada mes de adelanto, por lo que conviene pedir antes una simulación en <a href="https://portal.seg-social.gob.es/" rel="noopener" target="_blank">Tu Seguridad Social</a>.</p>
+<p><b>Ejemplo:</b> una persona nacida el 15 de mayo de 1962 con 36 años cotizados en noviembre de 2026 cumple 65 en mayo de 2027, pero entonces solo tendrá unos 36 años y medio. Aunque siga cotizando, no llegará a 38 años y 6 meses hasta después de cumplir los 67, así que su jubilación ordinaria es el 15 de mayo de 2029. Como tendrá más de 35 años cotizados, podría adelantarla de forma voluntaria hasta el 15 de mayo de 2027, con la pensión reducida.</p>""",
+[("¿Con cuántos años me puedo jubilar en 2027?", "A los 65 años si tienes 38 años y 6 meses cotizados o más; con menos, a los 67. Es la regla definitiva que se aplica desde 2027."),
+ ("¿Cuántos años hay que cotizar para jubilarse a los 65?", "En 2026, 38 años y 3 meses; a partir de 2027, 38 años y 6 meses. Para cobrar pensión hacen falta al menos 15 años cotizados, 2 de ellos dentro de los últimos 15."),
+ ("¿Cuándo puedo pedir la jubilación anticipada?", "La voluntaria, hasta 2 años antes de tu edad ordinaria si tienes 35 años cotizados; la involuntaria, hasta 4 años antes con 33 años cotizados. La pensión se reduce por cada mes de adelanto."),
+ ("¿Dónde veo cuántos años he cotizado?", "En el informe de vida laboral de la Seguridad Social, que puedes descargar gratis en su web o app con certificado, Cl@ve o SMS.")],
+"Calculadora de jubilación: ¿cuándo me jubilo?",
+DATEJS + """const RQ={2013:[781,423],2014:[782,426],2015:[783,429],2016:[784,432],2017:[785,435],2018:[786,438],2019:[788,441],2020:[790,444],2021:[792,447],2022:[794,450],2023:[796,453],2024:[798,456],2025:[800,459],2026:[802,459]};
+const rq=y=>y<2013?[780,0]:(RQ[y]||[804,462]);
+const am=(d,n)=>{const y=d.getFullYear(),m=d.getMonth()+n,t=new Date(y,m,1),dim=new Date(t.getFullYear(),t.getMonth()+1,0).getDate();return new Date(t.getFullYear(),t.getMonth(),Math.min(d.getDate(),dim));};
+const mb=(a,b)=>{let m=(b.getFullYear()-a.getFullYear())*12+b.getMonth()-a.getMonth();if(b.getDate()<a.getDate())m--;return m;};
+const ym=m=>{const y=Math.floor(m/12),r=m%12;return (y?y+(y>1?' años':' año'):'')+(y&&r?' y ':'')+(r?r+(r>1?' meses':' mes'):'')||'0 meses';};
+function calc(){const b=pd('a');if(!b)return;const hoy=new Date();hoy.setHours(0,0,0,0);const c0=Math.round(v('cy'))*12+Math.round(v('cm')),sg=document.getElementById('s').value=='1';
+const cot=D=>D>hoy&&sg?c0+mb(hoy,D):c0;let n=780,D;for(;n<=804;n++){D=am(b,n);const r=rq(D.getFullYear());if(n>=r[0]||cot(D)>=r[1])break;}
+const r0=rq(D.getFullYear());if(sg&&n>780&&n<r0[0]){const E=am(hoy,r0[1]-c0);if(E<D&&E>am(b,n-1))D=E;}
+const ord=mb(b,D),cD=cot(D);let h='Podrás jubilarte el:<b class="big">'+fmt(D)+'</b>Con <b>'+ym(ord)+'</b> de edad y unos <b>'+ym(cD)+'</b> cotizados.';
+const f=diff(hoy,D);if(f>0){const mm=mb(hoy,D),r2=am(hoy,mm),dd=diff(r2,D);h+='<br>Te faltan <b>'+ym(mm)+(dd?' y '+dd+' días':'')+'</b> ('+f.toLocaleString('es-ES')+' días).';}else h+='<br>Ya has alcanzado tu edad de jubilación ordinaria.';
+if(cD<180)h+='<br><b>Ojo:</b> para cobrar pensión contributiva necesitas al menos 15 años cotizados.';
+const F=am(b,780),ex=cot(F)>=rq(F.getFullYear())[1]?780:r0[0],A=am(b,ex-24),cA=cot(A);
+if(A<D&&A>hoy)h+='<br><br>Jubilación anticipada voluntaria: '+(cA>=420?'desde el <b>'+fmt(A)+'</b> (a los '+ym(ex-24)+'), con la pensión reducida.':'necesitas 35 años cotizados en ese momento y tendrías unos '+ym(cA)+'.');
+show('r',h);}"""))

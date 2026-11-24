@@ -7,8 +7,8 @@ S = dict(dir="calculadoradias", name="CalculadoraDías", logo="Calculadora<span>
                 ("calcular-edad", "Calculadora de edad exacta", "Edad en años, meses y días, y días hasta tu cumpleaños.", ""),
                 ("cuantos-dias-faltan", "¿Cuántos días faltan para…?", "Cuenta atrás para Navidad, verano o cualquier fecha.", ""),
                 ("semana-del-ano", "¿En qué semana del año estamos?", "Número de semana ISO de cualquier fecha.", "")],
-         home_title="CalculadoraDías | Calculadoras de fechas: días hábiles, días entre fechas, edad",
-         home_desc="Calcula días hábiles, días entre dos fechas, plazos, tu edad exacta, cuenta atrás y la semana del año. Gratis y al momento.",
+         home_title="Calculadora de días hábiles, días entre fechas y plazos | CalculadoraDías",
+         home_desc="Calcula días hábiles y naturales entre fechas, plazos, tu edad exacta y cuándo te jubilas. Con el calendario laboral 2027 oficial del BOE. Gratis y al momento.",
          home_h1="Calculadoras de fechas y plazos",
          home_intro='<p class="lead">Cuenta días naturales y hábiles, calcula plazos, tu edad exacta o cuántos días faltan para cualquier fecha. Todo funciona en tu navegador, sin registros.</p>',
          home_extra='<h2>Días naturales vs días hábiles</h2><p>Los <b>días naturales</b> son todos los del calendario. Los <b>días hábiles</b> excluyen sábados, domingos y festivos (en los procedimientos administrativos en España, los sábados no son hábiles desde la Ley 39/2015). Confundirlos es el error más común al calcular plazos de recursos, entregas o vacaciones.</p>')

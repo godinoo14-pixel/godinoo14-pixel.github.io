@@ -176,3 +176,44 @@ fetch('dgt/ultima.json',{cache:'no-store'}).then(r=>r.json()).then(u=>{const cur
 document.getElementById('um').innerHTML='<p>Última matrícula registrada en la DGT</p><div class="placa" style="font-size:2rem">'+(u.numero!==null?String(u.numero).padStart(4,'0')+' ':'')+u.serie+'</div><p class="note">Dato del fichero de la DGT del '+u.fecha+'</p>'+
 '<table><tr><td>Matrículas al mes (último año)</td><td><b>unas '+Math.round(pm*10000).toLocaleString('es-ES')+'</b> ('+pm.toFixed(1).replace('.',',')+' series de letras)</td></tr><tr><td>Llegada de la letra '+nl+' ('+nxt+')</td><td><b>'+f.toLocaleDateString('es-ES',{month:'long',year:'numeric'})+'</b> (estimación)</td></tr></table>'+
 '<h3>Primera serie de cada año</h3><table><tr><th>Año</th><th>Letras</th></tr>'+Y.slice().reverse().map(y=>'<tr><td>'+y[1]+'</td><td>'+y[0]+'</td></tr>').join('')+'</table>';}).catch(()=>{document.getElementById('um').textContent='No hemos podido cargar el dato. Inténtalo en unos minutos.';});"""))
+
+# --- Impuesto de matriculación (IEDMT) ---
+S['tools'].insert(5, ("impuesto-matriculacion", "Impuesto de matriculación", "Cuánto pagarás al matricular un coche nuevo o importado según su CO2 y tu comunidad.", ""))
+S['aff']["impuesto-matriculacion"] = SEG + amz("portamatriculas coche", "Portamatrículas")
+P.append(("impuesto-matriculacion", "Impuesto de matriculación 2026: calculadora por CO2 y comunidad | CocheCuentas",
+"Calcula el impuesto de matriculación de tu coche nuevo o importado: tramos de CO2 WLTP, tipos de cada comunidad, Canarias, familia numerosa y coches usados de importación.",
+"""<p class="lead">Mete el precio, las emisiones de CO2 y tu comunidad, y te decimos qué tramo te toca y cuánto pagarás en el modelo 576.</p>
+<div class="card"><label for="t">¿Qué vas a matricular?</label><select id="t" onchange="modo();calc()"><option value="n">Coche nuevo comprado en España</option><option value="u">Coche usado importado (valor de tablas de Hacienda)</option></select>
+<div class="row"><div id="bn"><label for="pr">Precio sin IVA (€)</label><input id="pr" inputmode="decimal" value="28000"></div>
+<div id="bu1" style="display:none"><label for="vt">Valor de tablas del modelo nuevo (€)</label><input id="vt" inputmode="decimal" value="35000"></div>
+<div id="bu2" style="display:none"><label for="an">Antigüedad (años desde la 1.ª matriculación)</label><input id="an" inputmode="decimal" value="4"></div>
+<div><label for="co">Emisiones CO2 WLTP (g/km)</label><input id="co" inputmode="numeric" value="135"></div>
+<div><label for="ca">Comunidad donde lo matriculas</label><select id="ca">
+<option value="g">Andalucía, Aragón, Castilla y León, Castilla-La Mancha, Extremadura, Galicia, Madrid, La Rioja</option>
+<option value="16">Asturias, Baleares, Cataluña o Comunidad Valenciana</option><option value="15.9">Región de Murcia</option><option value="15">Cantabria</option>
+<option value="c">Canarias</option><option value="0">Ceuta o Melilla</option></select></div>
+<div><label class="chk" style="margin-top:34px"><input type="checkbox" id="fn"><span>Familia numerosa (5 a 9 plazas)</span></label></div></div>
+<button onclick="calc()">Calcular impuesto</button><div class="res" id="r"></div></div>
+<p class="note">El CO2 WLTP viene en la ficha técnica (casilla V.7) o en la ficha del modelo del concesionario. Los eléctricos puros y los coches de hasta 120 g/km pagan 0 €. Navarra y País Vasco tienen su propia Hacienda foral: confirma allí los tipos.</p>
+<h2>Tramos y tipos en 2026</h2><table><tr><th>CO2 WLTP</th><th>Península y Baleares</th><th>Canarias</th></tr>
+<tr><td>Hasta 120 g/km</td><td>0 %</td><td>0 %</td></tr><tr><td>Más de 120 y menos de 160</td><td>4,75 %</td><td>3,75 %</td></tr>
+<tr><td>De 160 a menos de 200</td><td>9,75 %</td><td>8,75 %</td></tr><tr><td>200 g/km o más</td><td>14,75 %*</td><td>13,75 %</td></tr></table>
+<p class="note">* En el último tramo, Asturias, Baleares, Cataluña y la Comunitat Valenciana aplican el 16 %, Murcia el 15,9 % y Cantabria el 15 %. En Ceuta y Melilla el tipo es 0 %. Fuente: artículo 70 de la Ley 38/1992 de Impuestos Especiales y leyes autonómicas de tributos cedidos.</p>
+<h2>Cómo se calcula</h2><p>Impuesto = base imponible × tipo del tramo. En un <b>coche nuevo</b>, la base es el precio de venta sin IVA (incluidos extras y transporte, descontados los descuentos que aparezcan en factura). En un <b>coche usado importado</b> se paga sobre su valor de mercado: Hacienda toma el precio medio del modelo nuevo (Orden de precios medios de venta) y le aplica un porcentaje según los años: 100 % el primer año, 84 % hasta 2, 67 % hasta 3, 56 % hasta 4, 47 % hasta 5, 39 % hasta 6, 34 % hasta 7, 28 % hasta 8, 24 % hasta 9, 19 % hasta 10, 17 % hasta 11, 13 % hasta 12 y 10 % a partir de 12 años.</p>
+<p><b>Ejemplo:</b> un SUV de gasolina de 28.000 € sin IVA y 135 g/km cae en el tramo del 4,75 %: paga 1.330 € de impuesto de matriculación. Si emitiera 118 g/km pagaría 0 €; por eso, al elegir versión, unos pocos gramos de CO2 pueden ahorrarte más de mil euros.</p>
+<h2>Quién no paga o paga menos</h2><ul><li>Coches de hasta 120 g/km y eléctricos: 0 %.</li><li>Familias numerosas: base reducida al 50 % en vehículos de 5 a 9 plazas (con reconocimiento previo de Hacienda, modelo 05).</li><li>Personas con discapacidad, taxis, autoescuelas y empresas de alquiler: exentos con reconocimiento previo.</li><li>Traslado de residencia desde el extranjero: exento si cumples los requisitos de residencia y uso previo.</li><li>Coches de segunda mano ya matriculados en España: no pagan este impuesto, pagan el de transmisiones (ITP) al cambiar de dueño.</li></ul>
+<p class="note">Se declara con el <a href="https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GE03.shtml" rel="noopener" target="_blank">modelo 576 de la Agencia Tributaria</a> antes de matricular en la DGT. En un coche nuevo normalmente lo gestiona el concesionario y va incluido en el precio final.</p>""",
+[("¿Cuánto es el impuesto de matriculación de un coche?", "Depende de sus emisiones de CO2 WLTP: 0 % hasta 120 g/km, 4,75 % hasta 160, 9,75 % hasta 200 y 14,75 % a partir de 200 g/km (algo más en algunas comunidades), aplicado sobre el precio sin IVA."),
+ ("¿Los coches eléctricos pagan impuesto de matriculación?", "No. Los eléctricos puros y, en general, cualquier coche con 120 g/km de CO2 o menos tributan al 0 %."),
+ ("¿Un coche de segunda mano paga impuesto de matriculación?", "Solo si viene del extranjero y se matricula por primera vez en España. Si ya tenía matrícula española, al comprarlo pagas el impuesto de transmisiones patrimoniales (ITP), no el de matriculación."),
+ ("¿Cómo se calcula el impuesto de matriculación de un coche importado?", "Sobre el valor de mercado que fija Hacienda: el precio medio del modelo nuevo multiplicado por el porcentaje de su antigüedad (por ejemplo, 47 % con 4 a 5 años), y a ese valor se le aplica el tipo de su tramo de CO2.")],
+"Calculadora del impuesto de matriculación",
+"""const DEP=[100,84,67,56,47,39,34,28,24,19,17,13,10];
+function modo(){const u=document.getElementById('t').value=='u';document.getElementById('bn').style.display=u?'none':'';document.getElementById('bu1').style.display=u?'':'none';document.getElementById('bu2').style.display=u?'':'none';}
+function calc(){const u=document.getElementById('t').value=='u',co=v('co'),ca=document.getElementById('ca').value;
+let base,txt='';if(u){const a=v('an'),i=a<=1?0:Math.min(12,Math.ceil(a)-1),p=DEP[i];base=v('vt')*p/100;txt='Valor fiscal: '+eur(v('vt'))+' × '+p+' % = <b>'+eur(base)+'</b><br>';}else base=v('pr');
+if(document.getElementById('fn').checked){base/=2;txt+='Base reducida al 50 % por familia numerosa.<br>';}
+const b=co<=120?0:co<160?1:co<200?2:3;let T=[0,4.75,9.75,14.75];if(ca=='c')T=[0,3.75,8.75,13.75];else if(ca=='0')T=[0,0,0,0];else if(ca!='g')T=[0,4.75,9.75,parseFloat(ca)];
+const t=T[b],imp=base*t/100,TR=['hasta 120 g/km','de 121 a 159 g/km','de 160 a 199 g/km','200 g/km o más'];
+let sig='';if(b>0&&ca!='0'){const lim=[0,120,159,199][b];sig='<br>Con '+lim+' g/km bajarías al tramo del '+nf(T[b-1])+' %: pagarías '+eur(base*T[b-1]/100)+' ('+eur(imp-base*T[b-1]/100)+' menos).';}
+show('r','Impuesto de matriculación:<b class="big">'+eur(imp)+'</b>'+txt+'Tramo: <b>'+TR[b]+'</b> → tipo del <b>'+nf(t)+' %</b> sobre '+eur(base)+sig);}"""))

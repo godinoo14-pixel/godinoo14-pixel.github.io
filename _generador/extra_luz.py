@@ -99,3 +99,33 @@ h+='<div style="display:flex;justify-content:space-between;font-size:.75rem;colo
 h+='<h3 style="margin-top:20px">Todas las horas</h3><table><tr><th>Hora</th><th>€/kWh</th></tr>'+v.map(x=>'<tr'+(cur&&x[0]==cur[0]?' style="font-weight:700"':'')+'><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+col(x[1])+';margin-right:8px"></span>'+hh(x[0])+' a '+hh((x[0]+1)%24)+'</td><td>'+pr(x[1])+'</td></tr>').join('')+'</table>';
 document.getElementById('pv').innerHTML=h;}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{D=j;const ks=Object.keys(D.dias).sort();const hoy=fmtD.format(new Date());dia=ks.includes(hoy)?hoy:ks[ks.length-1];pinta();}).catch(()=>{document.getElementById('pv').textContent='No hemos podido cargar los precios. Inténtalo de nuevo en unos minutos.';});"""))
+
+# --- Calculadora de la factura de la luz ---
+S['tools'].insert(1, ("calcular-factura-luz", "Calcula tu factura de la luz", "Desglose completo: potencia, energía, impuesto eléctrico, contador e IVA.", "Factura"))
+S['aff']["calcular-factura-luz"] = CNMC + ENCH
+P.append(("calcular-factura-luz", "Calcular factura de la luz: simulador con impuestos 2026 | GastoLuz",
+"Calcula tu factura de la luz paso a paso: término de potencia, energía, bono social, impuesto eléctrico, alquiler del contador e IVA. Comprueba si tu recibo está bien.",
+"""<p class="lead">Copia los datos de tu contrato o de tu última factura y verás el recibo desglosado línea a línea, como lo calcula tu compañía.</p>
+<div class="card"><div class="row"><div><label for="kw">Potencia contratada (kW)</label><input id="kw" inputmode="decimal" value="3,45"></div>
+<div><label for="d">Días de la factura</label><input id="d" inputmode="numeric" value="30"></div>
+<div><label for="p1">Precio potencia punta (€/kW·día)</label><input id="p1" inputmode="decimal" value="0,10"></div>
+<div><label for="p2">Precio potencia valle (€/kW·día)</label><input id="p2" inputmode="decimal" value="0,04"></div>
+<div><label for="e">Consumo (kWh)</label><input id="e" inputmode="decimal" value="270"></div>
+<div><label for="pe">Precio medio de la energía (€/kWh)</label><input id="pe" inputmode="decimal" value="0,15"></div>
+<div><label for="bs">Financiación bono social (€/día)</label><input id="bs" inputmode="decimal" value="0,02469"></div>
+<div><label for="ct">Alquiler del contador (€/día)</label><input id="ct" inputmode="decimal" value="0,02663"></div></div>
+<label for="iv">Impuesto indirecto</label><select id="iv"><option value="21">Península y Baleares: IVA 21 %</option><option value="10">IVA reducido 10 % (solo si el Gobierno lo activa)</option><option value="0">Canarias, vivienda hasta 10 kW: IGIC 0 %</option><option value="3">Canarias, resto: IGIC 3 %</option><option value="1">Ceuta y Melilla: IPSI 1 %</option></select>
+<button onclick="calc()">Calcular factura</button><div class="res" id="r"></div></div>
+<p class="note">Los precios de potencia y energía de ejemplo son orientativos: pon los de tu contrato (vienen en la factura, en «Detalle de la factura»). Si el contador es tuyo, pon 0 en el alquiler. Con tarifa PVPC, usa el precio medio del kWh que aparece en tu factura o mira el <a href="precio-luz-hoy.html">precio de la luz hoy</a>.</p>
+<h2>Cómo se calcula la factura de la luz</h2><ol><li><b>Término de potencia</b> = kW × días × (precio punta + precio valle).</li><li><b>Término de energía</b> = kWh consumidos × precio del kWh.</li><li><b>Financiación del bono social</b> = importe diario × días.</li><li><b>Impuesto especial sobre la electricidad</b> = 5,11269632 % de la suma de los tres anteriores (con un mínimo de 1 € por cada 1.000 kWh).</li><li><b>Alquiler del contador</b> = importe diario × días (el regulado para un contador digital monofásico es 0,02663 €/día, unos 0,81 € al mes).</li><li><b>IVA</b> = 21 % de todo lo anterior, impuesto eléctrico incluido.</li></ol>
+<p><b>Ejemplo:</b> 3,45 kW, 30 días y 270 kWh a 0,15 €/kWh. Potencia: 3,45 × 30 × 0,14 = 14,49 €. Energía: 40,50 €. Bono social: 0,74 €. Impuesto eléctrico: 2,85 €. Contador: 0,80 €. IVA: 12,47 €. <b>Total: 71,85 €</b>, es decir, unos 0,27 € por cada kWh consumido cuando se suman todos los costes.</p>
+<h2>Cómo pagar menos</h2><ul><li>Si la potencia pesa mucho en tu factura, comprueba si puedes <a href="potencia-contratada.html">bajar la potencia contratada</a>: cada kW menos ahorra unos 50 € al año con estos precios.</li><li>Mira qué aparatos gastan más con la <a href="consumo-electrodomesticos.html">calculadora de consumo de electrodomésticos</a>.</li><li>Compara ofertas en el <a href="https://comparador.cnmc.gob.es/" rel="noopener" target="_blank">comparador oficial de la CNMC</a> usando tu consumo real.</li></ul>""",
+[("¿Cómo se calcula la factura de la luz?", "Se suman el término de potencia (kW × días × precio), el de energía (kWh × precio) y la financiación del bono social; sobre eso se aplica el impuesto eléctrico del 5,11 %, se añade el alquiler del contador y, al total, el IVA del 21 %."),
+ ("¿Qué IVA tiene la luz ahora?", "En la península y Baleares, el 21 %. En 2026 el Gobierno lo bajó temporalmente al 10 % entre el 22 de marzo y el 31 de mayo para contratos de hasta 10 kW; desde el 1 de junio vuelve a ser del 21 %. Canarias paga IGIC y Ceuta y Melilla, IPSI."),
+ ("¿Cuánto es el impuesto eléctrico?", "El 5,11269632 % de la suma de potencia, energía y bono social, con un mínimo de 1 € por cada 1.000 kWh consumidos en viviendas."),
+ ("¿Cuánto se paga por el alquiler del contador?", "El precio regulado de un contador digital monofásico de alquiler es de 0,02663 € al día, unos 0,81 € al mes más IVA. Si el contador es de tu propiedad, no pagas alquiler.")],
+"Calculadora de la factura de la luz",
+"""function calc(){const d=v('d'),pot=v('kw')*d*(v('p1')+v('p2')),en=v('e')*v('pe'),bs=v('bs')*d,b1=pot+en+bs,iee=Math.max(b1*0.0511269632,v('e')*0.001),ct=v('ct')*d,b2=b1+iee+ct,t=+document.getElementById('iv').value,iva=b2*t/100,tot=b2+iva;
+const L=[['Término de potencia',pot],['Término de energía',en],['Financiación bono social',bs],['Impuesto eléctrico (5,11 %)',iee],['Alquiler del contador',ct],['Impuesto indirecto ('+nf(t)+' %)',iva]];
+const km=v('e')>0?' · '+nf(tot/v('e'),3)+' € por kWh con todo incluido':'';
+show('r','Total de la factura:<b class="big">'+eur(tot)+'</b>'+nf(d,0)+' días'+km+'<table>'+L.map(x=>'<tr><td>'+x[0]+'</td><td style="text-align:right">'+eur(x[1])+'</td><td style="text-align:right;color:#6b7185">'+nf(x[1]/tot*100,0)+' %</td></tr>').join('')+'</table>');}"""))
