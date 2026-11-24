@@ -1,6 +1,8 @@
 import json, os, html, urllib.parse
 # === CONFIGURACIÓN DE MONETIZACIÓN ===
 ADSENSE_CLIENT = "ca-pub-3194168303618877"   # p.ej. "ca-pub-1234567890123456" cuando AdSense te apruebe
+GA_ID = ""          # p.ej. "G-ABC123XYZ" (Google Analytics); se usa GA_IDS por dominio si está relleno
+GA_IDS = {}         # {"cochecuentas.es": "G-...", "calculadoradias.es": "G-...", "gastoluz.es": "G-..."}
 AMAZON_TAG = ""       # p.ej. "cochecuentas-21" (tu ID de Amazon Afiliados)
 def amz(q, label):
     u = "https://www.amazon.es/s?k=" + urllib.parse.quote_plus(q) + ("&tag=" + AMAZON_TAG if AMAZON_TAG else "")
@@ -37,8 +39,15 @@ const v=id=>parseFloat(String(document.getElementById(id).value).replace(',','.'
 function show(id,h){const r=document.getElementById(id);r.innerHTML=h;r.style.display='block';}
 (function(){let s=null;try{s=localStorage.getItem('ck')}catch(e){}const b=document.getElementById('ck');if(!s)b.style.display='block';
 function set(x){try{localStorage.setItem('ck',x)}catch(e){}b.style.display='none';}
-document.getElementById('cka').onclick=()=>set('1');document.getElementById('ckr').onclick=()=>set('0');})();
+document.getElementById('cka').onclick=()=>{set('1');if(window.loadGA)loadGA();};document.getElementById('ckr').onclick=()=>set('0');if(s==='1'&&window.loadGA)loadGA();})();
 """
+
+def ga_js(site):
+    gid = GA_IDS.get(site.get('domain', ''), GA_ID)
+    if not gid:
+        return ""
+    return ("window.loadGA=function(){if(window._ga)return;window._ga=1;var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=" + gid + "';document.head.appendChild(s);"
+            "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());gtag('config','" + gid + "',{anonymize_ip:true});};\n")
 
 def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     base = site['base']
@@ -95,7 +104,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
 <p>Más calculadoras gratis: {net}</p><a href="sobre-nosotros.html">Sobre nosotros</a><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
 <div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
 <script>
-{JS_BASE}{counter}
+{ga_js(site)}{JS_BASE}{counter}
 {extra_js}
 if(typeof calc==='function'){{try{{const r=document.getElementById('r');if(r&&r.style.display!=='block')calc();}}catch(e){{}}}}
 </script></body></html>"""
