@@ -1,7 +1,7 @@
 from gen import build
 S = dict(dir="cochecuentas", name="CocheCuentas", logo="Coche<span>Cuentas</span>", acc="#d9480f",
          base="https://cochecuentas.es/", domain="cochecuentas.es",
-         tools=[("etiqueta-dgt", "Etiqueta DGT por matrícula", "Escribe tu matrícula y descubre si tu coche es 0, ECO, C, B o sin etiqueta.", "Etiqueta DGT"),
+         tools=[("etiqueta-dgt", "Etiqueta DGT por matrícula", "Escribe la matrícula y te decimos su etiqueta oficial: 0, ECO, C, B o sin etiqueta.", "Etiqueta DGT"),
                 ("coste-por-km", "Coste por kilómetro", "Cuánto te cuesta cada km y cada mes en combustible.", "Coste/km"),
                 ("electrico-vs-gasolina", "Eléctrico vs gasolina o diésel", "Cuánto ahorras al año pasándote al eléctrico.", "Eléctrico vs"),
                 ("coste-anual-coche", "Coste anual real de un coche", "Seguro, impuesto, ITV, mantenimiento, combustible y pérdida de valor.", ""),
@@ -15,49 +15,37 @@ S = dict(dir="cochecuentas", name="CocheCuentas", logo="Coche<span>Cuentas</span
          home_extra='<h2>¿Por qué calcular el coste real de tu coche?</h2><p>La mayoría de conductores solo piensa en la letra o en el combustible, pero un coche también cuesta seguro, impuesto de circulación, ITV, neumáticos, revisiones y, sobre todo, la pérdida de valor. Sumarlo todo te ayuda a decidir si comprar, mantener o cambiar de coche con números en la mano.</p>')
 
 P = []
-P.append(("etiqueta-dgt", "Etiqueta DGT por matrícula: ¿qué distintivo tiene mi coche? | CocheCuentas",
-"Escribe la matrícula y el combustible de tu coche y te decimos qué etiqueta medioambiental de la DGT le corresponde: 0, ECO, C, B o sin etiqueta.",
-"""<p class="lead">Escribe la matrícula y el tipo de motor. Calculamos la fecha de matriculación a partir de las letras y te decimos qué etiqueta le corresponde.</p>
-<div class="card"><label for="m">Matrícula</label><input id="m" placeholder="1234 KLM" autocapitalize="characters" autocomplete="off" enterkeyhint="go" onkeydown="if(event.key==='Enter')calc()" style="font-size:1.4rem;letter-spacing:2px;text-transform:uppercase">
-<label for="t">Tipo de motor</label><select id="t">
-<option value="g" selected>Gasolina</option><option value="d">Diésel</option>
-<option value="hev">Híbrido no enchufable (HEV o mild hybrid)</option><option value="gas">Gas (GLP, GNC o GNL)</option>
-<option value="phev">Híbrido enchufable con menos de 40 km eléctricos</option><option value="phev40">Híbrido enchufable con 40 km o más</option>
-<option value="bev">Eléctrico puro</option></select>
+P.append(("etiqueta-dgt", "Etiqueta DGT por matrícula: consulta qué distintivo tiene tu coche | CocheCuentas",
+"Escribe la matrícula y te decimos al instante la etiqueta medioambiental oficial de tu coche o moto: 0, ECO, C, B o sin etiqueta. Datos oficiales de la DGT actualizados a diario.",
+"""<p class="lead">Escribe la matrícula y te decimos al momento la etiqueta medioambiental de tu coche, moto o ciclomotor. Solo la matrícula, nada más.</p>
+<div class="card"><label for="m">Matrícula</label><input id="m" placeholder="1234 KLM" autocapitalize="characters" autocomplete="off" enterkeyhint="search" onkeydown="if(event.key==='Enter')calc()" style="font-size:1.5rem;letter-spacing:3px;text-transform:uppercase;text-align:center">
 <button onclick="calc()">Ver mi etiqueta</button><div class="res" id="r"></div>
-<p class="note" style="margin-top:14px"><a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" rel="noopener" target="_blank"><b>Confirmar gratis en la web oficial de la DGT →</b></a></p></div>
-<p class="note">Cálculo orientativo para turismos. Las letras de la matrícula indican la fecha aproximada de matriculación en España; la etiqueta oficial depende de la norma Euro de la ficha técnica. Un coche importado de segunda mano puede tener matrícula reciente y ser más antiguo: en ese caso, confírmalo en la DGT.</p>
-<h2>Cómo sabemos la fecha por la matrícula</h2><p>Desde septiembre de 2000 las matrículas españolas avanzan en orden: empezaron en 0000 BBB y siguen hasta hoy. Comparando las tres letras con la serie que se estaba asignando cada mes se puede saber, con un margen de pocos meses, cuándo se matriculó el coche. Las matrículas provinciales (por ejemplo, MA-1234-BZ) son anteriores a septiembre de 2000.</p>
-<h2>Criterios de la DGT para turismos</h2><table><tr><th>Etiqueta</th><th>Turismos y furgonetas ligeras</th></tr>
+<p class="note" id="fd" style="margin-top:12px">Datos oficiales del registro de la DGT, actualizados cada día.</p></div>
+<p class="note">Funciona con todas las matrículas españolas: las actuales (1234 KLM), las provinciales antiguas (MA-1234-BZ) y las de ciclomotor (C-1234-BCD). No guardamos las matrículas que consultas.</p>
+<h2>Qué significa cada etiqueta</h2><table><tr><th>Etiqueta</th><th>Turismos y furgonetas ligeras</th></tr>
 <tr><td><b>0 emisiones</b></td><td>Eléctricos de batería, de autonomía extendida, híbridos enchufables con 40 km o más de autonomía y pila de combustible.</td></tr>
-<tr><td><b>ECO</b></td><td>Enchufables con menos de 40 km, híbridos no enchufables y vehículos de gas (que además cumplan los criterios de la C).</td></tr>
+<tr><td><b>ECO</b></td><td>Enchufables con menos de 40 km, híbridos no enchufables y vehículos de gas que además cumplen los criterios de la C.</td></tr>
 <tr><td><b>C</b></td><td>Gasolina matriculados desde enero de 2006 y diésel desde septiembre de 2015.</td></tr>
 <tr><td><b>B</b></td><td>Gasolina matriculados desde enero de 2001 y diésel desde 2006.</td></tr>
 <tr><td><b>Sin etiqueta</b></td><td>Gasolina anteriores a 2001 y diésel anteriores a 2006.</td></tr></table>
-<p class="note">Fuente: <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" rel="noopener" target="_blank">Sede electrónica de la DGT</a>.</p>
-<h2>¿Para qué sirve la etiqueta?</h2><p>Las zonas de bajas emisiones (ZBE) de las ciudades usan el distintivo para decidir quién puede entrar, aparcar o pagar menos en zona regulada. Los coches sin etiqueta son los más afectados por las restricciones.</p>""",
-[("¿Puedo saber la etiqueta de un coche solo con la matrícula?", "Sí, de forma orientativa: la matrícula indica la fecha aproximada de matriculación, y con el tipo de combustible se deduce la etiqueta. El dato oficial lo da la DGT en su sede electrónica, gratis y sin identificarse, solo con la matrícula."),
+<h2>¿Para qué sirve la etiqueta?</h2><p>Las zonas de bajas emisiones (ZBE) de las ciudades usan el distintivo para decidir quién puede entrar, aparcar o pagar menos en zona regulada. Los vehículos sin etiqueta son los más afectados por las restricciones, y llevar la pegatina en el parabrisas es obligatorio en muchas ciudades para circular por esas zonas.</p>
+<p class="note">Fuente de los datos: Dirección General de Tráfico, fichero abierto de distintivos ambientales del parque de vehículos.</p>""",
+[("¿Cómo sé qué etiqueta tiene mi coche?", "Escribe la matrícula en esta página y te diremos al instante su distintivo ambiental según el registro oficial de la DGT, que se actualiza cada día."),
  ("¿Desde cuándo tienen etiqueta C los diésel?", "Según la DGT, los turismos diésel matriculados a partir de septiembre de 2015 tienen etiqueta C; los matriculados desde 2006 tienen la B."),
- ("¿Un mild hybrid tiene etiqueta ECO?", "Por lo general sí: la mayoría de microhíbridos de 48 V se homologan como híbridos y reciben etiqueta ECO. Confírmalo con la matrícula en la DGT."),
+ ("¿Por qué mi coche no tiene etiqueta?", "Porque no cumple las normas de emisiones Euro necesarias: en turismos, suelen ser gasolina anteriores a 2001 y diésel anteriores a 2006."),
  ("¿Dónde se compra la pegatina?", "En oficinas de Correos, talleres autorizados, gestorías y estancos autorizados, presentando el permiso de circulación.")],
 "Etiqueta DGT por matrícula",
-"""const LET='BCDFGHJKLMNPRSTVWXYZ';
-const K=[['BBB',2000+8.5/12],['BDR',2001],['BRT',2002],['CDC',2003],['CRC',2004],['DFF',2005],['DVB',2006],['FKC',2007],['FYY',2008],['GKH',2009],['GSR',2010],['HBG',2011],['HHT',2012],['HNK',2013],['HVF',2014],['JBY',2015],['JKZ',2016],['JVZ',2017],['KGN',2018],['KSS',2019],['LDR',2020],['LMC',2021],['LVV',2022],['MDF',2023],['MMN',2024],['MXP',2025],['NJS',2026],['NRY',2026+8/12]];
-const ix=s=>LET.indexOf(s[0])*400+LET.indexOf(s[1])*20+LET.indexOf(s[2]);
-function fecha(l){const x=ix(l);if(x<0)return null;for(let i=0;i<K.length-1;i++){const a=ix(K[i][0]),b=ix(K[i+1][0]);if(x>=a&&x<b)return K[i][1]+(K[i+1][1]-K[i][1])*(x-a)/(b-a);}return x>=ix(K[K.length-1][0])?K[K.length-1][1]:null;}
-const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const L={'0':['0 EMISIONES','#1c7ed6'],'ECO':['ECO','#2f9e44'],'C':['C','#37b24d'],'B':['B','#f59f00'],'N':['SIN ETIQUETA','#868e96']};
-function calc(){const raw=document.getElementById('m').value.toUpperCase().replace(/[^A-Z0-9]/g,''),t=document.getElementById('t').value;
-if(t=='bev'||t=='phev40'){out('0',null,'');return;}
+"""const N={1:['B','#f59f00','Etiqueta amarilla.'],2:['C','#37b24d','Etiqueta verde.'],3:['ECO','#2f9e44','Etiqueta verde y azul.'],4:['0 EMISIONES','#1c7ed6','Etiqueta azul.'],5:['SIN ETIQUETA','#868e96','No tiene derecho a distintivo ambiental. Revisa las zonas de bajas emisiones de tu ciudad.']};
+fetch('dgt/fecha.txt').then(r=>r.ok?r.text():'').then(t=>{if(t)document.getElementById('fd').textContent='Datos oficiales del registro de la DGT, actualizados el '+t.trim()+'.';}).catch(()=>{});
+async function calc(){const raw=document.getElementById('m').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
 if(!raw){document.getElementById('r').style.display='none';return;}
-let f=null,txt='',vieja=false;const m=raw.match(/^\\d{4}([B-DF-HJ-NP-TV-Z]{3})$/);
-if(m){f=fecha(m[1]);if(f===null){show('r','No reconocemos esa combinación de letras. Comprueba la matrícula.');return;}const y=Math.floor(f),mo=Math.min(11,Math.floor((f-y)*12));txt='Matriculado aprox. en <b>'+MES[mo]+' de '+y+'</b>.';}
-else if(/^[A-Z]{1,2}\\d{4,6}[A-Z]{0,2}$/.test(raw)){vieja=true;txt='Matrícula provincial: <b>anterior a septiembre de 2000</b>.';f=2000.5;}
-else{show('r','Escribe una matrícula válida, por ejemplo <b>1234 KLM</b>.');return;}
-if(t=='phev'||t=='hev'||t=='gas'){out('ECO',null,txt+' Además debe cumplir los criterios de la etiqueta C.');return;}
-let e,lim;if(t=='g'){e=f>=2006?'C':f>=2001?'B':'N';lim=[2006,2001];}else{e=f>=2015+8/12?'C':f>=2006?'B':'N';lim=[2015+8/12,2006];}
-const cerca=!vieja&&lim.some(l=>Math.abs(f-l)<0.25);out(e,cerca,txt);}
-function out(e,cerca,txt){show('r','Tu coche probablemente tiene:<b class="big" style="color:'+L[e][1]+'">'+L[e][0]+'</b>'+txt+(cerca?'<br><b>Ojo:</b> la fecha está justo en el límite entre dos etiquetas; confírmalo en la DGT.':'')+(e=='N'?'<br>Revisa las zonas de bajas emisiones de tu ciudad.':''));}"""))
+show('r','Buscando '+raw+'…');let v=0,m;
+try{if(m=raw.match(/^(\\d{4})([B-DF-HJ-NP-TV-Z]{3})$/)){const r=await fetch('dgt/m/'+m[2]+'.bin');if(r.ok){const b=new Uint8Array(await r.arrayBuffer());const n=+m[1],x=b[n>>1]||0;v=n&1?x>>4:x&15;}}
+else if(m=raw.match(/^([A-Z]{1,2})(\\d{3,})([A-Z]*)$/)){const r=await fetch('dgt/o/'+m[1]+m[2].slice(0,2)+'.txt');if(r.ok){const k=m[2].slice(2)+m[3]+':';const l=(await r.text()).split('\\n').find(x=>x.startsWith(k));if(l)v=+l.slice(k.length);}}
+else{show('r','Escribe una matrícula válida, por ejemplo <b>1234 KLM</b>.');return;}}
+catch(e){show('r','No hemos podido consultar ahora mismo. Inténtalo de nuevo en unos segundos.');return;}
+if(!N[v]){show('r','No encontramos la matrícula <b>'+raw+'</b> en el registro. Revisa que esté bien escrita.');return;}
+show('r','La matrícula <b>'+raw+'</b> tiene:<b class="big" style="color:'+N[v][1]+'">'+N[v][0]+'</b>'+N[v][2]);}"""))
 
 P.append(("coste-por-km", "Calculadora de coste por kilómetro del coche | CocheCuentas",
 "Calcula cuánto te cuesta cada kilómetro, cada mes y cada año en combustible según el consumo de tu coche y el precio del litro.",
