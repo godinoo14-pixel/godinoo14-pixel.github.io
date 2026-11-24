@@ -1,7 +1,7 @@
 import json, os, html, urllib.parse
 # === CONFIGURACIÓN DE MONETIZACIÓN ===
 ADSENSE_CLIENT = "ca-pub-3194168303618877"   # p.ej. "ca-pub-1234567890123456" cuando AdSense te apruebe
-GA_ID = ""          # p.ej. "G-ABC123XYZ" (Google Analytics); se usa GA_IDS por dominio si está relleno
+GA_ID = "GTM-5RTXD6QD"          # p.ej. "G-ABC123XYZ" (Google Analytics); se usa GA_IDS por dominio si está relleno
 GA_IDS = {}         # {"cochecuentas.es": "G-...", "calculadoradias.es": "G-...", "gastoluz.es": "G-..."}
 AMAZON_TAG = ""       # p.ej. "cochecuentas-21" (tu ID de Amazon Afiliados)
 def amz(q, label):
@@ -47,7 +47,7 @@ def ga_js(site):
     if not gid:
         return ""
     return ("window.loadGA=function(){if(window._ga)return;window._ga=1;var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=" + gid + "';document.head.appendChild(s);"
-            "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());gtag('config','" + gid + "',{anonymize_ip:true});};\n")
+            "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());" + ("gtag('config','" + gid + "');" if gid.startswith("G-") else "") + "};\n")
 
 def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     base = site['base']
