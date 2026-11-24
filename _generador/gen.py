@@ -73,6 +73,12 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
              f'<a href="https://wa.me/?text={q(title.split(" | ")[0] + " " + url)}" rel="noopener" target="_blank">WhatsApp</a>'
              f'<a href="https://t.me/share/url?url={q(url)}&text={q(title.split(" | ")[0])}" rel="noopener" target="_blank">Telegram</a>'
              f'<a href="https://twitter.com/intent/tweet?url={q(url)}&text={q(title.split(" | ")[0])}" rel="noopener" target="_blank">X</a></div>') if is_tool else ''
+    counter = "" if slug in ("404", "estadisticas") else (
+        "(function(){try{if(localStorage.getItem('nocount'))return;}catch(e){}"
+        "var d=new Date(),k=d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');"
+        "var h=function(x){try{fetch('https://abacus.jasoncameron.dev/hit/" + site['domain'] + "/'+x).catch(function(){});}catch(e){}};"
+        "h('total');h('d-'+k);h('p-" + slug + "');"
+        "try{if(localStorage.getItem('ck')==='1'&&localStorage.getItem('uv')!==k){localStorage.setItem('uv',k);h('u-'+k);}}catch(e){}})();\n")
     navl = "".join(f'<a href="{t[0]}.html">{t[3]}</a>' for t in site['tools'][:3])
     e = html.escape
     return f"""<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -89,7 +95,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
 <p>Más calculadoras gratis: {net}</p><a href="sobre-nosotros.html">Sobre nosotros</a><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
 <div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
 <script>
-{JS_BASE}
+{JS_BASE}{counter}
 {extra_js}
 if(typeof calc==='function'){{try{{const r=document.getElementById('r');if(r&&r.style.display!=='block')calc();}}catch(e){{}}}}
 </script></body></html>"""
@@ -100,10 +106,10 @@ def legal(site):
 <h2>Objeto</h2><p>{n} ofrece calculadoras y herramientas gratuitas de carácter informativo. Los resultados son estimaciones orientativas y no constituyen asesoramiento profesional. El titular no se responsabiliza de decisiones tomadas en base a ellos.</p>
 <h2>Propiedad intelectual</h2><p>Los textos, diseño y código de este sitio pertenecen a su titular salvo indicación en contrario. Queda prohibida su reproducción sin autorización.</p>
 <h2>Enlaces de afiliado</h2><p>Este sitio puede contener enlaces de afiliado: si compras a través de ellos podemos recibir una comisión sin coste adicional para ti.</p>"""
-    pr = f"""<p><b>Responsable:</b> {OWNER}.</p><h2>Qué datos tratamos</h2><p>Las calculadoras funcionan íntegramente en tu navegador: los datos que introduces no se envían ni se guardan en ningún servidor. Solo se tratan datos de navegación a través de herramientas de analítica y publicidad (Google) si das tu consentimiento.</p>
+    pr = f"""<p><b>Responsable:</b> {OWNER}.</p><h2>Qué datos tratamos</h2><p>Las calculadoras funcionan íntegramente en tu navegador: los datos que introduces no se envían ni se guardan en ningún servidor. Contamos las páginas vistas de forma anónima con un contador externo (Abacus), que solo suma uno por cada visita y no guarda cookies, direcciones ni datos que te identifiquen. Si aceptas las cookies, además contamos una vez al día tu navegador como visitante único. Las herramientas de publicidad de Google solo se activan si das tu consentimiento.</p>
 <h2>Base legal</h2><p>Tu consentimiento (art. 6.1.a RGPD), que puedes retirar en cualquier momento borrando las cookies de tu navegador.</p><h2>Derechos</h2><p>Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad contactando con el responsable. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>"""
     ck = """<p>Este sitio usa cookies técnicas (necesarias para recordar tu elección sobre cookies) y, solo si las aceptas, cookies de terceros:</p>
-<table><tr><th>Cookie</th><th>Titular</th><th>Finalidad</th></tr><tr><td>ck (localStorage)</td><td>Propia</td><td>Recordar tu consentimiento</td></tr><tr><td>_ga, _gid</td><td>Google Analytics</td><td>Estadísticas de visitas</td></tr><tr><td>__gads, IDE</td><td>Google AdSense</td><td>Mostrar y medir publicidad</td></tr></table>
+<table><tr><th>Cookie</th><th>Titular</th><th>Finalidad</th></tr><tr><td>ck (localStorage)</td><td>Propia</td><td>Recordar tu consentimiento</td></tr><tr><td>uv (localStorage)</td><td>Propia</td><td>Contar visitantes únicos por día (solo si aceptas)</td></tr><tr><td>_ga, _gid</td><td>Google Analytics</td><td>Estadísticas de visitas</td></tr><tr><td>__gads, IDE</td><td>Google AdSense</td><td>Mostrar y medir publicidad</td></tr></table>
 <p>Puedes retirar el consentimiento o borrar las cookies desde la configuración de tu navegador. Cómo usa Google los datos: policies.google.com/technologies/partner-sites</p>"""
     return [("aviso-legal", "Aviso legal | " + n, "Aviso legal de " + n, al),
             ("privacidad", "Política de privacidad | " + n, "Política de privacidad de " + n, pr),
@@ -128,6 +134,34 @@ def build(site, pages):
         open(f"{d}/{slug}.html", "w").write(page(site, slug, t, ds, b))
     open(f"{d}/404.html", "w").write(page(site, "404", "Página no encontrada | " + site['name'], "Página no encontrada",
                                           '<p>Esta página no existe. <a href="index.html">Vuelve al inicio</a>.</p>'))
+    pages_list = [("index", "Portada")] + [(t[0], t[1]) for t in site['tools']]
+    others = " · ".join(f'<a href="{u}estadisticas.html">{n}</a>' for n, u in NETWORK if n != site['name'])
+    stats = f"""<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Estadísticas | {site['name']}</title><link rel="stylesheet" href="style.css"></head><body>
+<header><div class="w"><a class="logo" href="index.html">{site['logo']}</a></div></header><main class="w"><h1>Visitas de {site['name']}</h1>
+<p class="note">Panel privado: no aparece en Google ni está enlazado. Otras webs: {others}</p>
+<div class="card"><div class="grid" id="sum" style="grid-template-columns:repeat(2,1fr)"></div><div id="bars" style="display:flex;align-items:flex-end;gap:3px;height:140px;margin-top:16px"></div><div id="bl" style="display:flex;justify-content:space-between;font-size:.75rem;color:#6b7185"></div></div>
+<div class="card"><b>Páginas más vistas (desde siempre)</b><table id="pg"></table></div>
+<div class="card"><b>Tus propias visitas</b><p class="note" id="nc"></p><button id="nb" style="width:auto;padding:10px 16px"></button></div>
+<p class="note">Visitas = páginas vistas. Visitantes únicos = navegadores distintos al día que aceptaron cookies, así que suelen ser menos que los reales.</p></main>
+<script>
+const NS='{site['domain']}',P={json.dumps(pages_list, ensure_ascii=False)};
+const sleep=m=>new Promise(r=>setTimeout(r,m));
+async function g(k){{await sleep(380);try{{const r=await fetch('https://abacus.jasoncameron.dev/get/'+NS+'/'+k);if(!r.ok)return 0;return (await r.json()).value||0;}}catch(e){{return 0;}}}}
+const dk=d=>d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+function box(t,v,s){{return '<div class="tool"><p>'+t+'</p><h3 style="font-size:1.6rem;margin:4px 0">'+v.toLocaleString('es-ES')+'</h3><p>'+(s||'')+'</p></div>';}}
+function nc(){{let on=false;try{{on=!!localStorage.getItem('nocount')}}catch(e){{}}document.getElementById('nc').textContent=on?'Tus visitas desde este navegador NO se cuentan.':'Tus visitas desde este navegador SÍ se cuentan.';document.getElementById('nb').textContent=on?'Volver a contarme':'No contar mis visitas en este navegador';}}
+document.getElementById('nb').onclick=()=>{{try{{localStorage.getItem('nocount')?localStorage.removeItem('nocount'):localStorage.setItem('nocount','1')}}catch(e){{}}nc();}};nc();
+(async()=>{{const days=[];for(let i=13;i>=0;i--){{const d=new Date();d.setDate(d.getDate()-i);days.push(d);}}
+const tot=await g('total');const vis=[],uni=[];
+for(const d of days){{vis.push(await g('d-'+dk(d)));}}
+const td=vis[13],yd=vis[12],w7=vis.slice(7).reduce((a,b)=>a+b,0);const u0=await g('u-'+dk(days[13]));
+document.getElementById('sum').innerHTML=box('Hoy',td,u0+' visitantes únicos')+box('Ayer',yd,'')+box('Últimos 7 días',w7,'')+box('Total',tot,'desde que se instaló el contador');
+const mx=Math.max(1,...vis);document.getElementById('bars').innerHTML=vis.map((v,i)=>'<div title="'+days[i].toLocaleDateString('es-ES')+': '+v+'" style="flex:1;height:'+Math.max(3,Math.round(v/mx*100))+'%;background:{site['acc']};border-radius:3px 3px 0 0"></div>').join('');
+document.getElementById('bl').innerHTML='<span>'+days[0].toLocaleDateString('es-ES',{{day:'numeric',month:'short'}})+'</span><span>hoy</span>';
+const rows=[];for(const [s,n] of P){{rows.push([n,s,await g('p-'+s)]);rows.sort((a,b)=>b[2]-a[2]);document.getElementById('pg').innerHTML='<tr><th>Página</th><th>Visitas</th></tr>'+rows.map(r=>'<tr><td><a href="'+(r[1]=='index'?'./':r[1]+'.html')+'">'+r[0]+'</a></td><td>'+r[2].toLocaleString('es-ES')+'</td></tr>').join('');}}
+}})();
+</script></body></html>"""
+    open(f"{d}/estadisticas.html", "w").write(stats)
     letter = site['name'][0]
     open(f"{d}/favicon.svg", "w").write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="{site["acc"]}"/><text x="32" y="44" font-family="Arial,sans-serif" font-size="36" font-weight="700" fill="#fff" text-anchor="middle">{letter}</text></svg>')
     about = site.get('about', f"<p>{site['name']} es un proyecto independiente de calculadoras gratuitas en español. Cada herramienta funciona en tu navegador, sin registro y sin guardar tus datos.</p>") + \
