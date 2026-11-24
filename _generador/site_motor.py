@@ -36,6 +36,7 @@ P.append(("etiqueta-dgt", "Etiqueta DGT por matrícula: consulta qué distintivo
  ("¿Dónde se compra la pegatina?", "En oficinas de Correos, talleres autorizados, gestorías y estancos autorizados, presentando el permiso de circulación.")],
 "Etiqueta DGT por matrícula",
 """const N={1:['B','#f59f00','Etiqueta amarilla.'],2:['C','#37b24d','Etiqueta verde.'],3:['ECO','#2f9e44','Etiqueta verde y azul.'],4:['0 EMISIONES','#1c7ed6','Etiqueta azul.'],5:['SIN ETIQUETA','#868e96','No tiene derecho a distintivo ambiental. Revisa las zonas de bajas emisiones de tu ciudad.']};
+N[6]=N[1];N[7]=N[2];N[8]=N[3];N[9]=N[4];
 fetch('dgt/fecha.txt').then(r=>r.ok?r.text():'').then(t=>{if(t)document.getElementById('fd').textContent='Datos oficiales del registro de la DGT, actualizados el '+t.trim()+'.';}).catch(()=>{});
 async function calc(){const raw=document.getElementById('m').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
 if(!raw){document.getElementById('r').style.display='none';return;}
