@@ -47,7 +47,8 @@ P.append(("dias-habiles", "Calculadora de días hábiles entre dos fechas | Calc
 <h2>Días hábiles en plazos administrativos</h2><p>Según la Ley 39/2015, cuando un plazo se fija en días se entienden hábiles, excluyendo sábados, domingos y festivos. Si el último día del plazo es inhábil, se pasa al siguiente hábil. Para plazos judiciales, además, agosto es inhábil salvo excepciones.</p>""",
 [("¿El sábado es día hábil?", "En plazos administrativos, no. En el ámbito laboral depende del convenio: en comercio, por ejemplo, el sábado suele ser laborable."),
  ("¿Agosto es hábil?", "Para plazos administrativos sí. Para plazos procesales en los juzgados, agosto se considera inhábil salvo para actuaciones urgentes.")],
-None, DATEJS + """function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>b)[a,b]=[b,a];const h=hol(),m=v('m');let n=0,w=0,f=0,t=0;
+None, DATEJS + """try{const q=new URLSearchParams(location.search).get('f');if(q){document.getElementById('f').value=q.split(',').join('\\n');document.getElementById('a').value='2027-01-01';document.getElementById('b').value='2027-12-31';}}catch(e){}
+function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>b)[a,b]=[b,a];const h=hol(),m=v('m');let n=0,w=0,f=0,t=0;
 for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){t++;const g=d.getDay();if(g==0||(m==2&&g==6)){w++;continue;}if(h.has(iso(d))){f++;continue;}n++;}
 show('r','Días hábiles:<b class="big">'+n+'</b>Total días: '+t+' · Fines de semana: '+w+' · Festivos excluidos: '+f);}"""))
 

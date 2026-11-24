@@ -123,3 +123,56 @@ function otra(){document.getElementById('m').value='';document.getElementById('r
 function usar(p){document.getElementById('m').value=p;calc();}
 try{const q=new URLSearchParams(location.search).get('m');if(q)document.getElementById('m').value=q;}catch(e){}
 pinta();"""))
+
+# --- Gasolineras más baratas (datos del Ministerio, carb/ lo genera el workflow) ---
+S['tools'].insert(2, ("gasolineras-baratas", "Gasolineras más baratas cerca de ti", "Precios de hoy de todas las gasolineras de España, ordenadas por precio y distancia.", "Gasolineras"))
+S['aff']["gasolineras-baratas"] = amz("soporte movil coche", "Soporte de móvil para el coche") + amz("compresor aire coche portatil", "Compresor para neumáticos")
+P.append(("gasolineras-baratas", "Gasolineras más baratas cerca de mí: precio gasolina y diésel hoy | CocheCuentas",
+"Encuentra las gasolineras más baratas cerca de ti con los precios oficiales de hoy de gasolina 95, diésel, gasolina 98 y GLP en toda España. Cuánto ahorras por depósito.",
+"""<p class="lead">Precios de hoy de las más de 11.000 gasolineras de España, con datos oficiales del Ministerio. Usa tu ubicación o elige tu provincia.</p>
+<div class="card"><div class="row"><div><label for="cb">Combustible</label><select id="cb" onchange="pinta()"><option value="5">Gasolina 95</option><option value="6">Diésel (gasóleo A)</option><option value="7">Gasolina 98</option><option value="8">GLP (autogás)</option></select></div>
+<div><label for="pv">Provincia</label><select id="pv" onchange="carga(this.value)"><option>Cargando…</option></select></div></div>
+<div class="row"><div><label for="mu">Municipio (opcional)</label><input id="mu" placeholder="Ej.: Málaga" oninput="pinta()"></div><div><label for="km">Distancia máxima</label><select id="km" onchange="pinta()"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="25">25 km</option><option value="1000">Toda la provincia</option></select></div></div>
+<button onclick="ubica()">Usar mi ubicación</button><p class="note" id="info" style="margin:10px 0 0"></p><div id="lst" style="margin-top:12px"></div></div>
+<h2>Cuánto se ahorra eligiendo bien la gasolinera</h2><p>Entre la gasolinera más cara y la más barata de una misma ciudad puede haber más de 20 céntimos por litro. En un depósito de 50 litros son 10 euros, y en un año, cientos. Las gasolineras automáticas y las de supermercado suelen ser las más baratas; las de autopista, las más caras.</p>
+<h2>Trucos para gastar menos combustible</h2><ul><li>Reposta antes de entrar en autopista o autovía.</li><li>Mira el precio el lunes: muchas gasolineras bajan precios a principio de semana.</li><li>Lleva los neumáticos a la presión correcta: un neumático bajo aumenta el consumo.</li><li>Calcula lo que gastas con la <a href="coste-por-km.html">calculadora de coste por kilómetro</a>.</li></ul>
+<p class="note">Fuente: Ministerio para la Transición Ecológica y el Reto Demográfico, Geoportal de gasolineras (precios comunicados por las estaciones de servicio). Actualizamos los datos dos veces al día.</p>""",
+[("¿Dónde está la gasolinera más barata cerca de mí?", "Pulsa en «Usar mi ubicación» y te mostramos las gasolineras más baratas en el radio que elijas, ordenadas por precio y con la distancia hasta cada una."),
+ ("¿De dónde salen los precios?", "Del Geoportal de gasolineras del Ministerio para la Transición Ecológica, donde todas las estaciones de servicio de España están obligadas a comunicar sus precios."),
+ ("¿Cuánto ahorro por depósito?", "Junto a cada gasolinera indicamos cuánto te ahorras en un depósito de 50 litros respecto al precio medio de tu provincia.")],
+"Gasolineras más baratas cerca de ti",
+"""let IDX=null,DAT=[],POS=null,PROV=null;
+const NB=['Gasolina 95','Diésel','Gasolina 98','GLP'];
+const eu=x=>x.toLocaleString('es-ES',{minimumFractionDigits:3,maximumFractionDigits:3})+' €/l';
+function dist(a,b,c,d){const R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+async function carga(p){PROV=p;document.getElementById('lst').textContent='Cargando gasolineras…';try{const r=await fetch('carb/p'+p+'.json');DAT=await r.json();}catch(e){DAT=[];document.getElementById('lst').textContent='No hemos podido cargar los precios. Inténtalo en unos minutos.';return;}pinta();}
+function pinta(){if(!DAT.length)return;const c=+document.getElementById('cb').value,mu=document.getElementById('mu').value.trim().toLowerCase(),km=+document.getElementById('km').value;
+let L=DAT.filter(e=>e[c]).map(e=>({e,d:POS?dist(POS[0],POS[1],e[3],e[4]):null}));
+if(mu)L=L.filter(x=>x.e[2].toLowerCase().includes(mu));if(POS&&km<1000)L=L.filter(x=>x.d<=km);
+const med=L.length?L.reduce((a,x)=>a+x.e[c],0)/L.length:0;L.sort((a,b)=>a.e[c]-b.e[c]||((a.d||0)-(b.d||0)));
+document.getElementById('info').innerHTML=L.length?(L.length+' gasolineras · precio medio de '+NB[c-5]+': <b>'+eu(med)+'</b>'+(IDX?' · media en España: '+eu(IDX.medias[['g95','gA','g98','glp'][c-5]]||0)+' · datos del '+IDX.fecha:'')):'No hay gasolineras con ese combustible y filtros. Amplía la distancia o quita el municipio.';
+document.getElementById('lst').innerHTML=L.slice(0,25).map((x,i)=>{const e=x.e,ah=(med-e[c])*50;return '<div class="tool" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:10px"><div><b>'+(i+1)+'. '+e[0]+'</b><p>'+e[1]+', '+e[2]+(x.d!==null?' · <b>'+x.d.toFixed(1).replace('.',',')+' km</b>':'')+'</p><p class="note">'+e[9]+'</p></div><div style="text-align:right;white-space:nowrap"><b style="font-size:1.3rem;color:'+(i<3?'#2f9e44':'#1d2433')+'">'+eu(e[c])+'</b><p class="note">'+(ah>0.5?'Ahorras '+ah.toFixed(2).replace('.',',')+' € por depósito':'')+'</p><a href="https://www.google.com/maps/dir/?api=1&destination='+e[3]+','+e[4]+'" target="_blank" rel="noopener">Cómo llegar</a></div></div></div>';}).join('');}
+function ubica(){if(!navigator.geolocation){document.getElementById('info').textContent='Tu navegador no permite usar la ubicación. Elige tu provincia.';return;}
+document.getElementById('info').textContent='Buscando tu ubicación…';navigator.geolocation.getCurrentPosition(p=>{POS=[p.coords.latitude,p.coords.longitude];let b=null;IDX.provincias.forEach(v=>{const dd=dist(POS[0],POS[1],v[2],v[3]);if(!b||dd<b[1])b=[v[0],dd];});document.getElementById('pv').value=b[0];carga(b[0]);},()=>{document.getElementById('info').textContent='No hemos podido obtener tu ubicación. Elige tu provincia.';},{timeout:10000});}
+fetch('carb/index.json').then(r=>r.json()).then(j=>{IDX=j;const s=document.getElementById('pv');s.innerHTML=j.provincias.map(p=>'<option value="'+p[0]+'"'+(p[0]=='28'?' selected':'')+'>'+p[1]+'</option>').join('');carga(s.value);}).catch(()=>{document.getElementById('lst').textContent='No hemos podido cargar los precios. Inténtalo en unos minutos.';});"""))
+
+# --- Última matrícula (dgt/ultima.json lo genera el workflow a partir del fichero de la DGT) ---
+S['tools'].append(("ultima-matricula", "¿Por qué letra van las matrículas?", "Última matrícula asignada en España, ritmo de matriculaciones y cuándo llegará la siguiente letra.", ""))
+S['aff']["ultima-matricula"] = amz("portamatriculas coche", "Portamatrículas") + SEG
+P.append(("ultima-matricula", "Última matrícula en España: ¿por qué letra van las matrículas hoy? | CocheCuentas",
+"Consulta por qué letra van las matrículas en España hoy, la última serie asignada según el registro de la DGT, cuántas matrículas se asignan al mes y cuándo llegará la siguiente letra.",
+"""<p class="lead">La serie de letras más reciente que aparece en el registro de vehículos de la DGT, actualizada cada día.</p>
+<div class="card" id="um">Cargando…</div>
+<h2>Cómo avanzan las matrículas en España</h2><p>Desde septiembre de 2000 las matrículas siguen un orden único para todo el país: cuatro números del 0000 al 9999 y tres letras que empiezan en BBB. Cuando una serie llega al 9999, pasa a la siguiente combinación de letras. No se usan vocales ni las letras Ñ y Q, para evitar confusiones y palabras malsonantes.</p>
+<h2>¿De qué año es un coche por su matrícula?</h2><p>Como el orden es correlativo, las letras indican la fecha aproximada de matriculación. Consulta cualquier matrícula en nuestra herramienta de <a href="historial-coche-matricula.html">historial de un coche por matrícula</a> y te diremos su año, su etiqueta y su próxima ITV.</p>
+<p class="note">Fuente: fichero abierto de distintivos ambientales del parque de vehículos de la DGT. Mostramos la serie más alta con vehículos registrados en el último fichero publicado; puede ir uno o dos días por detrás de la última placa entregada.</p>""",
+[("¿Por qué letra van las matrículas?", "Arriba tienes la última serie registrada en el fichero oficial de la DGT, que actualizamos cada día."),
+ ("¿Cuándo llegará la letra P a las matrículas?", "Lo estimamos arriba según el ritmo de matriculaciones del último año. Depende de cuántos coches se vendan, así que la fecha puede adelantarse o retrasarse unos meses."),
+ ("¿Qué letras no se usan en las matrículas?", "No se usan las vocales (A, E, I, O, U) ni las letras Ñ y Q.")],
+"¿Por qué letra van las matrículas?",
+"""const LET='BCDFGHJKLMNPRSTVWXYZ';const ix=s=>LET.indexOf(s[0])*400+LET.indexOf(s[1])*20+LET.indexOf(s[2]);const sx=i=>LET[Math.floor(i/400)]+LET[Math.floor(i/20)%20]+LET[i%20];
+const Y=[['BBB',2000],['BDR',2001],['BRT',2002],['CDC',2003],['CRC',2004],['DFF',2005],['DVB',2006],['FKC',2007],['FYY',2008],['GKH',2009],['GSR',2010],['HBG',2011],['HHT',2012],['HNK',2013],['HVF',2014],['JBY',2015],['JKZ',2016],['JVZ',2017],['KGN',2018],['KSS',2019],['LDR',2020],['LMC',2021],['LVV',2022],['MDF',2023],['MMN',2024],['MXP',2025],['NJS',2026]];
+fetch('dgt/ultima.json',{cache:'no-store'}).then(r=>r.json()).then(u=>{const cur=ix(u.serie),pm=(ix('NJS')-ix('MXP'))/12;const nl=LET[LET.indexOf(u.serie[0])+1];const nxt=nl+'BB';const meses=(ix(nxt)-cur)/pm;const f=new Date();f.setMonth(f.getMonth()+Math.round(meses));
+document.getElementById('um').innerHTML='<p>Última matrícula registrada en la DGT</p><div class="placa" style="font-size:2rem">'+(u.numero!==null?String(u.numero).padStart(4,'0')+' ':'')+u.serie+'</div><p class="note">Dato del fichero de la DGT del '+u.fecha+'</p>'+
+'<table><tr><td>Matrículas al mes (último año)</td><td><b>unas '+Math.round(pm*10000).toLocaleString('es-ES')+'</b> ('+pm.toFixed(1).replace('.',',')+' series de letras)</td></tr><tr><td>Llegada de la letra '+nl+' ('+nxt+')</td><td><b>'+f.toLocaleDateString('es-ES',{month:'long',year:'numeric'})+'</b> (estimación)</td></tr></table>'+
+'<h3>Primera serie de cada año</h3><table><tr><th>Año</th><th>Letras</th></tr>'+Y.slice().reverse().map(y=>'<tr><td>'+y[1]+'</td><td>'+y[0]+'</td></tr>').join('')+'</table>';}).catch(()=>{document.getElementById('um').textContent='No hemos podido cargar el dato. Inténtalo en unos minutos.';});"""))

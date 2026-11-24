@@ -1,3 +1,4 @@
+import json
 from gen import amz, ext
 S['aff'] = {
     "index": amz("agenda 2027", "Agendas 2027") + amz("calendario pared 2027", "Calendarios 2027"),
@@ -52,3 +53,60 @@ P.append(("que-dia-de-la-semana", "¿Qué día de la semana fue o será? Calcula
  ("¿Qué día cae Navidad el año que viene?", "Elige el 25 de diciembre del año que quieras y lo verás al instante, junto con los años siguientes.")],
 None, DATEJS + """function calc(){const a=pd('a');if(!a)return;let h='<table><tr><th>Año</th><th>Día</th></tr>';for(let i=1;i<=5;i++){const d=new Date(a);d.setFullYear(a.getFullYear()+i);h+='<tr><td>'+d.getFullYear()+'</td><td>'+d.toLocaleDateString('es-ES',{weekday:'long'})+'</td></tr>';}
 show('r','Es:<b class="big">'+a.toLocaleDateString('es-ES',{weekday:'long'})+'</b>'+fmt(a)+h+'</table>');}calc();"""))
+
+# --- Calendario laboral 2027 (BOE-A-2026-21254, Resolución de 8 de octubre de 2026) ---
+CCAA = [("AN","Andalucía"),("AR","Aragón"),("AS","Asturias"),("IB","Illes Balears"),("CN","Canarias"),("CB","Cantabria"),("CL","Castilla-La Mancha"),("CM","Castilla y León"),("CT","Cataluña"),("VC","Comunitat Valenciana"),("EX","Extremadura"),("GA","Galicia"),("MD","Comunidad de Madrid"),("MC","Región de Murcia"),("NC","Navarra"),("PV","País Vasco"),("RI","La Rioja"),("CE","Ceuta"),("ML","Melilla")]
+_ALL = "AN AR AS IB CN CB CL CM CT EX GA MD MC NC PV RI VC CE ML"
+FEST27 = [("2027-01-01","Año Nuevo",_ALL),("2027-01-06","Epifanía del Señor",_ALL),("2027-03-01","Día de Andalucía","AN"),("2027-03-01","Día de les Illes Balears","IB"),
+ ("2027-03-10","Fiesta del Eid Fitr","ML"),("2027-03-19","San José","GA MD MC NC VC"),("2027-03-25","Jueves Santo","AN AR AS IB CN CB CL CM EX GA MD MC NC PV RI CE ML"),
+ ("2027-03-26","Viernes Santo",_ALL),("2027-03-29","Lunes de Pascua","IB CT NC PV RI VC"),("2027-04-23","San Jorge / Día de Aragón","AR"),("2027-04-23","Fiesta de Castilla y León","CM"),
+ ("2027-05-01","Fiesta del Trabajo",_ALL),("2027-05-17","Día de las Letras Gallegas","GA"),("2027-05-17","Eidul Adha, Fiesta del Sacrificio","CE"),("2027-05-17","Fiesta del Sacrificio, Aid Al Adha","ML"),
+ ("2027-05-27","Corpus Christi","CL"),("2027-05-31","Día de Castilla-La Mancha","CL"),("2027-06-09","Día de la Región de Murcia","MC"),("2027-06-09","Día de La Rioja","RI"),("2027-06-24","Día de San Juan","CT"),
+ ("2027-07-28","Día de las Instituciones de Cantabria","CB"),("2027-08-05","Nuestra Señora de África","CE"),("2027-08-16","Lunes siguiente a la Asunción de la Virgen","AN AR AS CN CM MD"),
+ ("2027-09-08","Día de Asturias","AS"),("2027-09-08","Día de Extremadura","EX"),("2027-09-11","Fiesta Nacional de Cataluña","CT"),("2027-09-15","La Bien Aparecida","CB"),
+ ("2027-10-07","Aniversario del primer Gobierno vasco","PV"),("2027-10-09","Día de la Comunitat Valenciana","VC"),("2027-10-11","Sustitución del 15 de agosto","EX"),
+ ("2027-10-12","Fiesta Nacional de España",_ALL),("2027-11-01","Todos los Santos",_ALL),("2027-12-06","Día de la Constitución Española",_ALL),("2027-12-08","Inmaculada Concepción",_ALL),("2027-12-25","Natividad del Señor",_ALL)]
+ISLAS = [("","Selecciona tu isla"),("2027-09-24|El Hierro","El Hierro"),("2027-09-17|Fuerteventura","Fuerteventura"),("2027-09-08|Gran Canaria","Gran Canaria"),("2027-10-04|La Gomera","La Gomera"),("2027-08-05|La Palma","La Palma"),("2027-09-15|Lanzarote y La Graciosa","Lanzarote y La Graciosa"),("2027-02-02|Tenerife","Tenerife")]
+_fj = json.dumps([[d, n, c.split()] for d, n, c in FEST27], ensure_ascii=False)
+S['tools'].insert(0, ("calendario-laboral-2027", "Calendario laboral 2027", "Festivos de tu comunidad, puentes y días laborables de 2027, según el BOE.", "Calendario 2027"))
+S['aff']["calendario-laboral-2027"] = amz("calendario pared 2027", "Calendarios 2027") + amz("agenda 2027", "Agendas 2027")
+_opts = "".join(f'<option value="{c}"{" selected" if c=="MD" else ""}>{n}</option>' for c, n in CCAA)
+_isl = "".join(f'<option value="{v}">{n}</option>' for v, n in ISLAS)
+P.append(("calendario-laboral-2027", "Calendario laboral 2027: festivos por comunidad y puentes | CalculadoraDías",
+"Calendario laboral 2027 oficial: festivos nacionales y de tu comunidad autónoma, puentes, días laborables por mes y opción de añadir tus festivos locales. Según el BOE.",
+"""<p class="lead">Elige tu comunidad y te mostramos todos los festivos de 2027, los puentes y los días laborables de cada mes, según la relación oficial publicada en el BOE.</p>
+<div class="card"><label for="cc">Comunidad autónoma</label><select id="cc" onchange="pinta()">""" + _opts + """</select>
+<div id="isw" style="display:none"><label for="is">Isla (Canarias tiene una fiesta insular)</label><select id="is" onchange="pinta()">""" + _isl + """</select></div>
+<label for="lo">Tus 2 festivos locales (opcional, dd/mm)</label><input id="lo" placeholder="15/05, 09/11" oninput="pinta()">
+<div id="r2" style="margin-top:16px"></div></div>
+<h2>Festivos comunes a toda España en 2027</h2><p>Nueve fiestas son iguales en todo el país: 1 de enero (Año Nuevo), 6 de enero (Epifanía), 26 de marzo (Viernes Santo), 1 de mayo (Fiesta del Trabajo), 12 de octubre (Fiesta Nacional), 1 de noviembre (Todos los Santos), 6 de diciembre (Constitución), 8 de diciembre (Inmaculada) y 25 de diciembre (Navidad). En 2027 el 15 de agosto cae en domingo, así que varias comunidades lo pasan al lunes 16 y otras lo sustituyen por otra fiesta.</p>
+<h2>Festivos locales</h2><p>Además de estos, cada municipio tiene dos fiestas locales, que publica el boletín oficial de cada comunidad o provincia. Añádelas arriba para ver tu calendario completo y tus días laborables exactos.</p>
+<p class="note">Fuente: Resolución de 8 de octubre de 2026, de la Dirección General de Trabajo, por la que se publica relación de fiestas laborales para el año 2027 (BOE núm. 254, de 13 de octubre de 2026, BOE-A-2026-21254). En el Valle de Arán, el 29 de marzo se sustituye por el 17 de junio (Fiesta de Arán).</p>""",
+[("¿Cuántos festivos hay en 2027?", "Doce festivos de ámbito nacional y autonómico en cada comunidad (once en Canarias más la fiesta de cada isla), a los que se suman dos fiestas locales de cada municipio: catorce en total."),
+ ("¿Qué festivos son iguales en toda España en 2027?", "Año Nuevo, Epifanía, Viernes Santo, Fiesta del Trabajo, Fiesta Nacional de España, Todos los Santos, Día de la Constitución, Inmaculada Concepción y Navidad."),
+ ("¿Qué pasa con el 15 de agosto de 2027?", "Cae en domingo. Andalucía, Aragón, Asturias, Canarias, Castilla y León y Madrid lo trasladan al lunes 16 de agosto; Extremadura lo sustituye por el 11 de octubre."),
+ ("¿Dónde consulto mis festivos locales?", "En el boletín oficial de tu comunidad o provincia, o en la web de tu ayuntamiento. Cuando los tengas, añádelos en el campo de festivos locales.")],
+"Calendario laboral 2027",
+"""const F=""" + _fj + """;
+const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],DS=['L','M','X','J','V','S','D'];
+const iso=(m,d)=>'2027-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+function pinta(){const cc=document.getElementById('cc').value;document.getElementById('isw').style.display=cc=='CN'?'block':'none';
+const fs={};F.forEach(f=>{if(f[2].includes(cc))fs[f[0]]=f[1];});
+if(cc=='CN'){const v=document.getElementById('is').value;if(v){const p=v.split('|');fs[p[0]]='Fiesta insular de '+p[1];}}
+const loc=[];document.getElementById('lo').value.split(/[,;\\s]+/).forEach(x=>{const m=x.match(/^(\\d{1,2})[\\/.-](\\d{1,2})$/);if(m){const k=iso(+m[2]-1,+m[1]);if(!fs[k]){fs[k]='Festivo local';loc.push(k);}}});
+const ks=Object.keys(fs).sort();const dow=k=>(new Date(k+'T12:00').getDay()+6)%7;
+const lab=[];let tot=0;for(let m=0;m<12;m++){let n=0;const dim=new Date(2027,m+1,0).getDate();for(let d=1;d<=dim;d++){const w=(new Date(2027,m,d).getDay()+6)%7;if(w<5&&!fs[iso(m,d)])n++;}lab.push(n);tot+=n;}
+const adj=k=>{const dt=new Date(k+'T12:00');dt.setDate(dt.getDate()+(dow(k)==1?-1:1));return dt;};const k2=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const pu=ks.filter(k=>(dow(k)==1||dow(k)==3)&&!fs[k2(adj(k))]).map(k=>{const dt=new Date(k+'T12:00');const o=adj(k);return fmt(dt)+': coge libre el '+o.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})+' y tienes 4 días';});
+const lg=ks.filter(k=>dow(k)==0||dow(k)==4).map(k=>fmt(new Date(k+'T12:00'))+': fin de semana largo de 3 días');
+let h='<b class="big" style="font-size:1.4rem">'+ks.filter(k=>dow(k)<5).length+' festivos entre semana · '+tot+' días laborables</b>';
+h+='<table><tr><th>Fecha</th><th>Fiesta</th></tr>'+ks.map(k=>'<tr><td>'+new Date(k+'T12:00').toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})+'</td><td>'+fs[k]+(dow(k)>4?' <span class="note">(cae en fin de semana)</span>':'')+'</td></tr>').join('')+'</table>';
+if(pu.length||lg.length)h+='<h3>Puentes y fines de semana largos</h3><ul>'+pu.concat(lg).map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+const cel=i=>'<td style="text-align:center"><b>'+MES[i].slice(0,3)+'</b><br>'+lab[i]+'</td>';h+='<h3>Días laborables por mes</h3><table><tr>'+[0,1,2,3,4,5].map(cel).join('')+'</tr><tr>'+[6,7,8,9,10,11].map(cel).join('')+'</tr></table>';
+h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:16px">';
+for(let m=0;m<12;m++){const off=(new Date(2027,m,1).getDay()+6)%7,dim=new Date(2027,m+1,0).getDate();h+='<div><b>'+MES[m]+'</b><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.75rem;text-align:center">'+DS.map(x=>'<span class="note">'+x+'</span>').join('')+'<span></span>'.repeat(off);
+for(let d=1;d<=dim;d++){const k=iso(m,d),w=(off+d-1)%7,f=fs[k];h+='<span title="'+(f||'')+'" style="padding:3px 0;border-radius:4px;'+(f?'background:#5f3dc4;color:#fff;font-weight:700':w>4?'color:#9aa0b0':'')+'">'+d+'</span>';}h+='</div></div>';}
+h+='</div><p style="margin-top:14px"><a class="afl" href="dias-habiles.html?f='+encodeURIComponent(ks.map(k=>k.slice(8)+'/'+k.slice(5,7)+'/2027').join(','))+'">Calcular días hábiles con estos festivos →</a></p>';
+document.getElementById('r2').innerHTML=h;}
+function fmt(d){return d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});}
+pinta();"""))
