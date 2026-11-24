@@ -90,7 +90,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script></head><body>
 <header><div class="w"><a class="logo" href="index.html">{site['logo']}</a><nav>{navl}</nav></div></header>
 <main class="w"><h1>{h1 or title.split(' | ')[0]}</h1>{upd}{body}{share}
-{aff}<div class="ad"><!-- ADSENSE bloque inferior -->Publicidad</div>{faqh}{rel}</main>
+{aff}{faqh}{rel}</main>
 <footer><div class="w"><p>© 2026 {site['name']} · Resultados orientativos; no sustituyen asesoramiento profesional.</p>
 <p>Más calculadoras gratis: {net}</p><a href="sobre-nosotros.html">Sobre nosotros</a><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a></div></footer>
 <div id="ck">Usamos cookies propias y de terceros (Google) para analítica y publicidad. <a href="cookies.html" style="color:#fff">Más info</a><br><button id="cka">Aceptar</button><button class="no" id="ckr">Rechazar</button></div>
@@ -122,7 +122,7 @@ def build(site, pages):
     grid = '<div class="grid">' + "".join(
         f'<a class="tool" href="{t[0]}.html"><h3>{t[1]}</h3><p>{t[2]}</p></a>' for t in site['tools']) + '</div>'
     home = ("index", site['home_title'], site['home_desc'],
-            site['home_intro'] + '<div class="ad"><!-- ADSENSE bloque superior -->Publicidad</div>' + grid + site['home_extra'],
+            site['home_intro'] + grid + site['home_extra'],
             site.get('home_faq', ()), site['home_h1'], "")
     for p in [home] + pages:
         slug, t, ds, b = p[:4]
@@ -174,4 +174,6 @@ const rows=[];for(const [s,n] of P){{rows.push([n,s,await g('p-'+s)]);rows.sort(
     open(f"{d}/CNAME", "w").write(site["domain"] + "\n")
     open(f"{d}/.nojekyll", "w").write("")
     open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
-    #open(f"{d}/ads.txt", "w").write("google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0\n")
+    # Anuncios automáticos de AdSense: con ADSENSE_CLIENT relleno se carga el script en <head> y Google coloca los anuncios solo.
+    if ADSENSE_CLIENT:
+        open(f"{d}/ads.txt", "w").write("google.com, " + ADSENSE_CLIENT.replace("ca-", "") + ", DIRECT, f08c47fec0942fa0\n")
