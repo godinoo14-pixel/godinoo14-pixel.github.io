@@ -44,12 +44,20 @@ function hm(x){x=Math.round(x);return Math.floor(x/60)+' h '+String(x%60).padSta
 function calc(){let d=mn('s')-mn('e');if(d<0)d+=1440;d-=v('p');d=Math.max(0,d);const w=d*v('dd'),m=w*52/12,ph=v('ph');
 show('r','Horas al día:<b class="big">'+hm(d)+'</b>('+nf(d/60,2)+' h) · Semana: <b>'+hm(w)+'</b> · Mes: <b>'+nf(m/60,1)+' h</b>'+(ph>0?'<br>Ingresos: '+eur(d/60*ph)+'/día · '+eur(m/60*ph)+'/mes':''));}"""))
 
-P.append(("que-dia-de-la-semana", "¿Qué día de la semana fue o será? Calculadora | CalculadoraDías",
-"Descubre en qué día de la semana cae cualquier fecha: tu cumpleaños, una boda, un festivo o el día en que naciste.",
+P.append(("que-dia-de-la-semana", "¿Qué día de la semana cae? Cualquier fecha, Navidad y Reyes 2027 | CalculadoraDías",
+"Descubre qué día de la semana cae cualquier fecha: Nochebuena 2026 es jueves, Reyes 2027 miércoles. Tu cumpleaños, una boda o el día en que naciste, y cómo cae los próximos años.",
 """<p class="lead">Elige una fecha y te decimos qué día de la semana fue o será, y cómo cae en los próximos años.</p>
 <div class="card"><label for="a">Fecha</label><input id="a" type="date" value="2027-12-25"><button onclick="calc()">Ver día</button><div class="res" id="r"></div></div>
-<h2>¿Por qué cada año cambia el día?</h2><p>Un año normal tiene 365 días, es decir, 52 semanas y 1 día. Por eso una misma fecha avanza un día de la semana cada año, y dos cuando hay un 29 de febrero de por medio. Así, si tu cumpleaños es martes este año, el que viene será miércoles.</p>""",
-[("¿Qué día de la semana nací?", "Pon tu fecha de nacimiento en la calculadora y te dirá el día exacto."),
+<h2>¿Por qué cada año cambia el día?</h2><p>Un año normal tiene 365 días, es decir, 52 semanas y 1 día. Por eso una misma fecha avanza un día de la semana cada año, y dos cuando hay un 29 de febrero de por medio. Así, si tu cumpleaños es martes este año, el que viene será miércoles.</p>
+<h2>Qué día cae cada fiesta de estas Navidades y de 2027</h2>
+<table><tr><th>Fecha</th><th>Día de la semana</th></tr>
+<tr><td>Nochebuena, 24 de diciembre de 2026</td><td>jueves</td></tr><tr><td>Navidad, 25 de diciembre de 2026</td><td>viernes</td></tr>
+<tr><td>Nochevieja, 31 de diciembre de 2026</td><td>jueves</td></tr><tr><td>Año Nuevo, 1 de enero de 2027</td><td>viernes</td></tr>
+<tr><td>Reyes, 6 de enero de 2027</td><td>miércoles</td></tr><tr><td>San Valentín, 14 de febrero de 2027</td><td>domingo</td></tr>
+<tr><td>Jueves y Viernes Santo de 2027</td><td>25 y 26 de marzo</td></tr><tr><td>Navidad, 25 de diciembre de 2027</td><td>sábado</td></tr></table>
+<p>Con Navidad y Año Nuevo en viernes, estas fiestas dejan dos fines de semana largos seguidos. Mira los puentes de todo el año en el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>, cuenta los días con la <a href="cuantos-dias-faltan.html">cuenta atrás para Navidad</a> o calcula <a href="dias-entre-fechas.html">los días entre dos fechas</a>.</p>""",
+[("¿Qué día de la semana cae Nochebuena en 2026?", "En jueves. Navidad, el 25 de diciembre de 2026, cae en viernes, y Año Nuevo de 2027 también es viernes."),
+ ("¿Qué día de la semana nací?", "Pon tu fecha de nacimiento en la calculadora y te dirá el día exacto."),
  ("¿Qué día cae Navidad el año que viene?", "Elige el 25 de diciembre del año que quieras y lo verás al instante, junto con los años siguientes.")],
 None, DATEJS + """function calc(){const a=pd('a');if(!a)return;let h='<table><tr><th>Año</th><th>Día</th></tr>';for(let i=1;i<=5;i++){const d=new Date(a);d.setFullYear(a.getFullYear()+i);h+='<tr><td>'+d.getFullYear()+'</td><td>'+d.toLocaleDateString('es-ES',{weekday:'long'})+'</td></tr>';}
 show('r','Es:<b class="big">'+a.toLocaleDateString('es-ES',{weekday:'long'})+'</b>'+fmt(a)+h+'</table>');}calc();"""))
@@ -273,4 +281,44 @@ if(d==0)h+='<br>No has trabajado ningún día de este periodo, así que no te co
 if(fb&&fb<p[1])h+='<br>Como dejas la empresa, esta cantidad debe aparecer en tu <b>finiquito</b>.';
 h+='<br><span class="note">Si tienes las pagas prorrateadas, ya cobras cada mes '+eur(pe*jo/12)+' brutos por esta paga y en diciembre no recibirás nada aparte.</span>';
 show('r',h);}
+calc();"""))
+
+# --- Indemnización por despido según antigüedad (arts. 49.1.c, 53.1.b y 56.1 ET y DT 11.ª del Estatuto de los Trabajadores) ---
+S['tools'].insert(3, ("indemnizacion-despido", "Indemnización por despido", "Cuánto te corresponde según tu antigüedad, tu salario y el tipo de despido.", "Despido"))
+S['aff']["indemnizacion-despido"] = amz("estatuto de los trabajadores 2026", "Estatuto de los Trabajadores") + amz("agenda 2027", "Agendas 2027")
+P.append(("indemnizacion-despido", "Calcular indemnización por despido 2026: improcedente, objetivo y fin de contrato | CalculadoraDías",
+"Calcula tu indemnización por despido improcedente (33 o 45 días por año), objetivo (20 días) o fin de contrato temporal (12 días) con tus fechas exactas, salario diario y topes legales.",
+"""<p class="lead">Pon tu fecha de alta, la del despido y tu salario bruto anual. Calculamos la antigüedad exacta, el salario diario y la indemnización que marca el Estatuto de los Trabajadores, con sus topes.</p>
+<div class="card"><div class="row"><div><label for="al">Fecha de alta en la empresa</label><input id="al" type="date" value="2018-03-01"></div>
+<div><label for="de">Fecha del despido o fin de contrato</label><input id="de" type="date" value="2026-11-30"></div>
+<div><label for="sa">Salario bruto anual, con pagas extra (€)</label><input id="sa" inputmode="decimal" value="24000"></div>
+<div><label for="ti">Tipo de extinción</label><select id="ti"><option value="i">Despido improcedente (33 días por año)</option><option value="o">Despido objetivo o ERE (20 días por año)</option><option value="t">Fin de contrato temporal (12 días por año)</option><option value="d">Despido disciplinario declarado procedente (sin indemnización)</option></select></div></div>
+<button onclick="calc()">Calcular indemnización</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto se cobra por cada tipo de despido</h2>
+<div style="overflow-x:auto"><table><tr><th>Tipo</th><th>Días por año</th><th>Tope</th></tr>
+<tr><td>Improcedente</td><td>33 (45 por el tiempo antes del 12/02/2012)</td><td>24 meses de salario (720 días si hay tiempo anterior a 2012, hasta 42 meses)</td></tr>
+<tr><td>Objetivo o colectivo (ERE)</td><td>20</td><td>12 mensualidades</td></tr><tr><td>Fin de contrato temporal</td><td>12</td><td>Sin tope</td></tr>
+<tr><td>Disciplinario procedente</td><td>0</td><td>—</td></tr></table></div>
+<p><b>Fórmula:</b> indemnización = salario diario × días por año × años de servicio. El salario diario es el salario bruto anual (con pagas extra y complementos salariales) ÷ 365. Los periodos de menos de un año se prorratean por meses y, como hacen los tribunales y la mayoría de calculadoras oficiales, la fracción de mes se cuenta como mes completo.</p>
+<p><b>Ejemplo:</b> entraste el 1 de marzo de 2018 y te despiden el 30 de noviembre de 2026 con 24.000 € brutos al año. Llevas 8 años y 9 meses (105 meses) y tu salario diario es de 65,75 €. Si el despido es improcedente te corresponden 33 × 105 ÷ 12 = 288,75 días: <b>18.986 €</b>. Si es objetivo, 175 días: <b>11.507 €</b>.</p>
+<h2>Impuestos, plazos y finiquito</h2><p>La indemnización por despido está <b>exenta de IRPF</b> hasta la cuantía obligatoria que marca el Estatuto, con un máximo de 180.000 € (artículo 7.e de la Ley del IRPF); en un despido improcedente la exención exige que se reconozca en conciliación o por sentencia. Si no estás de acuerdo con el despido, tienes <b>20 días hábiles</b> para presentar la papeleta de conciliación: calcula la fecha límite con <a href="sumar-dias.html">sumar días hábiles</a>. Aparte de la indemnización, el finiquito incluye el salario del mes, las <a href="calculadora-vacaciones.html">vacaciones no disfrutadas</a> y la parte proporcional de la <a href="paga-extra-navidad.html">paga extra</a>. Puedes revisar la norma en el <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430" rel="noopener" target="_blank">Estatuto de los Trabajadores (BOE)</a>.</p>""",
+[("¿Cuánto me corresponde por despido improcedente?", "33 días de salario por año trabajado, prorrateando por meses, con un máximo de 24 mensualidades. Si empezaste antes del 12 de febrero de 2012, el tiempo anterior se paga a 45 días por año. Con 5 años y 30.000 € brutos al año son unos 13.562 €."),
+ ("¿Cómo se calcula el salario diario para la indemnización?", "Se divide el salario bruto anual entre 365. Debe incluir las pagas extra y los complementos salariales fijos; no entran las dietas ni los gastos de locomoción."),
+ ("¿Tengo que pagar IRPF por la indemnización por despido?", "No hasta la cuantía obligatoria que marca la ley, con un límite de 180.000 €. Lo que la empresa pague de más sí tributa."),
+ ("¿Cuánto se cobra al terminar un contrato temporal?", "12 días de salario por año trabajado, prorrateando por meses. Con un contrato de 6 meses y 20.000 € al año, unos 329 €.")],
+"Calculadora de indemnización por despido",
+DATEJS + """function meses(a,b){if(b<a)return 0;const e=new Date(b);e.setDate(e.getDate()+1);let m=(e.getFullYear()-a.getFullYear())*12+e.getMonth()-a.getMonth();const add=k=>{const x=new Date(a.getFullYear(),a.getMonth()+k,1);x.setDate(Math.min(a.getDate(),new Date(x.getFullYear(),x.getMonth()+1,0).getDate()));return x;};while(m>0&&add(m)>e)m--;return m+(add(m)<e?1:0);}
+function calc(){const a=pd('al'),b=pd('de'),sa=v('sa'),ti=document.getElementById('ti').value;
+if(!a||!b||b<a||sa<=0){show('r','Revisa las fechas y el salario.');return;}
+const sd=sa/365,mens=sa/12,m=meses(a,b),y=Math.floor(m/12),mm=m%12,ant='Antigüedad: <b>'+y+' años y '+mm+' meses</b> ('+m+' meses computados, '+(diff(a,b)+1)+' días)<br>Salario diario: <b>'+eur(sd)+'</b>';
+let d=0,tope='',det='';
+if(ti=='d'){show('r','Indemnización:<b class="big">'+eur(0)+'</b>'+ant+'<br>El despido disciplinario declarado procedente no da derecho a indemnización. Sí te corresponde el finiquito y puedes cobrar el paro si cumples los requisitos.');return;}
+if(ti=='o'){d=Math.min(20*m/12,365);tope=20*m/12>365?' (aplicado el tope de 12 mensualidades)':'';det='20 días × '+nf(m/12,2)+' años';}
+else if(ti=='t'){d=12*m/12;det='12 días × '+nf(m/12,2)+' años';}
+else{const R=new Date(2012,1,12);if(a<R){const pre=new Date(2012,1,11),m1=meses(a,b<pre?b:pre),m2=b>=R?meses(R,b):0,d1=45*m1/12,d2=33*m2/12;
+det='45 días × '+nf(m1/12,2)+' años (hasta el 11/02/2012) + 33 días × '+nf(m2/12,2)+' años';
+if(d1>720){d=Math.min(d1,42*365/12);tope=' (el tiempo anterior a 2012 ya supera los 720 días: se mantiene, con un máximo de 42 mensualidades)';}else{d=Math.min(d1+d2,720);tope=d1+d2>720?' (aplicado el tope de 720 días)':'';}}
+else{d=Math.min(33*m/12,730);tope=33*m/12>730?' (aplicado el tope de 24 mensualidades)':'';det='33 días × '+nf(m/12,2)+' años';}}
+const imp=d*sd;
+show('r','Indemnización:<b class="big">'+eur(imp)+'</b>'+ant+'<br>Días de indemnización: <b>'+nf(d,2)+'</b> = '+det+tope+'<br>Equivale a '+nf(imp/mens,1)+' mensualidades. Exenta de IRPF hasta lo que marca la ley'+(imp>180000?', con un máximo de 180.000 €':'')+'.');}
 calc();"""))

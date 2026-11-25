@@ -347,3 +347,47 @@ const al=[36,48,60,72,84].filter(x=>x!=n).map(m=>m+' meses: '+eur(Math.floor(((i
 show('r',h);}
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias||!j.medias.g95)return;document.getElementById('cb').value=j.medias.g95.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio del combustible: media de la gasolina 95 en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si tu coche es diésel, cámbialo por el de tu <a href="gasolineras-baratas.html">gasolinera</a>.';calc();}).catch(()=>{});
 calc();"""))
+
+# --- Consumo real del coche (método del depósito lleno, varios repostajes) ---
+S['tools'].insert(4, ("consumo-real-coche", "Consumo real de tu coche", "Calcula los l/100 km reales con tus repostajes y compáralo con el homologado.", "Consumo real"))
+S['aff']["consumo-real-coche"] = amz("lector obd2 bluetooth", "Lectores OBD2 para ver el consumo") + amz("medidor presion neumaticos", "Medidores de presión de neumáticos")
+P.append(("consumo-real-coche", "Calcular consumo real de un coche (l/100 km) con tus repostajes | CocheCuentas",
+"Calcula el consumo real de tu coche en litros cada 100 km con el método del depósito lleno: uno o varios repostajes, coste por km, km por litro y CO2. Compáralo con el WLTP.",
+"""<p class="lead">El ordenador de a bordo suele marcar menos de lo que gastas de verdad. Llena el depósito, apunta los kilómetros y en los siguientes repostajes anota los litros que entran hasta llenar: así sale tu consumo real.</p>
+<div class="card"><table id="tb"><tr><th>Km del cuentakilómetros</th><th>Litros hasta llenar</th></tr></table>
+<p class="note">Primera fila: el llenado de partida (no hace falta poner litros). Cada fila siguiente: kilómetros al volver a llenar y litros que han entrado. Llena siempre hasta que salte el surtidor.</p>
+<button type="button" onclick="fila('','')" style="background:#fff;color:inherit;border:1px solid #cfd3df;margin-top:8px">+ Añadir repostaje</button>
+<div class="row"><div><label for="cb">Combustible</label><select id="cb" onchange="pz()"><option value="g95">Gasolina</option><option value="gA">Diésel</option></select></div>
+<div><label for="p">Precio por litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div>
+<div><label for="wl">Consumo homologado WLTP (l/100 km, opcional)</label><input id="wl" inputmode="decimal" value="5,6"></div></div>
+<button onclick="calc()">Calcular consumo real</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula el consumo real</h2><p>Con el <b>método del depósito lleno</b>: si llenas el depósito, recorres unos kilómetros y vuelves a llenar, los litros que entran la segunda vez son exactamente lo que has gastado en ese recorrido.</p>
+<p><b>Fórmula:</b> consumo (l/100 km) = litros repostados ÷ kilómetros recorridos × 100. Con varios repostajes se suman todos los litros (menos los del llenado de partida) y se dividen entre los kilómetros totales: así se corrigen los pequeños errores de cada llenado.</p>
+<p><b>Ejemplo:</b> llenas con el cuentakilómetros en 45.200 km. Vuelves a llenar a los 45.780 (entran 36,2 l), a los 46.390 (38,9 l) y a los 46.950 (35,1 l). Has gastado 110,2 litros en 1.750 km: <b>6,30 l/100 km</b>, un 12 % más que los 5,6 homologados. A 1,55 €/l, cada 100 km te cuestan 9,76 €.</p>
+<table><tr><th>Consumo real</th><th>Km con 1 litro</th><th>Coste cada 100 km (1,55 €/l)</th><th>Coste con 15.000 km/año</th></tr>
+<tr><td>4,5 l/100 km</td><td>22,2 km</td><td>6,98 €</td><td>1.046 €</td></tr><tr><td>6 l/100 km</td><td>16,7 km</td><td>9,30 €</td><td>1.395 €</td></tr>
+<tr><td>7,5 l/100 km</td><td>13,3 km</td><td>11,63 €</td><td>1.744 €</td></tr><tr><td>9 l/100 km</td><td>11,1 km</td><td>13,95 €</td><td>2.093 €</td></tr></table>
+<h2>Por qué gastas más que el homologado</h2><ul><li>El ciclo <b>WLTP</b> se mide en laboratorio: en la práctica es normal gastar entre un 10 y un 20 % más, y más aún en ciudad o con frío.</li>
+<li>En invierno el motor tarda en calentarse y los trayectos cortos disparan el consumo. Las ruedas con poca presión también suben el gasto.</li>
+<li>A 120 km/h un coche gasta bastante más que a 100 km/h, porque la resistencia del aire crece con el cuadrado de la velocidad.</li></ul>
+<p>Con tu consumo real ya puedes calcular el <a href="coste-viaje-coche.html">coste de un viaje en coche</a>, tu <a href="coste-por-km.html">coste por kilómetro</a> o si te compensa un <a href="electrico-vs-gasolina.html">coche eléctrico</a>. Y para pagar menos por litro, busca las <a href="gasolineras-baratas.html">gasolineras más baratas cerca de ti</a>.</p>""",
+[("¿Cómo calculo el consumo real de mi coche?", "Llena el depósito y pon el cuentakilómetros parcial a cero. En el siguiente repostaje, vuelve a llenar y divide los litros que han entrado entre los kilómetros recorridos y multiplica por 100. Por ejemplo, 36 litros en 580 km son 6,2 l/100 km."),
+ ("¿Es fiable el consumo que marca el ordenador de a bordo?", "Sirve como referencia, pero suele marcar entre un 3 y un 10 % menos que el consumo real. El método del depósito lleno con varios repostajes es el más exacto que puedes hacer en casa."),
+ ("¿Cuánto es normal gastar más que el consumo homologado?", "Con el ciclo WLTP es habitual gastar entre un 10 y un 20 % más en uso real. Si gastas más de un 30 % por encima, revisa la presión de los neumáticos, los filtros y tu forma de conducir.")],
+"Calcula el consumo real de tu coche",
+"""const tb=document.getElementById('tb');
+function fila(k,l){const r=tb.insertRow();r.innerHTML='<td><input inputmode="numeric" aria-label="Kilómetros" value="'+k+'"></td><td><input inputmode="decimal" aria-label="Litros" value="'+l+'"></td>';}
+[['45200',''],['45780','36,2'],['46390','38,9'],['46950','35,1']].forEach(x=>fila(x[0],x[1]));
+const num=s=>parseFloat(String(s).replace(/\\./g,'').replace(',','.'));
+function calc(){const R=[...tb.querySelectorAll('tr')].slice(1).map(r=>{const i=r.querySelectorAll('input');return [num(i[0].value),parseFloat(String(i[1].value).replace(',','.'))];}).filter(x=>x[0]>0);
+if(R.length<2){show('r','Añade al menos el llenado de partida y un repostaje.');return;}
+let L=0,t='',ok=true;for(let k=1;k<R.length;k++){const d=R[k][0]-R[k-1][0],l=R[k][1];if(!(d>0)||!(l>0)){ok=false;break;}L+=l;t+='<tr><td>'+nf(R[k-1][0],0)+' → '+nf(R[k][0],0)+' km</td><td>'+nf(d,0)+' km</td><td>'+nf(l/d*100,2)+' l/100 km</td></tr>';}
+if(!ok){show('r','Revisa los datos: los kilómetros deben ir aumentando y cada repostaje necesita sus litros.');return;}
+const km=R[R.length-1][0]-R[0][0],c=L/km*100,p=v('p'),wl=v('wl'),f=document.getElementById('cb').value=='gA'?2.68:2.31;
+let h='Consumo real:<b class="big">'+nf(c,2)+' l/100 km</b>'+nf(L,1)+' litros en '+nf(km,0)+' km · '+nf(km/L,1)+' km por litro<br>Coste: <b>'+eur(c*p)+' cada 100 km</b> ('+nf(c*p,2)+' céntimos por km) · CO<sub>2</sub>: unos '+nf(c*f*10,0)+' g/km';
+if(wl>0){const dv=(c/wl-1)*100;h+='<br>Frente al homologado ('+nf(wl,1)+' l/100 km): <b>'+(dv>=0?'+':'')+nf(dv,0)+' %</b>'+(dv>30?'. Es bastante más de lo normal: revisa presiones, filtros y conducción.':dv>=0?'. Dentro de lo habitual en uso real.':'. Muy buena conducción.');}
+if(R.length>2)h+='<table><tr><th>Tramo</th><th>Km</th><th>Consumo</th></tr>'+t+'</table>';
+show('r',h);}
+let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k])document.getElementById('p').value=MED[k].toFixed(3).replace('.',',');calc();}
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(j.medias){MED=j.medias;pz();}}).catch(()=>{});
+calc();"""))

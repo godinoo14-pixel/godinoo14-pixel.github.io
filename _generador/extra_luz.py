@@ -249,3 +249,41 @@ show('r','Lo más barato: <b>'+o[0][0].toLowerCase()+'</b><b class="big">'+eur(o
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<20)return;
 const m=H.reduce((a,x)=>a+x[1],0)/H.length*1.0511*1.21;document.getElementById('p').value=m.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio de la luz: media de hoy de la tarifa regulada (PVPC, Red Eléctrica) con impuesto eléctrico e IVA. Si tienes tarifa de mercado libre, pon el precio de tu factura. Una habitación de 20-25 m² necesita unos 2-2,5 kW.';calc();}).catch(()=>{});
 calc();"""))
+
+# --- Consumo de la secadora (por tipo, carga y hora con el PVPC de pvpc.json) ---
+S['tools'].insert(4, ("consumo-secadora", "Consumo de la secadora", "Cuánto cuesta cada secado según el tipo de secadora y la hora a la que la pones.", "Secadora"))
+S['aff']["consumo-secadora"] = amz("secadora bomba de calor", "Secadoras con bomba de calor") + amz("tendedero electrico", "Tendederos eléctricos") + amz("deshumidificador", "Deshumidificadores")
+P.append(("consumo-secadora", "¿Cuánto gasta una secadora? Coste por ciclo y mejor hora para ponerla | GastoLuz",
+"Calcula cuánto consume tu secadora por ciclo, al mes y al año: bomba de calor, condensación o evacuación. Con el precio de la luz por horas de hoy para ver a qué hora te sale más barata.",
+"""<p class="lead">Elige tu tipo de secadora y cuántas veces la pones. Te decimos lo que cuesta cada secado y, con el precio de la luz por horas de hoy, a qué hora te sale más barato ponerla.</p>
+<div class="card"><div class="row"><div><label for="ti">Tipo de secadora (8 kg)</label><select id="ti" onchange="tipo()"><option value="1.8|3">Bomba de calor</option><option value="4.5|2">Condensación</option><option value="4.8|2">Evacuación</option></select></div>
+<div><label for="kw">Consumo por ciclo a carga completa (kWh)</label><input id="kw" inputmode="decimal" value="1,8"></div>
+<div><label for="du">Duración del ciclo (horas)</label><input id="du" inputmode="decimal" value="3"></div>
+<div><label for="ca">Carga</label><select id="ca"><option value="1">Llena</option><option value="0.6">Media carga</option></select></div>
+<div><label for="cs">Secados por semana</label><input id="cs" inputmode="decimal" value="4"></div>
+<div><label for="ho">Hora a la que la pones</label><select id="ho"></select></div>
+<div><label for="p">Precio de la luz (€/kWh, si no usas el PVPC de hoy)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
+<p class="note" id="pn">Cargando el precio de la luz por horas de hoy…</p>
+<button onclick="calc()">Calcular coste</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto gasta cada tipo de secadora</h2><p>Lo que más cambia el consumo es la tecnología. Las secadoras de <b>bomba de calor</b> reaprovechan el calor del aire y gastan menos de la mitad que las de <b>condensación</b> o <b>evacuación</b>, que calientan el aire con una resistencia. A cambio tardan más en secar.</p>
+<table><tr><th>Secadora 8 kg, llena</th><th>kWh/ciclo</th><th>€/ciclo*</th><th>Al año*</th></tr>
+<tr><td>Bomba de calor</td><td>1,5 a 2</td><td>0,27 €</td><td>56 €</td></tr><tr><td>Condensación</td><td>4 a 5</td><td>0,68 €</td><td>140 €</td></tr><tr><td>Evacuación</td><td>4,5 a 5</td><td>0,72 €</td><td>150 €</td></tr></table>
+<p class="note">* Con la luz a 0,15 €/kWh y 4 secados a la semana. Valores típicos de referencia. El dato exacto está en la etiqueta energética o el manual: si indica kWh por 100 ciclos, divide entre 100; en etiquetas antiguas que dan kWh al año, divide entre 160 ciclos.</p>
+<p><b>Fórmula:</b> coste por ciclo = kWh del ciclo × carga × precio medio de la luz durante las horas que funciona. Con la tarifa regulada (PVPC), el mismo secado puede costar el doble a las 20:00 que de madrugada o a mediodía.</p>
+<h2>Trucos para gastar menos</h2><ul><li>Centrifuga la ropa en la lavadora a 1.200-1.400 rpm: cuanta menos agua lleve, menos tiempo de secadora.</li><li>Limpia el filtro de pelusa en cada uso y el condensador cada mes.</li><li>Llénala sin apretar: a media carga gasta más por cada kilo de ropa.</li><li>Ponla en las horas más baratas: mira el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>.</li></ul>
+<p>Compara con el resto de tu casa en el <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a>, comprueba si cabe en tu <a href="potencia-contratada.html">potencia contratada</a> junto con la calefacción o calcula tu <a href="calcular-factura-luz.html">factura de la luz</a>.</p>""",
+[("¿Cuánto gasta una secadora por ciclo?", "Una de bomba de calor de 8 kg gasta entre 1,5 y 2 kWh por ciclo completo, unos 0,27 € con la luz a 0,15 €/kWh. Una de condensación o evacuación, entre 4 y 5 kWh: unos 0,70 € por secado."),
+ ("¿Cuánto gasta una secadora al mes?", "Con 4 secados a la semana, unos 4,70 € al mes una de bomba de calor y entre 11,70 y 12,50 € una de condensación o evacuación, con el kWh a 0,15 €."),
+ ("¿A qué hora es más barato poner la secadora?", "Con la tarifa regulada (PVPC), en las horas valle de madrugada (de 0 a 8 h) y, muchos días, a mediodía cuando hay mucha producción solar. Las horas más caras suelen ser de 19 a 22 h. Con tarifa de precio fijo da igual la hora.")],
+"¿Cuánto gasta una secadora?",
+"""let HP=null;const hs=document.getElementById('ho');for(let i=0;i<24;i++)hs.add(new Option(String(i).padStart(2,'0')+':00',i));hs.value=14;
+function tipo(){const t=document.getElementById('ti').value.split('|');document.getElementById('kw').value=t[0].replace('.',',');document.getElementById('du').value=t[1];calc();}
+function pm(h0,du){let s=0,w=0;for(let t=0;t<du;t+=0.25){const h=Math.floor(h0+t)%24;s+=HP[h];w++;}return s/w*1.0511*1.21;}
+function calc(){const e=v('kw')*+document.getElementById('ca').value,du=Math.max(0.5,v('du')),cs=v('cs'),h0=+hs.value;
+if(e<=0){show('r','Escribe el consumo por ciclo.');return;}
+let pr=v('p'),txt='';if(HP){pr=pm(h0,du);let bh=0,bp=1e9,wh=0,wp=0;for(let h=0;h<24;h++){const x=pm(h,du);if(x<bp){bp=x;bh=h;}if(x>wp){wp=x;wh=h;}}
+txt='<br>Hoy, la hora más barata para empezar es a las <b>'+String(bh).padStart(2,'0')+':00</b> ('+eur(e*bp)+' por secado) y la más cara a las '+String(wh).padStart(2,'0')+':00 ('+eur(e*wp)+').';}
+const c=e*pr;show('r','Coste por secado:<b class="big">'+eur(c)+'</b>'+nf(e,2)+' kWh a '+nf(pr,3)+' €/kWh'+(HP?' (PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00, con impuestos)':'')+'<br>Al mes: <b>'+eur(c*cs*52/12)+'</b> · Al año: <b>'+eur(c*cs*52)+'</b> ('+nf(e*cs*52,0)+' kWh)'+txt);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio arriba y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
+calc();"""))

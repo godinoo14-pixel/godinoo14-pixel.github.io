@@ -62,21 +62,26 @@ None,
 """function calc(){const c=v('c'),p=v('p'),k=v('k'),km=c/100*p;
 show('r','Coste por km:<b class="big">'+nf(km,3)+' €</b>Al mes: <b>'+eur(km*k/12)+'</b> · Al año: <b>'+eur(km*k)+'</b> · Litros/año: '+nf(c/100*k,0));}"""))
 
-P.append(("electrico-vs-gasolina", "Coche eléctrico vs gasolina o diésel: ¿cuánto ahorro? | CocheCuentas",
-"Compara el coste de recorrer kilómetros con un coche eléctrico frente a uno de gasolina o diésel y calcula tu ahorro anual.",
+P.append(("electrico-vs-gasolina", "Coche eléctrico o gasolina: ¿cuánto ahorro al año y cuándo compensa? | CocheCuentas",
+"Calcula cuánto ahorras al año con un coche eléctrico frente a uno de gasolina o diésel, con el precio medio oficial del combustible de hoy, y en cuántos años amortizas la diferencia de precio.",
 """<p class="lead">Calcula cuánto ahorrarías al año en energía cargando un coche eléctrico frente a repostar gasolina o diésel.</p>
 <div class="card"><div class="row"><div><label for="ce">Consumo eléctrico (kWh/100 km)</label><input id="ce" inputmode="decimal" value="17"></div>
 <div><label for="pe">Precio del kWh (€)</label><input id="pe" inputmode="decimal" value="0,12"></div>
 <div><label for="cc">Consumo combustión (L/100 km)</label><input id="cc" inputmode="decimal" value="6,5"></div>
 <div><label for="pc">Precio del litro (€)</label><input id="pc" inputmode="decimal" value="1,55"></div></div>
-<label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"><button onclick="calc()">Comparar</button><div class="res" id="r"></div></div>
+<div class="row"><div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div>
+<div><label for="dp">El eléctrico cuesta más (€, opcional)</label><input id="dp" inputmode="decimal" value="5000"></div></div><p class="note" id="pn">Precio del litro: media orientativa de la gasolina 95.</p><button onclick="calc()">Comparar</button><div class="res" id="r"></div></div>
 <p class="note">Pon el precio del kWh de tu tarifa. Cargando en casa por la noche con tarifa de discriminación horaria suele salir bastante más barato que en cargadores rápidos de carretera.</p>
 <h2>Lo que no entra en la cuenta</h2><p>El ahorro en energía es solo una parte. El eléctrico suele tener menos mantenimiento (sin aceite, filtros ni embrague), bonificaciones en el impuesto de circulación en muchos municipios y ventajas en zonas de bajas emisiones. En contra, el precio de compra suele ser mayor y el seguro puede ser algo más caro.</p>""",
 [("¿Cuánto cuesta cargar un coche eléctrico en casa?", "Multiplica la capacidad útil de la batería por el precio del kWh. Una batería de 60 kWh a 0,12 €/kWh cuesta unos 7,20 € de 0 a 100 %."),
- ("¿Cuántos km necesito hacer para que compense?", "Cuantos más km hagas, antes recuperas la diferencia de precio de compra. Divide esa diferencia entre el ahorro anual que te da esta calculadora para ver en cuántos años lo amortizas.")],
+ ("¿Cuántos km necesito hacer para que compense?", "Cuantos más km hagas, antes recuperas la diferencia de precio de compra. Pon esa diferencia en la calculadora y te dirá en cuántos años lo amortizas solo con lo que ahorras en energía."),
+ ("¿Cuánto cuesta hacer 100 km en un coche eléctrico?", "Con un consumo de 17 kWh/100 km, unos 2 € cargando en casa a 0,12 €/kWh, frente a unos 10 € de un coche de gasolina que gaste 6,5 litros a 1,55 €/l. En cargadores rápidos puede costar 8-10 €."),
+ ("¿Cómo sé cuánto gasta de verdad mi coche actual?", "Con el método del depósito lleno: llena, apunta los kilómetros y en el siguiente repostaje divide los litros entre los km recorridos. Te lo calcula nuestra calculadora de consumo real.")],
 "Eléctrico vs gasolina: calculadora de ahorro",
 """function calc(){const k=v('k'),e=v('ce')/100*v('pe'),c=v('cc')/100*v('pc'),a=(c-e)*k;
-show('r','Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Eléctrico: '+nf(e,3)+' €/km ('+eur(e*k)+'/año) · Combustión: '+nf(c,3)+' €/km ('+eur(c*k)+'/año)<br>En 5 años: <b>'+eur(a*5)+'</b>');}"""))
+const dp=v('dp');let am='';if(dp>0)am=a>0?'<br>Recuperas los '+eur(dp)+' de diferencia en <b>'+nf(dp/a,1)+' años</b> (o '+nf(dp/(c-e),0)+' km) solo con el ahorro en energía.':'<br>Con estos datos el eléctrico no ahorra en energía, así que la diferencia de precio no se recupera.';
+show('r','Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Eléctrico: '+nf(e,3)+' €/km ('+eur(e*k)+'/año) · Combustión: '+nf(c,3)+' €/km ('+eur(c*k)+'/año)<br>En 5 años: <b>'+eur(a*5)+'</b>'+am);}
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias||!j.medias.g95)return;document.getElementById('pc').value=j.medias.g95.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio del litro: media de la gasolina 95 en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si comparas con un diésel, pon su precio. ¿No sabes cuánto gasta tu coche? Calcúlalo con tu <a href="consumo-real-coche.html">consumo real</a>.';calc();}).catch(()=>{});"""))
 
 P.append(("coste-anual-coche", "¿Cuánto cuesta mantener un coche al año? Calculadora | CocheCuentas",
 "Suma seguro, impuesto de circulación, ITV, mantenimiento, neumáticos, combustible, aparcamiento y depreciación para saber el coste real de tu coche.",

@@ -20,17 +20,23 @@ APP = [("Frigorífico", 150, 24, "Funciona a ciclos: equivale a unas 8 h reales 
 opts = "".join(f'<option value="{w}|{h}">{n}</option>' for n, w, h, _ in APP)
 
 P = []
-P.append(("consumo-electrodomesticos", "Consumo de electrodomésticos: cuánto gasta cada aparato | GastoLuz",
-"Calcula cuánto consume y cuánto cuesta al día, al mes y al año cualquier electrodoméstico según su potencia y horas de uso.",
+P.append(("consumo-electrodomesticos", "Consumo de electrodomésticos: cuánto gasta cada aparato al mes | GastoLuz",
+"Calcula cuánto consume y cuánto cuesta al día, al mes y al año cada electrodoméstico: frigorífico, horno, lavadora, termo, secadora o radiador, según su potencia y las horas de uso.",
 """<p class="lead">Elige un aparato (o pon su potencia en vatios), las horas de uso y el precio del kWh.</p>
 <div class="card"><label for="ap">Electrodoméstico</label><select id="ap" onchange="pre()">""" + opts + """</select>
 <div class="row"><div><label for="w">Potencia (W)</label><input id="w" inputmode="decimal"></div><div><label for="h">Horas de uso al día</label><input id="h" inputmode="decimal"></div>
 <div><label for="p">Precio kWh (€)</label><input id="p" inputmode="decimal" value="0,15"></div><div><label for="f">Factor de uso (%)</label><input id="f" inputmode="decimal" value="100"></div></div>
 <button onclick="calc()">Calcular consumo</button><div class="res" id="r"></div></div>
 <p class="note">La potencia viene en la etiqueta o en el manual. El frigorífico y otros aparatos con termostato no funcionan a plena potencia todo el tiempo: para ellos usa un factor de uso del 30-40 %.</p>
-<h2>Los aparatos que más gastan</h2><p>Los que producen calor son los que más consumen: secadora, horno, termo eléctrico, calefactores y vitrocerámica. El frigorífico gasta poco por hora pero está encendido todo el año, por eso suele ser uno de los mayores consumos de la casa. Programar lavadora y lavavajillas en horas valle puede reducir mucho su coste.</p>""",
+<h2>Los aparatos que más gastan</h2><p>Los que producen calor son los que más consumen: secadora, horno, termo eléctrico, calefactores y vitrocerámica. El frigorífico gasta poco por hora pero está encendido todo el año, por eso suele ser uno de los mayores consumos de la casa. Programar lavadora y lavavajillas en horas valle puede reducir mucho su coste.</p>
+<table><tr><th>Aparato (uso típico)</th><th>kWh al mes</th><th>€ al mes (0,15 €/kWh)</th></tr>
+<tr><td>Frigorífico combi A++ (encendido siempre)</td><td>25-35</td><td>3,75-5,25 €</td></tr><tr><td>Lavadora a 40 °C, 4 lavados/semana</td><td>15</td><td>2,25 €</td></tr>
+<tr><td>Horno, 30 min al día</td><td>30</td><td>4,50 €</td></tr><tr><td>Termo de 80 l, una familia</td><td>120-180</td><td>18-27 €</td></tr></table>
+<p class="note">Valores orientativos: calcula los tuyos arriba con la potencia de tu aparato.</p>
+<p>Para los que más gastan tenemos calculadoras específicas: <a href="consumo-secadora.html">secadora</a>, <a href="coste-ducha-termo.html">termo eléctrico</a>, <a href="coste-calefaccion-electrica.html">radiadores</a>, <a href="coste-aire-acondicionado.html">aire acondicionado</a> y <a href="consumo-freidora-aire.html">freidora de aire u horno</a>. Y si quieres saber a qué hora ponerlos, mira el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>.</p>""",
 [("¿Cuánto gasta un frigorífico al mes?", "Un frigorífico moderno consume entre 20 y 40 kWh al mes, unos 3-6 € con el kWh a 0,15 €. Los antiguos pueden gastar el doble."),
- ("¿Cómo paso vatios a kWh?", "Multiplica los vatios por las horas de uso y divide entre 1.000. Un aparato de 2.000 W durante 1 hora consume 2 kWh.")],
+ ("¿Cómo paso vatios a kWh?", "Multiplica los vatios por las horas de uso y divide entre 1.000. Un aparato de 2.000 W durante 1 hora consume 2 kWh."),
+ ("¿Qué electrodoméstico gasta más luz en casa?", "Los que calientan: termo eléctrico, calefacción eléctrica, secadora y horno. En una casa sin calefacción eléctrica, el termo y el frigorífico suelen ser los mayores consumos del año.")],
 None, """function pre(){const [w,h]=document.getElementById('ap').value.split('|');document.getElementById('w').value=w;document.getElementById('h').value=h;document.getElementById('f').value=(w==150&&h==24)?35:100;}
 function calc(){const k=v('w')*v('h')*v('f')/100/1000,p=v('p');show('r','Coste al mes:<b class="big">'+eur(k*p*30.4)+'</b>Al día: '+nf(k,2)+' kWh ('+eur(k*p)+') · Al año: '+nf(k*365,0)+' kWh (<b>'+eur(k*p*365)+'</b>)');}pre();"""))
 
