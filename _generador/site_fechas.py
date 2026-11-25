@@ -36,17 +36,21 @@ P.append(("dias-entre-fechas", "Días entre dos fechas: calculadora de días, se
 None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b)return;let n=Math.abs(diff(a,b))+(document.getElementById('inc').checked?1:0);
 show('r','Entre las dos fechas hay:<b class="big">'+nf(n,0)+' días</b>'+nf(n/7,1)+' semanas · '+nf(n/30.4375,1)+' meses · '+nf(n*24,0)+' horas');}"""))
 
-P.append(("dias-habiles", "Calculadora de días hábiles entre dos fechas | CalculadoraDías",
-"Cuenta los días hábiles o laborables entre dos fechas excluyendo fines de semana y los festivos que tú indiques.",
+P.append(("dias-habiles", "Calculadora de días hábiles y laborables entre dos fechas | CalculadoraDías",
+"Cuenta los días hábiles entre dos fechas sin sábados, domingos ni festivos: para plazos administrativos (Ley 39/2015), días laborables de un mes o entregas. Añade tus festivos de 2026 o 2027.",
 """<p class="lead">Calcula los días laborables entre dos fechas, ambas incluidas, quitando fines de semana y festivos.</p>
 <div class="card"><div class="row"><div><label for="a">Desde</label><input id="a" type="date" data-today></div>
 <div><label for="b">Hasta</label><input id="b" type="date" value="2026-12-31"></div></div>
 <label for="m">Días no laborables</label><select id="m"><option value="2">Sábados y domingos</option><option value="1">Solo domingos</option></select>""" + FEST + """
 <button onclick="calc()">Calcular días hábiles</button><div class="res" id="r"></div></div>
 <p class="note">Añade los festivos nacionales, autonómicos y locales de tu zona: los publica cada año el BOE y el boletín de tu comunidad.</p>
-<h2>Días hábiles en plazos administrativos</h2><p>Según la Ley 39/2015, cuando un plazo se fija en días se entienden hábiles, excluyendo sábados, domingos y festivos. Si el último día del plazo es inhábil, se pasa al siguiente hábil. Para plazos judiciales, además, agosto es inhábil salvo excepciones.</p>""",
+<h2>Días hábiles en plazos administrativos</h2><p>Según la Ley 39/2015, cuando un plazo se fija en días se entienden hábiles, excluyendo sábados, domingos y festivos. Si el último día del plazo es inhábil, se pasa al siguiente hábil. Para plazos judiciales, además, agosto es inhábil salvo excepciones.</p>
+<p><b>Ejemplo:</b> del 1 al 31 de diciembre de 2026 hay 23 días de lunes a viernes. Si quitas los festivos nacionales del 8 (Inmaculada) y el 25 (Navidad), quedan <b>21 días hábiles</b>; en tu comunidad pueden ser menos si hay algún festivo autonómico o local.</p>
+<p>¿Necesitas saber en qué fecha vence un plazo? Usa <a href="sumar-dias.html">sumar días hábiles a una fecha</a>. Para todo 2027, abre el <a href="calendario-laboral-2027.html">calendario laboral 2027 de tu comunidad</a>: desde ahí puedes traer aquí sus festivos con un clic.</p>""",
 [("¿El sábado es día hábil?", "En plazos administrativos, no. En el ámbito laboral depende del convenio: en comercio, por ejemplo, el sábado suele ser laborable."),
- ("¿Agosto es hábil?", "Para plazos administrativos sí. Para plazos procesales en los juzgados, agosto se considera inhábil salvo para actuaciones urgentes.")],
+ ("¿Agosto es hábil?", "Para plazos administrativos sí. Para plazos procesales en los juzgados, agosto se considera inhábil salvo para actuaciones urgentes."),
+ ("¿Cuántos días hábiles tiene diciembre de 2026?", "Tiene 23 días de lunes a viernes. Quitando los festivos nacionales del 8 y el 25 de diciembre, quedan 21 días hábiles, menos si en tu comunidad o municipio hay otro festivo ese mes."),
+ ("¿Cómo se cuenta un plazo de 10 días hábiles?", "Se empieza a contar el día siguiente a la notificación y se saltan sábados, domingos y festivos. Si el último día cae en inhábil, el plazo termina el siguiente día hábil.")],
 None, DATEJS + """try{const q=new URLSearchParams(location.search).get('f');if(q){document.getElementById('f').value=q.split(',').join('\\n');document.getElementById('a').value='2027-01-01';document.getElementById('b').value='2027-12-31';}}catch(e){}
 function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>b)[a,b]=[b,a];const h=hol(),m=v('m');let n=0,w=0,f=0,t=0;
 for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){t++;const g=d.getDay();if(g==0||(m==2&&g==6)){w++;continue;}if(h.has(iso(d))){f++;continue;}n++;}

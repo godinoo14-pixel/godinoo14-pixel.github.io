@@ -210,3 +210,42 @@ if(Wi>W*1.05)t+='<br>Con guirnaldas y cortinas incandescentes en vez de LED paga
 show('r',t);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)return;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' por horas según Red Eléctrica. Con tarifa de precio fijo, elige «Precio fijo» y pon el de tu contrato. <a href="precio-luz-hoy.html">Ver todas las horas</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='No se ha podido cargar el PVPC de hoy: usamos el precio fijo indicado.';});"""))
+
+# --- Estufa de butano vs calefacción eléctrica vs bomba de calor (precio bombona: BOE-A-2026-23896; precio luz: pvpc.json) ---
+S['tools'].insert(3, ("estufa-butano-vs-electrica", "Butano, radiador o bomba de calor", "Qué calefacción sale más barata con el precio de la bombona y de la luz de hoy.", "Butano vs luz"))
+S['aff']["estufa-butano-vs-electrica"] = amz("detector monoxido de carbono", "Detectores de monóxido de carbono") + amz("radiador bajo consumo termostato", "Radiadores con termostato") + amz("termometro higrometro digital", "Termómetros de habitación")
+P.append(("estufa-butano-vs-electrica", "Estufa de butano o eléctrica: ¿qué calefacción es más barata? | GastoLuz",
+"Compara lo que cuesta calentarte con estufa de butano (bombona a 19,55 €), radiador eléctrico o aire acondicionado con bomba de calor, con el precio de la luz de hoy. Coste por hora, mes e invierno.",
+"""<p class="lead">Indica cuánto calor necesitas y cuántas horas enciendes la calefacción. Te decimos lo que cuesta con <b>estufa de butano</b>, con <b>radiador o calefactor eléctrico</b> y con <b>bomba de calor</b> (aire acondicionado en modo calor), con el precio oficial de la bombona y el de la luz de hoy.</p>
+<div class="card"><div class="row"><div><label for="kw">Calor necesario (kW)</label><input id="kw" inputmode="decimal" value="2,5"></div>
+<div><label for="h">Horas al día</label><input id="h" inputmode="decimal" value="5"></div>
+<div><label for="d">Días de calefacción en el invierno</label><input id="d" inputmode="numeric" value="120"></div>
+<div><label for="bo">Precio de la bombona de 12,5 kg (€)</label><input id="bo" inputmode="decimal" value="19,55"></div>
+<div><label for="p">Precio de la luz (€/kWh, con impuestos)</label><input id="p" inputmode="decimal" value="0,15"></div>
+<div><label for="sc">Rendimiento de la bomba de calor (SCOP)</label><input id="sc" inputmode="decimal" value="3,5"></div></div>
+<p class="note" id="pn">Como referencia, una habitación o salón de 20-25 m² necesita unos 2-2,5 kW; una estufa de butano típica da 4,2 kW al máximo y unos 1,5-2,5 kW en las posiciones intermedias.</p>
+<button onclick="calc()">Comparar calefacciones</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto cuesta cada kWh de calor</h2><p>Una bombona de butano de 12,5 kg cuesta <b>19,55 €</b> desde el 17 de noviembre de 2026 (precio máximo regulado, revisado cada dos meses por la <a href="https://www.boe.es/boe/dias/2026/11/16/pdfs/BOE-A-2026-23896.pdf" rel="noopener" target="_blank">Resolución de 12 de noviembre de 2026 publicada en el BOE</a>; la próxima revisión es el tercer martes de enero). El butano da unos <b>12,7 kWh de calor por kilo</b>, es decir, unos 159 kWh por bombona. Como la estufa suelta en la habitación todo el calor de la combustión, cada kWh de calor sale a unos <b>0,12 €</b>.</p>
+<p>Un radiador, calefactor, acumulador o panel eléctrico convierte 1 kWh de luz en 1 kWh de calor, así que paga el precio del kWh tal cual: entre 0,10 y 0,40 € según la hora con la tarifa regulada (<a href="precio-luz-hoy.html">mira el precio de la luz hoy</a>). Una <b>bomba de calor</b> (el aire acondicionado en modo calor) saca de 3 a 4 kWh de calor por cada kWh de luz, por eso suele ser la opción más barata.</p>
+<p><b>Fórmulas:</b> butano = kWh de calor ÷ 12,7 × precio de la bombona ÷ 12,5. Eléctrico = kWh × precio de la luz. Bomba de calor = kWh × precio de la luz ÷ SCOP.</p>
+<table><tr><th>2,5 kW · 5 h al día</th><th>Al día</th><th>Al mes</th></tr>
+<tr><td>Estufa de butano (19,55 €)</td><td>1,54 €</td><td>46,18 €</td></tr>
+<tr><td>Radiador eléctrico (0,15 €/kWh)</td><td>1,88 €</td><td>56,25 €</td></tr>
+<tr><td>Bomba de calor (SCOP 3,5)</td><td>0,54 €</td><td>16,07 €</td></tr></table>
+<p>Con 12,5 kWh de calor al día gastas casi 1 kg de butano: una bombona te dura unos <b>13 días</b>. El butano compensa frente al radiador cuando la luz pasa de unos 0,12 €/kWh, sobre todo en las horas punta de la tarde; si puedes usar el radiador en las horas valle, la diferencia se reduce o se invierte.</p>
+<h2>Seguridad con la estufa de butano</h2><ul><li>Ventila la habitación: deja una rendija abierta y no la uses en dormitorios mientras duermes ni en baños.</li><li>Un <b>detector de monóxido de carbono</b> cuesta menos que una bombona y avisa a tiempo.</li><li>Revisa la goma y el regulador: tienen fecha de caducidad impresa.</li><li>La combustión suelta vapor de agua: si ves condensación en los cristales, ventila más.</li></ul>
+<p>Calcula también el <a href="coste-calefaccion-electrica.html">coste de tu radiador eléctrico</a>, el del <a href="coste-aire-acondicionado.html">aire acondicionado con bomba de calor</a> o la <a href="potencia-contratada.html">potencia que necesitas</a> si enciendes varios aparatos a la vez.</p>""",
+[("¿Qué es más barato, una estufa de butano o un radiador eléctrico?", "Con la bombona a 19,55 €, el calor del butano sale a unos 0,12 € por kWh. Un radiador eléctrico cuesta lo que pagues por el kWh de luz: si pagas más de 0,12-0,13 €/kWh con impuestos, el butano es más barato; en horas valle, el radiador puede salir mejor."),
+ ("¿Cuánto dura una bombona de butano en una estufa?", "Depende de la potencia: al máximo (unos 4,2 kW) una estufa gasta alrededor de 0,33 kg por hora y la bombona dura unas 38 horas. En potencia media (unos 2 kW) dura unas 80 horas."),
+ ("¿Cuánto cuesta la bombona de butano ahora?", "19,55 € la bombona de 12,5 kg, desde el 17 de noviembre de 2026. El precio máximo lo revisa el Ministerio cada dos meses y se publica en el BOE; la próxima revisión será el tercer martes de enero de 2027."),
+ ("¿Es más barato calentar con aire acondicionado?", "Casi siempre. Una bomba de calor da de 3 a 4 kWh de calor por cada kWh de luz, así que calentar con ella cuesta entre la mitad y un tercio que con butano o con radiadores eléctricos.")],
+"Estufa de butano o calefacción eléctrica: ¿qué sale más barato?",
+"""function calc(){const kw=v('kw'),h=v('h'),dd=v('d'),bo=v('bo'),p=v('p'),sc=v('sc')||3.5,e=kw*h;
+if(e<=0){show('r','Indica la potencia de calor y las horas al día.');return;}
+const kg=e/12.7,cb=kg*bo/12.5,ce=e*p,cp=e*p/sc,o=[['Estufa de butano',cb],['Radiador o calefactor eléctrico',ce],['Bomba de calor (aire acondicionado)',cp]].sort((a,b)=>a[1]-b[1]);
+let t='<div style="overflow-x:auto"><table style="font-size:.9rem"><tr><th>Sistema</th><th>Hora</th><th>Mes</th><th>Invierno</th></tr>'+o.map(x=>'<tr><td>'+x[0]+'</td><td>'+eur(x[1]/h)+'</td><td>'+eur(x[1]*30)+'</td><td><b>'+eur(x[1]*dd)+'</b></td></tr>').join('')+'</table></div>';
+const eq=bo/12.5/12.7;
+show('r','Lo más barato: <b>'+o[0][0].toLowerCase()+'</b><b class="big">'+eur(o[0][1]*dd)+' en el invierno</b>'+t+'Necesitas '+nf(e,1)+' kWh de calor al día: '+nf(kg,2)+' kg de butano, así que una bombona te dura <b>'+nf(12.5/kg,0)+' días</b> ('+nf(dd*kg/12.5,1)+' bombonas en el invierno).<br>El butano sale más barato que el radiador cuando la luz pasa de <b>'+nf(eq,3)+' €/kWh</b>.');}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<20)return;
+const m=H.reduce((a,x)=>a+x[1],0)/H.length*1.0511*1.21;document.getElementById('p').value=m.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio de la luz: media de hoy de la tarifa regulada (PVPC, Red Eléctrica) con impuesto eléctrico e IVA. Si tienes tarifa de mercado libre, pon el precio de tu factura. Una habitación de 20-25 m² necesita unos 2-2,5 kW.';calc();}).catch(()=>{});
+calc();"""))

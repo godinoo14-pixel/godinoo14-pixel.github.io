@@ -48,8 +48,8 @@ None,
 """function calc(){const n=v('n'),c=v('pc'),rev=c*v('vr')/100,buy=c-rev+(v('sg')+v('mt')+v('im'))*n,ren=v('cr')*12*n+v('en'),d=buy-ren;
 show('r',(d>0?'Sale más barato el <b>renting</b>':'Sale más barato <b>comprar</b>')+':<b class="big">'+eur(Math.abs(d))+' de diferencia</b>Coste total compra: '+eur(buy)+' ('+eur(buy/n/12)+'/mes) · Coste total renting: '+eur(ren)+' ('+eur(ren/n/12)+'/mes)');}"""))
 
-P.append(("cuota-financiacion-coche", "Calculadora de financiación de coche: cuota mensual | CocheCuentas",
-"Calcula la cuota mensual de la financiación de tu coche, los intereses totales y el coste final según precio, entrada, TIN y plazo.",
+P.append(("cuota-financiacion-coche", "Calculadora de financiación de coche: cuota, TAE e intereses | CocheCuentas",
+"Calcula la cuota mensual al financiar tu coche y su TAE real con comisión de apertura: intereses, coste total y cuota final de la financiación multiopción. Compara ofertas en segundos.",
 """<p class="lead">Calcula la cuota y lo que pagarás en total al financiar tu coche.</p>
 <div class="card"><div class="row"><div><label for="p">Precio del coche (€)</label><input id="p" inputmode="decimal" value="20000"></div>
 <div><label for="e">Entrada (€)</label><input id="e" inputmode="decimal" value="4000"></div>
@@ -57,13 +57,17 @@ P.append(("cuota-financiacion-coche", "Calculadora de financiación de coche: cu
 <div><label for="ca">Comisión de apertura (%)</label><input id="ca" inputmode="decimal" value="3"></div><div><label for="vf">Cuota final / valor futuro (€, opcional)</label><input id="vf" inputmode="decimal" value="0"></div></div>
 <button onclick="calc()">Calcular cuota</button><div class="res" id="r"></div></div>
 <p class="note">Cálculo con sistema francés (cuota constante). Si es una financiación con cuota final (tipo multiopción), pon el importe de esa última cuota.</p>
-<h2>Lo que debes mirar antes de firmar</h2><ul><li><b>TAE</b>, no solo el TIN: incluye comisiones y da el coste real.</li><li>Si el descuento del concesionario está condicionado a financiar, y qué pasa si amortizas antes.</li><li>Seguros vinculados (vida, protección de pagos) que encarecen la cuota.</li><li>Comisión por amortización anticipada.</li></ul>""",
+<h2>Lo que debes mirar antes de firmar</h2><ul><li><b>TAE</b>, no solo el TIN: incluye comisiones y da el coste real.</li><li>Si el descuento del concesionario está condicionado a financiar, y qué pasa si amortizas antes.</li><li>Seguros vinculados (vida, protección de pagos) que encarecen la cuota.</li><li>Comisión por amortización anticipada.</li></ul>
+<h2>Cómo calculamos la TAE</h2><p>Buscamos el interés mensual que iguala lo que realmente recibes (importe financiado menos la comisión de apertura) con todas las cuotas que vas a pagar, y lo convertimos a anual: TAE = (1 + i)<sup>12</sup> − 1. Es la cifra que debes usar para comparar ofertas de bancos y concesionarios, porque incluye la comisión. Si dudas de que la cuota encaje en tu economía, mira <a href="que-coche-me-puedo-permitir.html">qué coche te puedes permitir según tu sueldo</a>.</p>""",
 [("¿Es mejor financiar en el concesionario o con el banco?", "Depende. El concesionario suele ofrecer descuentos ligados a financiar con su financiera; compara el coste total (precio + intereses + comisiones) de ambas opciones."),
- ("¿Qué es la cuota final o multiopción?", "Una financiación en la que pagas cuotas bajas y al final eliges entre pagar una última cuota grande, devolver el coche o cambiarlo por otro.")],
+ ("¿Qué es la cuota final o multiopción?", "Una financiación en la que pagas cuotas bajas y al final eliges entre pagar una última cuota grande, devolver el coche o cambiarlo por otro."),
+ ("¿Por qué la TAE es mayor que el TIN?", "El TIN solo refleja el interés. La TAE suma además la comisión de apertura y otros gastos obligatorios y los expresa como interés anual. Con un 8,5 % TIN y un 3 % de comisión a 5 años, la TAE sube por encima del 10 %."),
+ ("¿Cuánto coche me puedo permitir con mi sueldo?", "Como referencia, que el coste total del coche (cuota y gastos de uso) no pase del 15-20 % de tus ingresos netos. Calcúlalo con nuestra calculadora de qué coche me puedo permitir.")],
 None,
 """function calc(){const cap=v('p')-v('e'),i=v('t')/100/12,n=Math.max(1,Math.round(v('m'))),fv=v('vf'),com=cap*v('ca')/100;
 const q=i? (cap-fv/Math.pow(1+i,n))*i/(1-Math.pow(1+i,-n)) : (cap-fv)/n,tot=q*n+fv+com;
-show('r','Cuota mensual:<b class="big">'+eur(q)+'</b>Importe financiado: '+eur(cap)+' · Comisión: '+eur(com)+'<br>Intereses: <b>'+eur(q*n+fv-cap)+'</b> · Total a pagar (con entrada): <b>'+eur(tot+v('e'))+'</b>');}"""))
+const pv=r=>{let x=0;for(let k=1;k<=n;k++)x+=q/Math.pow(1+r,k);return x+fv/Math.pow(1+r,n);};let lo=0,hi=0.1;for(let k=0;k<100;k++){const mi=(lo+hi)/2;pv(mi)>cap-com?lo=mi:hi=mi;}const tae=Math.pow(1+lo,12)-1;
+show('r','Cuota mensual:<b class="big">'+eur(q)+'</b>Importe financiado: '+eur(cap)+' · Comisión: '+eur(com)+'<br>TAE aproximada: <b>'+nf(tae*100,2)+' %</b> (TIN '+nf(v('t'),2)+' %)<br>Intereses: <b>'+eur(q*n+fv-cap)+'</b> · Total a pagar (con entrada): <b>'+eur(tot+v('e'))+'</b>');}"""))
 
 # --- Historial por matrícula (datos oficiales de etiqueta + fecha por serie de letras + ITV) ---
 INFORME_URL = "https://www.carvertical.com/es"   # cambiar por el enlace de afiliado cuando lo tengas
@@ -299,3 +303,47 @@ h+='<br>Según el ayuntamiento, entre <b>'+eur(b)+'</b> (coeficiente 1) y <b>'+e
 if(i<4){const lim=T[i][0];h+='<br>A partir de '+nf(lim,0)+' CVF cambiarías al tramo siguiente ('+eur(T[i+1][1]*co*(1-bo/100))+' con tu coeficiente).';}
 show('r',h);}
 modo();"""))
+
+# --- ¿Qué coche me puedo permitir? Presupuesto según ingresos, gastos de uso y financiación (combustible: media oficial de carb/index.json) ---
+S['tools'].insert(3, ("que-coche-me-puedo-permitir", "¿Qué coche me puedo permitir?", "El precio máximo de coche según tu sueldo, la entrada y lo que cuesta mantenerlo.", "Presupuesto"))
+S['aff']["que-coche-me-puedo-permitir"] = SEG + ext("https://www.bde.es/wbe/es/para-ciudadanos/", "Guía del Banco de España sobre préstamos")
+P.append(("que-coche-me-puedo-permitir", "¿Qué coche me puedo permitir según mi sueldo? Calculadora | CocheCuentas",
+"Calcula el precio máximo de coche que puedes pagar con tu sueldo: cuota máxima, entrada, financiación y gastos reales de seguro, gasolina, mantenimiento e impuesto.",
+"""<p class="lead">Pon tus ingresos netos, lo que tienes ahorrado para la entrada y cuánto vas a usar el coche. Te decimos la cuota que puedes asumir y el <b>precio máximo</b> de coche que encaja en tu bolsillo, contando lo que cuesta mantenerlo.</p>
+<div class="card"><div class="row"><div><label for="in">Ingresos netos al mes del hogar (€)</label><input id="in" inputmode="decimal" value="2000"></div>
+<div><label for="pc">Máximo para el coche, todo incluido (% de ingresos)</label><input id="pc" inputmode="decimal" value="20"></div>
+<div><label for="en">Entrada o ahorro disponible (€)</label><input id="en" inputmode="decimal" value="3000"></div>
+<div><label for="ti">TIN de la financiación (%)</label><input id="ti" inputmode="decimal" value="8"></div>
+<div><label for="pl">Plazo (meses)</label><select id="pl"><option>36</option><option>48</option><option selected>60</option><option>72</option><option>84</option></select></div>
+<div><label for="km">Kilómetros al año</label><input id="km" inputmode="numeric" value="12000"></div>
+<div><label for="co">Consumo (l/100 km)</label><input id="co" inputmode="decimal" value="6"></div>
+<div><label for="cb">Precio del combustible (€/l)</label><input id="cb" inputmode="decimal" value="1,55"></div>
+<div><label for="se">Seguro al año (€)</label><input id="se" inputmode="decimal" value="450"></div>
+<div><label for="ma">Mantenimiento, ITV y neumáticos al año (€)</label><input id="ma" inputmode="decimal" value="400"></div>
+<div><label for="iv">Impuesto de circulación y aparcamiento al año (€)</label><input id="iv" inputmode="decimal" value="80"></div></div>
+<p class="note" id="pn">Precio del combustible: media orientativa de gasolina 95.</p>
+<button onclick="calc()">Calcular mi presupuesto</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula</h2><p>Primero fijamos lo que puedes destinar al coche cada mes: un porcentaje de tus ingresos netos. Muchos asesores financieros recomiendan que el coste <b>total</b> del coche (cuota, combustible, seguro, mantenimiento e impuestos) no supere el <b>15-20 %</b> de lo que entra en casa. Después restamos los gastos de uso y lo que queda es la <b>cuota máxima</b>. Con esa cuota, el TIN y el plazo calculamos el capital que puedes pedir (sistema francés) y le sumamos tu entrada.</p>
+<p><b>Fórmulas:</b> cuota máxima = ingresos × % − gastos de uso ÷ 12. Capital = cuota × (1 − (1 + i)<sup>−n</sup>) ÷ i, con i = TIN ÷ 12. Precio máximo = capital + entrada.</p>
+<p><b>Ejemplo:</b> con 2.000 € netos y un 20 %, tienes 400 € al mes. Un coche que hace 12.000 km al año gastando 6 l/100 km a 1,55 €/l consume 1.116 € de combustible; con 450 € de seguro, 400 € de mantenimiento y 80 € de impuesto, el uso cuesta unos 170 € al mes. Te quedan 229 € de cuota: a 60 meses y un 8 % TIN puedes financiar unos 11.300 €, así que con 3.000 € de entrada tu tope está en torno a <b>14.300 €</b>. A 84 meses el tope sube, pero pagarás bastante más en intereses.</p>
+<table><tr><th>Ingresos netos/mes</th><th>Al coche (20 %)</th><th>Precio máximo orientativo*</th></tr>
+<tr><td>1.500 €</td><td>300 €</td><td>≈ 9.400 €</td></tr><tr><td>2.000 €</td><td>400 €</td><td>≈ 14.300 €</td></tr>
+<tr><td>2.500 €</td><td>500 €</td><td>≈ 19.200 €</td></tr><tr><td>3.500 €</td><td>700 €</td><td>≈ 29.100 €</td></tr></table>
+<p class="note">* Con los gastos de uso del ejemplo (≈ 170 €/mes), 3.000 € de entrada, 60 meses y 8 % TIN.</p>
+<h2>Antes de comprar</h2><ul><li>Compara la <b>TAE</b> y el coste total en la <a href="cuota-financiacion-coche.html">calculadora de financiación</a>: las comisiones cambian mucho el resultado.</li>
+<li>Calcula lo que perderá de valor con la <a href="depreciacion-coche.html">calculadora de depreciación</a> y revisa el <a href="coste-anual-coche.html">coste anual completo</a>.</li>
+<li>Si es de segunda mano, mira su <a href="historial-coche-matricula.html">historial por matrícula</a> y su <a href="etiqueta-dgt.html">etiqueta DGT</a>. Si lo vas a usar poco, quizá te compense el <a href="renting-vs-compra.html">renting</a>.</li></ul>""",
+[("¿Qué porcentaje del sueldo debo gastar en el coche?", "Como referencia, el coste total del coche (cuota más gasolina, seguro, mantenimiento e impuestos) no debería pasar del 15-20 % de tus ingresos netos. Si ya pagas hipoteca o alquiler alto, mejor quedarte cerca del 15 %."),
+ ("¿Qué coche me puedo permitir con 1.500 € de sueldo?", "Destinando el 20 % (300 € al mes) y con unos 170 € de gastos de uso, te quedan unos 130 € de cuota: a 60 meses y 8 % TIN son unos 6.400 € financiados. Con 3.000 € de entrada, un coche de unos 9.400 €."),
+ ("¿Es mejor alargar el plazo para comprar un coche más caro?", "Alargar el plazo baja la cuota pero dispara los intereses y puedes acabar debiendo más de lo que vale el coche. Si necesitas 84 meses para que la cuota encaje, probablemente el coche es demasiado caro para tu presupuesto.")],
+"¿Qué coche me puedo permitir según mi sueldo?",
+"""function calc(){const ing=v('in'),pre=ing*v('pc')/100,i=v('ti')/100/12,n=+document.getElementById('pl').value,ent=v('en');
+const comb=v('km')*v('co')/100*v('cb'),uso=(comb+v('se')+v('ma')+v('iv'))/12,q=pre-uso;
+if(ing<=0){show('r','Escribe tus ingresos netos mensuales.');return;}
+let h;if(q<=0){h='Con este presupuesto <b>no queda margen para cuota</b>:<b class="big">'+eur(ent)+'</b>Lo que destinas al coche ('+eur(pre)+' al mes) no cubre ni los gastos de uso ('+eur(uso)+' al mes). Busca un coche que puedas pagar al contado con tu ahorro, sube el porcentaje o reduce kilómetros y seguro.';}
+else{const cap=i?q*(1-Math.pow(1+i,-n))/i:q*n,pm=cap+ent,int=q*n-cap;
+h='Precio máximo de coche:<b class="big">'+eur(Math.floor(pm/100)*100)+'</b>Presupuesto para el coche: <b>'+eur(pre)+'</b> al mes · Gastos de uso: '+eur(uso)+' al mes (combustible '+eur(comb/12)+')<br>Cuota máxima: <b>'+eur(q)+'</b> durante '+n+' meses → puedes financiar '+eur(cap)+' (pagarás '+eur(int)+' de intereses) + '+eur(ent)+' de entrada.';
+const al=[36,48,60,72,84].filter(x=>x!=n).map(m=>m+' meses: '+eur(Math.floor(((i?q*(1-Math.pow(1+i,-m))/i:q*m)+ent)/100)*100)).join(' · ');h+='<br><span class="note">Con otros plazos: '+al+'</span>';}
+show('r',h);}
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias||!j.medias.g95)return;document.getElementById('cb').value=j.medias.g95.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio del combustible: media de la gasolina 95 en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si tu coche es diésel, cámbialo por el de tu <a href="gasolineras-baratas.html">gasolinera</a>.';calc();}).catch(()=>{});
+calc();"""))

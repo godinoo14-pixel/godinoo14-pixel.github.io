@@ -34,8 +34,8 @@ P.append(("consumo-electrodomesticos", "Consumo de electrodomésticos: cuánto g
 None, """function pre(){const [w,h]=document.getElementById('ap').value.split('|');document.getElementById('w').value=w;document.getElementById('h').value=h;document.getElementById('f').value=(w==150&&h==24)?35:100;}
 function calc(){const k=v('w')*v('h')*v('f')/100/1000,p=v('p');show('r','Coste al mes:<b class="big">'+eur(k*p*30.4)+'</b>Al día: '+nf(k,2)+' kWh ('+eur(k*p)+') · Al año: '+nf(k*365,0)+' kWh (<b>'+eur(k*p*365)+'</b>)');}pre();"""))
 
-P.append(("coste-aire-acondicionado", "¿Cuánto gasta el aire acondicionado? Calculadora | GastoLuz",
-"Calcula cuánto cuesta tener encendido el aire acondicionado o la bomba de calor por hora, al día y al mes según frigorías y eficiencia.",
+P.append(("coste-aire-acondicionado", "¿Cuánto gasta el aire acondicionado en frío y en calor? Calculadora | GastoLuz",
+"Calcula cuánto cuesta el aire acondicionado o la bomba de calor por hora, al día y al mes, en verano y para calentar en invierno, según frigorías, eficiencia y precio de la luz.",
 """<p class="lead">Calcula el coste de tu aire acondicionado a partir de sus frigorías (o kW de frío) y su eficiencia.</p>
 <div class="card"><div class="row"><div><label for="fr">Frigorías</label><input id="fr" inputmode="numeric" value="3000"></div>
 <div><label for="e">Eficiencia (EER/SEER)</label><input id="e" inputmode="decimal" value="3,5"></div>
@@ -43,8 +43,10 @@ P.append(("coste-aire-acondicionado", "¿Cuánto gasta el aire acondicionado? Ca
 <div><label for="c">Carga media (%)</label><input id="c" inputmode="decimal" value="60"></div><div><label for="p">Precio kWh (€)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
 <button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
 <p class="note">Un equipo inverter no trabaja al 100 % todo el tiempo: una vez alcanzada la temperatura baja el ritmo. Una carga media del 50-70 % es realista.</p>
-<h2>Cómo gastar menos con el aire</h2><ul><li>Pon el termostato a 25-26 °C: cada grado menos sube el consumo alrededor de un 7 %.</li><li>Limpia los filtros cada mes en verano.</li><li>Baja persianas y toldos en las horas de sol.</li><li>Usa el modo «eco» o «sleep» por la noche.</li></ul>""",
-[("¿Cuánto gasta un aire de 3.000 frigorías por hora?", "Con una eficiencia de 3,5, a plena potencia consume alrededor de 1 kW por hora, unos 0,15 €/h con el kWh a 0,15 €. En uso real (inverter) suele ser menos."),
+<h2>Cómo gastar menos con el aire</h2><ul><li>Pon el termostato a 25-26 °C: cada grado menos sube el consumo alrededor de un 7 %.</li><li>Limpia los filtros cada mes en verano.</li><li>Baja persianas y toldos en las horas de sol.</li><li>Usa el modo «eco» o «sleep» por la noche.</li></ul>
+<h2>Aire acondicionado en modo calor (invierno)</h2><p>Para calentar, pon las frigorías del equipo (su potencia en calor suele ser parecida o algo mayor) y su <b>SCOP</b> en la casilla de eficiencia; suele estar entre 3 y 4,5 en la etiqueta energética. En invierno el termostato a 19-21 °C es suficiente: cada grado de más sube el consumo alrededor de un 7 %. Calentar con bomba de calor cuesta entre la mitad y un tercio que con radiadores eléctricos o con butano: <a href="estufa-butano-vs-electrica.html">compara butano, radiador y bomba de calor</a> con el precio de hoy.</p>""",
+[("¿Cuánto gasta el aire acondicionado para calentar?", "Un equipo de 3.000 frigorías con SCOP 3,5 consume alrededor de 1 kW a plena potencia y unos 0,6 kW de media una vez caliente la habitación: con el kWh a 0,15 €, unos 0,09 € por hora, menos de 15 € al mes encendido 5 horas al día."),
+ ("¿Cuánto gasta un aire de 3.000 frigorías por hora?", "Con una eficiencia de 3,5, a plena potencia consume alrededor de 1 kW por hora, unos 0,15 €/h con el kWh a 0,15 €. En uso real (inverter) suele ser menos."),
  ("¿Cuántas frigorías necesito?", "Como referencia, unas 100 frigorías por m² en zonas calurosas: una habitación de 25 m² necesita unas 2.500 frigorías.")],
 None, """function calc(){const kw=v('fr')*1.163/1000/(v('e')||1)*v('c')/100,p=v('p'),h=v('h');
 show('r','Coste al mes:<b class="big">'+eur(kw*h*v('d')*p)+'</b>Por hora: '+eur(kw*p)+' ('+nf(kw,2)+' kW) · Al día: '+eur(kw*h*p));}"""))

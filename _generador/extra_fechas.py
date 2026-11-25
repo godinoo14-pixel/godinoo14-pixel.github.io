@@ -234,3 +234,43 @@ h+='<br>'+(br/f<2000?'Se cobra en cualquier administración de lotería.':'Más 
 h+='<br>'+(ds>0?'Faltan <b>'+ds+' días</b> para el sorteo. ':'')+'Fecha límite para cobrar: <b>'+SD[s][2]+'</b>'+(ds<=0&&ok>=0?' (quedan '+ok+' días)':'')+'.';
 show('r',h);}
 lista();"""))
+
+# --- Paga extra de Navidad: parte proporcional según días trabajados en el periodo de devengo (art. 31 ET; cuantía y devengo según convenio) ---
+S['tools'].insert(2, ("paga-extra-navidad", "Paga extra de Navidad", "Cuánto cobras de paga extra según los días trabajados, tu jornada y el IRPF.", "Paga extra"))
+S['aff']["paga-extra-navidad"] = amz("agenda 2027", "Agendas 2027") + amz("hucha ahorro", "Huchas y libretas de ahorro")
+P.append(("paga-extra-navidad", "Calcular paga extra de Navidad 2026 por días trabajados | CalculadoraDías",
+"Calcula tu paga extra de Navidad: parte proporcional por días trabajados si entraste este año, devengo anual o semestral, jornada parcial e IRPF. Bruto y neto al instante.",
+"""<p class="lead">Pon lo que cobras en una paga extra completa y desde cuándo trabajas en la empresa. Calculamos los días que generan paga dentro del periodo de tu convenio y lo que te llegará en bruto y en neto.</p>
+<div class="card"><div class="row"><div><label for="pe">Paga extra completa según convenio (€ brutos)</label><input id="pe" inputmode="decimal" value="1600"></div>
+<div><label for="dv">Periodo de devengo de la paga de Navidad</label><select id="dv"><option value="a">Anual: 1 de enero a 31 de diciembre de 2026</option><option value="s">Semestral: 1 de julio a 31 de diciembre de 2026</option><option value="d">Anual: 1 de diciembre de 2025 a 30 de noviembre de 2026</option></select></div>
+<div><label for="al">Fecha de alta en la empresa</label><input id="al" type="date" value="2026-03-02"></div>
+<div><label for="fb">Fecha de baja (si dejas la empresa; si no, vacío)</label><input id="fb" type="date"></div>
+<div><label for="nc">Días que no generan paga (excedencia, permiso sin sueldo, huelga)</label><input id="nc" inputmode="numeric" value="0"></div>
+<div><label for="jo">Jornada (% de la completa)</label><input id="jo" inputmode="decimal" value="100"></div>
+<div><label for="ir">Retención de IRPF de tu nómina (%)</label><input id="ir" inputmode="decimal" value="15"></div></div>
+<button onclick="calc()">Calcular paga extra</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula la paga extra</h2><p>El <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430#a31" rel="noopener" target="_blank">artículo 31 del Estatuto de los Trabajadores</a> reconoce al menos dos pagas extraordinarias al año, una de ellas en Navidad. Su importe y el periodo en el que se «genera» (devengo) los fija tu convenio colectivo: lo más habitual es que la de Navidad se genere a lo largo de todo el año natural, pero hay convenios con devengo semestral (de julio a diciembre) o de diciembre a noviembre. Si no has trabajado el periodo completo, cobras la parte proporcional:</p>
+<p><b>Fórmula:</b> paga = paga completa × (días trabajados en el periodo ÷ días del periodo) × % de jornada.</p>
+<p><b>Ejemplo:</b> entraste el 2 de marzo de 2026, tu paga completa es de 1.600 € y el devengo es anual. Del 2 de marzo al 31 de diciembre van 305 de los 365 días del año: 1.600 × 305 ÷ 365 = <b>1.336,99 € brutos</b>. Con un 15 % de IRPF te llegan unos 1.136 €. Si el devengo fuera semestral, cobrarías la paga entera porque has trabajado todo el semestre.</p>
+<table><tr><th>Alta en 2026 (devengo anual)</th><th>Días computados</th><th>% de la paga</th></tr>
+<tr><td>2 de enero</td><td>364</td><td>99,7 %</td></tr><tr><td>1 de abril</td><td>275</td><td>75,3 %</td></tr><tr><td>1 de julio</td><td>184</td><td>50,4 %</td></tr><tr><td>1 de octubre</td><td>92</td><td>25,2 %</td></tr></table>
+<h2>Impuestos y cuándo se cobra</h2><p>La paga extra no paga cotizaciones a la Seguridad Social el mes en que la cobras: ya se cotiza repartida en las nóminas de todo el año. Sí lleva la <b>retención de IRPF</b> de tu nómina. La fecha la marca el convenio, normalmente antes del 20-22 de diciembre. Si tus pagas están <b>prorrateadas</b>, ya cobras cada mes la doceava parte y en diciembre no recibirás nada extra. Si dejas la empresa antes, la parte generada se paga en el finiquito.</p>
+<p>Organiza los días libres de Navidad con la <a href="calculadora-vacaciones.html">calculadora de vacaciones</a> y el <a href="calendario-laboral-2027.html">calendario laboral 2027 con puentes</a>, o cuenta los <a href="dias-entre-fechas.html">días entre dos fechas</a>.</p>""",
+[("¿Cuánto me corresponde de paga extra si empecé a trabajar este año?", "La parte proporcional a los días trabajados dentro del periodo de devengo. Con devengo anual y alta el 1 de julio, te corresponde algo más de la mitad: 184 de 365 días, el 50,4 % de la paga completa."),
+ ("¿La paga extra de Navidad lleva descuento de Seguridad Social?", "No en el mes en que se cobra, porque se cotiza prorrateada en todas las nóminas del año. Sí se le aplica la retención de IRPF, así que el neto es la paga bruta menos ese porcentaje."),
+ ("¿Las bajas por enfermedad o por nacimiento reducen la paga extra?", "Depende del convenio. Durante esas bajas la prestación ya incluye la parte proporcional de las pagas extra, por lo que muchas empresas descuentan ese periodo. Si tu convenio lo dice, indica esos días como días que no generan paga."),
+ ("¿Cuándo cobran los pensionistas la paga extra de Navidad?", "Las pensiones contributivas se pagan en 14 pagas: la extra de Navidad se abona junto con la pensión de noviembre, a finales de ese mes.")],
+"Calculadora de la paga extra de Navidad",
+DATEJS + """const PER={a:[new Date(2026,0,1),new Date(2026,11,31)],s:[new Date(2026,6,1),new Date(2026,11,31)],d:[new Date(2025,11,1),new Date(2026,10,30)]};
+function calc(){const p=PER[document.getElementById('dv').value],pe=v('pe'),jo=(v('jo')||100)/100,al=pd('al'),fb=pd('fb'),irp=v('ir');
+if(pe<=0){show('r','Escribe el importe de una paga extra completa.');return;}
+const ini=al&&al>p[0]?al:p[0],fin=fb&&fb<p[1]?fb:p[1],tot=diff(p[0],p[1])+1;
+let d=Math.max(0,diff(ini,fin)+1-Math.max(0,Math.round(v('nc'))));if(d>tot)d=tot;
+const br=pe*d/tot*jo,ne=br*(1-irp/100),f=x=>x.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+let h='Paga extra de Navidad (bruto):<b class="big">'+eur(br)+'</b>Neto aproximado con '+nf(irp,1)+' % de IRPF: <b>'+eur(ne)+'</b>';
+h+='<br>Días que generan paga: <b>'+d+' de '+tot+'</b> ('+nf(d/tot*100,1)+' %), del '+f(ini)+' al '+f(fin)+(jo<1?' · Jornada al '+nf(jo*100,1)+' %':'')+'.';
+if(d==0)h+='<br>No has trabajado ningún día de este periodo, así que no te corresponde esta paga.';
+if(fb&&fb<p[1])h+='<br>Como dejas la empresa, esta cantidad debe aparecer en tu <b>finiquito</b>.';
+h+='<br><span class="note">Si tienes las pagas prorrateadas, ya cobras cada mes '+eur(pe*jo/12)+' brutos por esta paga y en diciembre no recibirás nada aparte.</span>';
+show('r',h);}
+calc();"""))
