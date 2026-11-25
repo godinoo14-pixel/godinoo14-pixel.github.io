@@ -17,20 +17,38 @@ S['tools'] += [("coste-cargar-coche-electrico", "Coste de cargar un coche eléct
                ("calculadora-placas-solares", "Calculadora de placas solares", "Ahorro anual y amortización del autoconsumo.", ""),
                ("coste-ducha-termo", "Coste de una ducha con termo eléctrico", "Lo que pagas por cada ducha y al mes.", "")]
 
-P.append(("coste-cargar-coche-electrico", "¿Cuánto cuesta cargar un coche eléctrico? Calculadora | GastoLuz",
-"Calcula cuánto cuesta cargar tu coche eléctrico en casa o en un cargador público según la batería, el porcentaje y el precio del kWh.",
-"""<p class="lead">Calcula el coste de una carga completa o parcial y compárala entre casa y cargador público.</p>
+P.append(("coste-cargar-coche-electrico", "Cuánto cuesta cargar un coche eléctrico en casa: por carga y cada 100 km | GastoLuz",
+"Calcula cuánto cuesta cargar tu coche eléctrico en casa o en la calle: por carga, cada 100 km y al mes, con el precio de la luz por horas de hoy y la franja más barata para enchufarlo.",
+"""<p class="lead">Pon la batería, cuánto quieres cargar y la potencia de tu enchufe. Calculamos el coste en casa con el precio de la luz de hoy (y la franja horaria más barata), en un cargador público y por cada 100 km.</p>
 <div class="card"><div class="row"><div><label for="b">Batería útil (kWh)</label><input id="b" inputmode="decimal" value="60"></div><div><label for="pe">Pérdidas de carga (%)</label><input id="pe" inputmode="decimal" value="10"></div>
 <div><label for="d">Desde (%)</label><input id="d" inputmode="numeric" value="20"></div><div><label for="h">Hasta (%)</label><input id="h" inputmode="numeric" value="80"></div>
-<div><label for="pc">Precio kWh en casa (€)</label><input id="pc" inputmode="decimal" value="0,12"></div><div><label for="pp">Precio kWh cargador público (€)</label><input id="pp" inputmode="decimal" value="0,49"></div></div>
-<button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
-<p class="note">Pon tu tarifa: con discriminación horaria, cargar de madrugada (periodo valle) es lo más barato. En la calle, los cargadores rápidos suelen ser los más caros.</p>
-<h2>Cómo se calcula</h2><p>Energía = batería × (hasta − desde) / 100, más un 8-12 % de pérdidas en la carga. Multiplicada por el precio del kWh te da el coste. Una carga del 20 % al 80 % de una batería de 60 kWh son 36 kWh útiles, unos 40 kWh de la red.</p>""",
-[("¿Cuánto cuesta llenar un coche eléctrico en casa?", "Con una batería de 60 kWh y el kWh a 0,12 €, una carga completa ronda los 8 €, contando pérdidas."),
- ("¿Por qué no se carga siempre al 100 %?", "Para cuidar la batería, la mayoría de fabricantes recomiendan cargar al 80 % en el día a día y llegar al 100 % solo antes de viajes largos.")],
+<div><label for="kw">Potencia de carga en casa</label><select id="kw"><option value="2.3">Enchufe normal (2,3 kW)</option><option value="3.7">Wallbox 3,7 kW</option><option value="7.4" selected>Wallbox 7,4 kW</option><option value="11">Wallbox trifásico 11 kW</option></select></div>
+<div><label for="co">Consumo del coche (kWh/100 km)</label><input id="co" inputmode="decimal" value="16"></div>
+<div><label for="pc">Precio kWh en casa (€, si no usas el PVPC de hoy)</label><input id="pc" inputmode="decimal" value="0,12"></div><div><label for="pp">Precio kWh cargador público (€)</label><input id="pp" inputmode="decimal" value="0,49"></div>
+<div><label for="km">Kilómetros al mes</label><input id="km" inputmode="numeric" value="1000"></div></div>
+<p class="note" id="pn">Cargando el precio de la luz por horas de hoy…</p>
+<button onclick="calc()">Calcular</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Con discriminación horaria o tarifa regulada (PVPC), cargar de madrugada es lo más barato. En la calle, los cargadores rápidos suelen ser los más caros.</p>
+<h2>Cómo se calcula</h2><p><b>Energía de la red</b> = batería × (hasta − desde) ÷ 100 × (1 + pérdidas). Las pérdidas en la carga van del 8 al 15 %: más con el enchufe normal y con frío. Multiplicada por el precio del kWh te da el coste. Una carga del 20 % al 80 % de una batería de 60 kWh son 36 kWh útiles, unos 40 kWh de la red: <b>4,75 €</b> en casa a 0,12 €/kWh y <b>19,40 €</b> en un cargador público a 0,49 €/kWh.</p>
+<table><tr><th>Consumo del coche</th><th>Casa (0,12 €/kWh)</th><th>Casa (0,20 €/kWh)</th><th>Cargador público (0,49 €/kWh)</th></tr>
+<tr><td>14 kWh/100 km (utilitario)</td><td>1,85 €</td><td>3,08 €</td><td>7,55 €</td></tr><tr><td>17 kWh/100 km (compacto)</td><td>2,24 €</td><td>3,74 €</td><td>9,16 €</td></tr><tr><td>21 kWh/100 km (SUV grande)</td><td>2,77 €</td><td>4,62 €</td><td>11,32 €</td></tr></table>
+<p class="note">Coste cada 100 km con un 10 % de pérdidas de carga. Un coche de gasolina que gaste 6 l/100 km a 1,55 €/l cuesta 9,30 € cada 100 km.</p>
+<p>Compara con lo que gastarías en combustible en el <a href="https://cochecuentas.es/electrico-vs-gasolina.html">comparador eléctrico vs gasolina</a> de CocheCuentas, mira el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a> y comprueba si necesitas subir tu <a href="potencia-contratada.html">potencia contratada</a> para instalar un wallbox.</p>""",
+[("¿Cuánto cuesta llenar un coche eléctrico en casa?", "Con una batería de 60 kWh y el kWh a 0,12 €, una carga completa ronda los 8 €, contando pérdidas. Con la tarifa regulada (PVPC) y cargando de madrugada suele salir parecido o más barato."),
+ ("¿Por qué no se carga siempre al 100 %?", "Para cuidar la batería, la mayoría de fabricantes recomiendan cargar al 80 % en el día a día y llegar al 100 % solo antes de viajes largos."),
+ ("¿Cuánto tarda en cargar un coche eléctrico en un enchufe normal?", "A 2,3 kW, recuperar 40 kWh lleva unas 17 horas. Con un wallbox de 7,4 kW, unas 5,5 horas: cabe de sobra en la madrugada, cuando la luz es más barata."),
+ ("¿Cuánto sube la factura de la luz con un coche eléctrico?", "Con 1.000 km al mes y un consumo de 16 kWh/100 km son unos 176 kWh con pérdidas: entre 21 y 35 € al mes según el precio del kWh. Si instalas un wallbox quizá necesites más potencia contratada.")],
 None,
-"""function calc(){const k=v('b')*(v('h')-v('d'))/100*(1+v('pe')/100);
-show('r','Energía de la red:<b class="big">'+nf(k,1)+' kWh</b>En casa: <b>'+eur(k*v('pc'))+'</b> · En cargador público: <b>'+eur(k*v('pp'))+'</b><br>Ahorras '+eur(k*(v('pp')-v('pc')))+' por carga en casa');}"""))
+"""let HP=null;
+function win(n){let best=null;for(let h0=0;h0<24;h0++){let s=0,rem=n,t=0;while(rem>0){const f=Math.min(1,rem);s+=HP[(h0+t)%24]*f;rem-=f;t++;}const avg=s/n;if(!best||avg<best[1])best=[h0,avg];}return best;}
+function calc(){const k=v('b')*(v('h')-v('d'))/100*(1+v('pe')/100),kw=parseFloat(document.getElementById('kw').value),hr=k/kw,co=v('co'),pp=v('pp');
+if(k<=0){show('r','Revisa la batería y los porcentajes de carga.');return;}
+let pc=v('pc'),tx='';if(HP){const w=win(Math.min(24,Math.max(1,hr)));pc=w[1]*1.0511*1.21;tx=' (PVPC de hoy en la franja más barata: empezando a las <b>'+String(w[0]).padStart(2,'0')+':00</b>, con impuestos)';}
+const ckm=co*(1+v('pe')/100)/100,mes=v('km')*ckm;
+show('r','Coste de la carga en casa:<b class="big">'+eur(k*pc)+'</b>'+nf(k,1)+' kWh de la red a '+nf(pc,3)+' €/kWh'+tx+'<br>Tiempo de carga a '+nf(kw,1)+' kW: <b>'+nf(hr,1)+' h</b> · En cargador público: <b>'+eur(k*pp)+'</b> (ahorras '+eur(k*(pp-pc))+' cargando en casa)<br>Cada 100 km: <b>'+eur(ckm*100*pc)+'</b> en casa · Al mes ('+nf(v('km'),0)+' km): <b>'+eur(mes*pc)+'</b> en casa o '+eur(mes*pp)+' en la calle');}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio en casa: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes otra tarifa, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas: pon el de tu factura (término de energía con impuestos).';calc();});
+calc();"""))
 
 P.append(("calculadora-placas-solares", "Calculadora de placas solares: ahorro y amortización | GastoLuz",
 "Calcula cuántas placas solares necesitas, cuánto ahorrarás al año con autoconsumo y en cuántos años se amortiza la instalación.",
@@ -286,4 +304,45 @@ txt='<br>Hoy, la hora más barata para empezar es a las <b>'+String(bh).padStart
 const c=e*pr;show('r','Coste por secado:<b class="big">'+eur(c)+'</b>'+nf(e,2)+' kWh a '+nf(pr,3)+' €/kWh'+(HP?' (PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00, con impuestos)':'')+'<br>Al mes: <b>'+eur(c*cs*52/12)+'</b> · Al año: <b>'+eur(c*cs*52)+'</b> ('+nf(e*cs*52,0)+' kWh)'+txt);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio arriba y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
+calc();"""))
+
+# --- Manta eléctrica, calientacamas, almohadilla y brasero: coste con el PVPC por horas frente a un radiador ---
+S['tools'].insert(5, ("consumo-manta-electrica", "Consumo de la manta eléctrica", "Cuánto cuesta la manta, el calientacamas o el brasero frente a un radiador.", ""))
+S['aff']["consumo-manta-electrica"] = amz("manta electrica sofa", "Mantas eléctricas") + amz("calientacamas electrico", "Calientacamas") + amz("brasero electrico mesa camilla", "Braseros eléctricos")
+P.append(("consumo-manta-electrica", "¿Cuánto gasta una manta eléctrica? Coste por hora y al mes | GastoLuz",
+"Calcula cuánto gasta tu manta eléctrica, calientacamas, almohadilla o brasero por hora, al día y al mes con el precio de la luz por horas de hoy, y cuánto ahorras frente a un radiador o calefactor.",
+"""<p class="lead">Elige el aparato, cuántas horas lo usas y a qué hora lo enciendes. Te decimos lo que cuesta con el precio real de la luz de esas horas y cuánto ahorras frente a calentar la habitación con un radiador.</p>
+<div class="card"><div class="row"><div><label for="ap">Aparato</label><select id="ap" onchange="pre()"><option value="100|60">Manta eléctrica de sofá (100 W)</option><option value="60|50">Calientacamas individual (60 W)</option><option value="120|50">Calientacamas de matrimonio (120 W)</option><option value="100|60">Almohadilla eléctrica (100 W)</option><option value="900|70">Brasero eléctrico de mesa camilla (900 W)</option></select></div>
+<div><label for="w">Potencia (W)</label><input id="w" inputmode="decimal" value="100"></div>
+<div><label for="f">Uso medio de la potencia (%)</label><input id="f" inputmode="decimal" value="60"></div>
+<div><label for="hd">Horas al día</label><input id="hd" inputmode="decimal" value="3"></div>
+<div><label for="ho">Hora a la que lo enciendes</label><select id="ho"></select></div>
+<div><label for="dm">Días al mes</label><input id="dm" inputmode="numeric" value="30"></div>
+<div><label for="rw">Radiador o calefactor para comparar (W)</label><input id="rw" inputmode="decimal" value="1500"></div>
+<div><label for="p">Precio de la luz (€/kWh, si no usas el PVPC de hoy)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
+<p class="note" id="pn">Cargando el precio de la luz por horas de hoy…</p>
+<button onclick="calc()">Calcular coste</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto gasta cada aparato</h2><p>Las mantas y calientacamas tienen potencias muy bajas porque calientan tu cuerpo, no el aire de la habitación. Además, con el termostato no funcionan siempre al máximo: en el nivel medio, el consumo real suele quedarse en la mitad o algo más de la potencia de la etiqueta. Por eso ponemos un <b>uso medio</b> del 50-70 %.</p>
+<table><tr><th>3 horas al día (0,15 €/kWh)</th><th>kWh al día</th><th>Al día</th><th>Al mes</th></tr>
+<tr><td>Manta eléctrica 100 W al 60 %</td><td>0,18</td><td>0,03 €</td><td>0,81 €</td></tr>
+<tr><td>Calientacamas 60 W al 50 % (1 h)</td><td>0,03</td><td>0,005 €</td><td>0,14 €</td></tr>
+<tr><td>Brasero eléctrico 900 W al 70 %</td><td>1,89</td><td>0,28 €</td><td>8,51 €</td></tr>
+<tr><td>Radiador eléctrico 1.500 W al 80 %</td><td>3,6</td><td>0,54 €</td><td>16,20 €</td></tr></table>
+<p><b>Fórmula:</b> coste = potencia (W) × uso medio (%) × horas ÷ 1.000 × precio del kWh. Con la tarifa regulada (PVPC), el precio de las 20:00 puede triplicar el de la madrugada, así que la hora a la que la usas también cuenta.</p>
+<h2>Seguridad con la manta eléctrica</h2><ul><li>No la dobles ni la uses arrugada o debajo del cuerpo si el fabricante no lo permite: el cable interior puede dañarse y sobrecalentarse.</li><li>Si la usas en la cama, elige una con <b>apagado automático</b> o desenchúfala antes de dormir.</li><li>No la uses con bebés, ni con personas que no puedan apagarla solas.</li><li>Revísala al empezar el invierno: si ves el cable dañado, quemaduras o zonas que calientan más, cámbiala.</li></ul>
+<p>Compara con el coste del <a href="coste-calefaccion-electrica.html">radiador eléctrico</a>, de una <a href="estufa-butano-vs-electrica.html">estufa de butano o la bomba de calor</a>, o revisa el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>.</p>""",
+[("¿Cuánto gasta una manta eléctrica al mes?", "Una manta de 100 W usada 3 horas al día en nivel medio gasta unos 5,4 kWh al mes: menos de 1 € con la luz a 0,15 €/kWh. Un radiador de 1.500 W las mismas horas cuesta unos 16 €."),
+ ("¿Qué gasta más, una manta eléctrica o un calefactor?", "El calefactor, de lejos. Un calefactor de 2.000 W gasta en una hora lo que una manta de 100 W en unas 20 horas o más. La manta calienta solo a quien la usa, no toda la habitación."),
+ ("¿Cuánto gasta un brasero eléctrico?", "Uno de 900 W usado a un 70 % de su potencia gasta unos 0,63 kWh por hora: algo menos de 10 céntimos por hora con la luz a 0,15 €/kWh. Unos 8,50 € al mes con 3 horas al día.")],
+"¿Cuánto gasta una manta eléctrica?",
+"""let HP=null;const hs=document.getElementById('ho');for(let i=0;i<24;i++)hs.add(new Option(String(i).padStart(2,'0')+':00',i));hs.value=20;
+function pre(){const t=document.getElementById('ap').value.split('|');document.getElementById('w').value=t[0];document.getElementById('f').value=t[1];calc();}
+function pm(h0,du){let s=0,w=0;for(let t=0;t<du;t+=0.25){s+=HP[Math.floor(h0+t)%24];w++;}return s/w*1.0511*1.21;}
+function calc(){const kw=v('w')/1000*v('f')/100,hd=Math.min(24,v('hd')),dm=v('dm'),h0=+hs.value,rk=v('rw')/1000*0.8;
+if(kw<=0||hd<=0){show('r','Escribe la potencia y las horas de uso.');return;}
+let pr=v('p'),tx='';if(HP){pr=pm(h0,hd);let bh=0,bp=1e9;for(let h=0;h<24;h++){const x=pm(h,hd);if(x<bp){bp=x;bh=h;}}tx='<br>Hoy, la franja más barata empieza a las <b>'+String(bh).padStart(2,'0')+':00</b> ('+nf(bp,3)+' €/kWh).';}
+const e=kw*hd,c=e*pr,cr=rk*hd*pr;
+show('r','Coste al mes:<b class="big">'+eur(c*dm)+'</b>Por hora: '+eur(kw*pr)+' · Al día: <b>'+eur(c)+'</b> ('+nf(e,2)+' kWh a '+nf(pr,3)+' €/kWh'+(HP?', PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00 con impuestos':'')+')<br>Un radiador de '+nf(v('rw'),0)+' W (al 80 %) las mismas horas: <b>'+eur(cr*dm)+' al mes</b>. '+(cr>c?'Ahorras <b>'+eur((cr-c)*dm)+'</b> al mes ('+nf((1-c/cr)*100,0)+' % menos).':'')+tx);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
 calc();"""))

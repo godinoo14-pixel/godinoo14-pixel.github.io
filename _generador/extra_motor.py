@@ -32,21 +32,30 @@ None,
 function calc(){const d1=dm(v('a1'),v('b1'),v('c1')),d2=dm(v('a2'),v('b2'),v('c2')),p=(d2-d1)/d1*100,ok=Math.abs(p)<=3;
 show('r','Diferencia de diámetro:<b class="big" style="color:'+(ok?'#2f9e44':'#e03131')+'">'+(p>0?'+':'')+nf(p,2)+' %</b>Original: '+nf(d1,0)+' mm · Nueva: '+nf(d2,0)+' mm<br>Cuando el velocímetro marca 100 km/h, vas realmente a <b>'+nf(100*d2/d1,1)+' km/h</b><br>'+(ok?'Dentro del margen habitual del ±3 %.':'Fuera del margen del ±3 %: no recomendable.'));}"""))
 
-P.append(("renting-vs-compra", "Renting o comprar coche: ¿qué sale más barato? Calculadora | CocheCuentas",
-"Compara el coste total de un renting con el de comprar un coche al contado: precio, valor de reventa, seguro, mantenimiento e impuestos.",
-"""<p class="lead">Compara cuánto te cuesta de verdad cada opción durante el mismo número de años.</p>
+P.append(("renting-vs-compra", "Renting o comprar coche: ¿qué sale más barato? Calculadora 2026 | CocheCuentas",
+"Renting o compra: compara el coste total de cada opción en los mismos años, con valor de reventa, seguro, mantenimiento, impuestos y, si financias, los intereses. Te decimos cuál sale más barato y por cuánto.",
+"""<p class="lead">Compara cuánto te cuesta de verdad cada opción durante el mismo número de años, incluyendo lo que recuperas al vender el coche y los intereses si lo financias.</p>
 <div class="card"><b>Compra</b><div class="row"><div><label for="pc">Precio del coche (€)</label><input id="pc" inputmode="decimal" value="25000"></div>
 <div><label for="vr">Valor de reventa al final (%)</label><input id="vr" inputmode="decimal" value="50"></div>
 <div><label for="sg">Seguro (€/año)</label><input id="sg" inputmode="decimal" value="500"></div><div><label for="mt">Mantenimiento + neumáticos (€/año)</label><input id="mt" inputmode="decimal" value="500"></div>
-<div><label for="im">Impuesto + ITV (€/año)</label><input id="im" inputmode="decimal" value="120"></div><div><label for="n">Años</label><input id="n" inputmode="numeric" value="4"></div></div>
+<div><label for="im">Impuesto + ITV (€/año)</label><input id="im" inputmode="decimal" value="120"></div><div><label for="n">Años</label><input id="n" inputmode="numeric" value="4"></div>
+<div><label for="ti">Si lo financias: TIN (%; 0 si pagas al contado)</label><input id="ti" inputmode="decimal" value="0"></div><div><label for="ef">Entrada si financias (€)</label><input id="ef" inputmode="decimal" value="5000"></div></div>
 <b style="display:block;margin-top:16px">Renting</b><div class="row"><div><label for="cr">Cuota mensual con IVA (€)</label><input id="cr" inputmode="decimal" value="420"></div><div><label for="en">Entrada / fianza no recuperable (€)</label><input id="en" inputmode="decimal" value="0"></div></div>
-<button onclick="calc()">Comparar</button><div class="res" id="r"></div></div>
-<h2>Qué incluye normalmente el renting</h2><p>La cuota suele incluir seguro a todo riesgo, mantenimiento, neumáticos, impuesto de circulación y asistencia. A cambio, el coche nunca es tuyo y hay penalización si te pasas de kilómetros o cancelas antes. Comprar sale mejor cuanto más tiempo te quedes el coche; el renting gana si cambias de coche cada pocos años o eres autónomo y puedes deducirlo.</p>""",
+<button onclick="calc()">Comparar</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se compara</h2><p><b>Coste de comprar</b> = precio − valor de reventa + (seguro + mantenimiento + impuestos) × años + intereses de la financiación. <b>Coste del renting</b> = cuota × 12 × años + entrada. La pérdida de valor del coche (la depreciación) es el gran gasto oculto de comprar: un coche nuevo suele perder entre el 40 y el 50 % en cuatro años.</p>
+<p><b>Ejemplo:</b> un coche de 25.000 € que a los 4 años vale la mitad cuesta, comprado al contado, 12.500 € de depreciación más 4.480 € de seguro, mantenimiento e impuestos: <b>16.980 €</b>, unos 354 € al mes. Un renting de 420 € al mes cuesta 20.160 € en esos 4 años: comprar sale 3.180 € más barato. Si financias 20.000 € al 8 % TIN a 4 años, los intereses suman unos 3.440 € y la diferencia prácticamente desaparece.</p>
+<h2>Qué incluye normalmente el renting</h2><p>La cuota suele incluir seguro a todo riesgo, mantenimiento, neumáticos, impuesto de circulación y asistencia. A cambio, el coche nunca es tuyo y hay penalización si te pasas de kilómetros o cancelas antes. Comprar sale mejor cuanto más tiempo te quedes el coche; el renting gana si cambias de coche cada pocos años, si vas a financiar a un tipo alto o si eres autónomo y puedes deducir parte de la cuota.</p>
+<p>Afina los datos con la <a href="depreciacion-coche.html">calculadora de depreciación</a>, la <a href="cuota-financiacion-coche.html">cuota y TAE de la financiación</a> o el <a href="coste-anual-coche.html">coste anual de mantener un coche</a>, y comprueba <a href="que-coche-me-puedo-permitir.html">qué coche te puedes permitir</a> con tu sueldo.</p>""",
 [("¿El renting es tirar el dinero?", "No necesariamente: al comprar también pierdes dinero por depreciación. Lo justo es comparar el coste total de ambas opciones en el mismo periodo, como hace esta calculadora."),
- ("¿Qué pasa si me paso de kilómetros en un renting?", "Se paga un importe por cada km extra, normalmente unos céntimos por km. Ajusta bien el kilometraje al contratar.")],
+ ("¿Qué pasa si me paso de kilómetros en un renting?", "Se paga un importe por cada km extra, normalmente unos céntimos por km. Ajusta bien el kilometraje al contratar."),
+ ("¿Qué es mejor, renting o financiar un coche?", "Depende del tipo de interés y de cuánto tiempo vayas a quedarte el coche. Con un TIN alto y un plazo corto, el renting suele salir parecido o más barato; si te quedas el coche 7 años o más, comprar casi siempre gana porque dejas de pagar cuota y el coche sigue siendo tuyo."),
+ ("¿Puedo cancelar un renting antes de tiempo?", "Sí, pero con penalización: suele ser un porcentaje (a menudo el 50 %) de las cuotas que quedan por pagar. Por eso conviene elegir un plazo que vayas a cumplir.")],
 None,
-"""function calc(){const n=v('n'),c=v('pc'),rev=c*v('vr')/100,buy=c-rev+(v('sg')+v('mt')+v('im'))*n,ren=v('cr')*12*n+v('en'),d=buy-ren;
-show('r',(d>0?'Sale más barato el <b>renting</b>':'Sale más barato <b>comprar</b>')+':<b class="big">'+eur(Math.abs(d))+' de diferencia</b>Coste total compra: '+eur(buy)+' ('+eur(buy/n/12)+'/mes) · Coste total renting: '+eur(ren)+' ('+eur(ren/n/12)+'/mes)');}"""))
+"""function calc(){const n=Math.max(1,v('n')),c=v('pc'),rev=c*v('vr')/100,ti=v('ti'),pr=Math.max(0,c-v('ef'));let it=0,cu=0;
+if(ti>0&&pr>0){const i=ti/1200,m=n*12;cu=pr*i/(1-Math.pow(1+i,-m));it=cu*m-pr;}
+const buy=c-rev+(v('sg')+v('mt')+v('im'))*n+it,ren=v('cr')*12*n+v('en'),d=buy-ren;
+show('r',(d>0?'Sale más barato el <b>renting</b>':'Sale más barato <b>comprar</b>')+':<b class="big">'+eur(Math.abs(d))+' de diferencia</b>Coste total compra: '+eur(buy)+' ('+eur(buy/n/12)+'/mes)'+(it>0?' · incluye '+eur(it)+' de intereses (cuota de '+eur(cu)+'/mes)':'')+'<br>Coste total renting: '+eur(ren)+' ('+eur(ren/n/12)+'/mes)<br>Al comprar, el coche pierde '+eur(c-rev)+' de valor en '+nf(n,0)+' años: '+eur((c-rev)/n/12)+' al mes.');}
+calc();"""))
 
 P.append(("cuota-financiacion-coche", "Calculadora de financiación de coche: cuota, TAE e intereses | CocheCuentas",
 "Calcula la cuota mensual al financiar tu coche y su TAE real con comisión de apertura: intereses, coste total y cuota final de la financiación multiopción. Compara ofertas en segundos.",
@@ -390,4 +399,46 @@ if(R.length>2)h+='<table><tr><th>Tramo</th><th>Km</th><th>Consumo</th></tr>'+t+'
 show('r',h);}
 let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k])document.getElementById('p').value=MED[k].toFixed(3).replace('.',',');calc();}
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(j.medias){MED=j.medias;pz();}}).catch(()=>{});
+calc();"""))
+
+# --- Distancia de frenado y de detención según velocidad, firme y tiempo de reacción (física: d = v·t + v²/(2·μ·g)) ---
+S['tools'].insert(7, ("distancia-frenado", "Distancia de frenado", "Cuántos metros necesitas para parar según la velocidad, la lluvia, la nieve o el hielo.", ""))
+S['aff']["distancia-frenado"] = amz("cadenas nieve textiles coche", "Cadenas de nieve textiles") + amz("neumaticos invierno", "Neumáticos de invierno y all season") + amz("medidor profundidad dibujo neumatico", "Medidor de dibujo del neumático")
+P.append(("distancia-frenado", "Distancia de frenado: calculadora con lluvia, nieve y hielo | CocheCuentas",
+"Calcula cuántos metros necesitas para detener el coche según la velocidad, el tiempo de reacción y el firme (seco, mojado, nieve o hielo), y a qué velocidad chocarías si el obstáculo está más cerca.",
+"""<p class="lead">Elige la velocidad y el estado de la carretera. Te decimos los metros que recorres mientras reaccionas, los que necesitas para frenar y, si pones a qué distancia aparece un obstáculo, si te daría tiempo a parar.</p>
+<div class="card"><div class="row"><div><label for="ve">Velocidad (km/h)</label><input id="ve" inputmode="numeric" value="120"></div>
+<div><label for="fi">Estado de la carretera</label><select id="fi"><option value="0.8">Asfalto seco</option><option value="0.5">Asfalto mojado</option><option value="0.35">Mojado con neumáticos gastados</option><option value="0.2">Nieve compacta</option><option value="0.1">Hielo</option></select></div>
+<div><label for="tr">Tiempo de reacción (segundos)</label><select id="tr"><option value="1">1 s: conductor atento</option><option value="1.5">1,5 s: cansado o de noche</option><option value="2.5">2,5 s: mirando el móvil o con alcohol</option></select></div>
+<div><label for="ob">Obstáculo a (metros, opcional)</label><input id="ob" inputmode="numeric" value="80"></div></div>
+<button onclick="calc()">Calcular distancia</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula la distancia de detención</h2><p>La distancia total para parar tiene dos partes. La <b>distancia de reacción</b> es lo que recorres desde que ves el peligro hasta que pisas el freno: a velocidad constante, así que es la velocidad en m/s por el tiempo de reacción. La <b>distancia de frenado</b> depende del cuadrado de la velocidad y del agarre entre neumático y carretera (coeficiente de rozamiento μ).</p>
+<p><b>Fórmula:</b> distancia de detención = v × t + v² ÷ (2 × μ × 9,81), con v en metros por segundo (km/h ÷ 3,6). Usamos μ = 0,8 en seco, 0,5 en mojado, 0,35 en mojado con neumáticos al límite, 0,2 en nieve compacta y 0,1 en hielo, valores típicos de un turismo con ABS. Son estimaciones: un coche cargado, una cuesta abajo o unos frenos en mal estado alargan la distancia.</p>
+<div style="overflow-x:auto"><table><tr><th>Velocidad</th><th>Reacción (1 s)</th><th>Seco</th><th>Mojado</th><th>Nieve</th><th>Hielo</th></tr>
+<tr><td>30 km/h</td><td>8 m</td><td>13 m</td><td>15 m</td><td>26 m</td><td>44 m</td></tr>
+<tr><td>50 km/h</td><td>14 m</td><td>26 m</td><td>34 m</td><td>63 m</td><td>112 m</td></tr>
+<tr><td>90 km/h</td><td>25 m</td><td>65 m</td><td>89 m</td><td>184 m</td><td>344 m</td></tr>
+<tr><td>100 km/h</td><td>28 m</td><td>77 m</td><td>106 m</td><td>224 m</td><td>421 m</td></tr>
+<tr><td>120 km/h</td><td>33 m</td><td>104 m</td><td>147 m</td><td>316 m</td><td>600 m</td></tr></table></div>
+<p class="note">Distancia total de detención (reacción + frenado) con 1 segundo de reacción.</p>
+<p><b>Ejemplo:</b> un peatón cruza a 35 metros en una calle seca. A 60 km/h paras justo a tiempo (34 m). A 70 km/h necesitas 40 m: llegas a él todavía a unos <b>42 km/h</b>. Diez kilómetros por hora de más convierten un susto en un atropello.</p>
+<h2>Qué distancia dejar con el coche de delante</h2><p>La regla práctica que recomienda la DGT es la de los <b>dos segundos</b>: cuando el coche de delante pase por un punto fijo (una señal, un puente), cuenta «mil uno, mil dos»; si llegas a ese punto antes de terminar, vas demasiado cerca. Con lluvia, niebla o de noche, déjalo al menos en el doble, y con nieve o hielo mucho más. En estas fechas, antes de un viaje largo, revisa la profundidad del dibujo de los neumáticos (mínimo legal 1,6 mm) y lleva cadenas si vas a zonas de montaña.</p>
+<p>Calcula también lo que te costaría una <a href="multa-exceso-velocidad.html">multa por exceso de velocidad</a>, el <a href="coste-viaje-coche.html">coste de tu viaje en coche</a> con el precio de hoy del combustible o si una <a href="equivalencia-neumaticos.html">medida de neumático distinta</a> es compatible con tu coche.</p>""",
+[("¿Cuántos metros necesita un coche para frenar a 120 km/h?", "En seco y con un conductor atento, unos 104 metros en total: 33 m mientras reacciona y 71 m frenando. Con la carretera mojada pasa a unos 147 metros, y con nieve a más de 300."),
+ ("¿Cómo se calcula la distancia de frenado?", "Distancia de frenado = v² ÷ (2 × μ × 9,81), con la velocidad en m/s y μ el agarre del firme (0,8 en seco, 0,5 en mojado). Como depende del cuadrado de la velocidad, si vas el doble de rápido necesitas cuatro veces más metros para frenar."),
+ ("¿Cuánto aumenta la distancia de frenado con lluvia?", "Alrededor de un 60 % solo en la parte de frenado, y más si los neumáticos tienen poco dibujo. Con nieve compacta se multiplica por cuatro y en hielo por ocho respecto al asfalto seco."),
+ ("¿Qué es la regla de los dos segundos?", "Una forma sencilla de mantener la distancia de seguridad: entre que el coche de delante pasa por un punto y tú llegas a él deben pasar al menos dos segundos. Con lluvia o mala visibilidad, al menos el doble.")],
+"Calculadora de distancia de frenado",
+"""const FN={'0.8':'en seco','0.5':'en mojado','0.35':'en mojado con neumáticos gastados','0.2':'sobre nieve','0.1':'sobre hielo'};
+function det(kmh,mu,t){const s=kmh/3.6;return [s*t,s*s/(2*mu*9.81)];}
+function calc(){const kmh=v('ve'),fs=document.getElementById('fi').value,mu=parseFloat(fs),t=parseFloat(document.getElementById('tr').value),ob=v('ob');
+if(kmh<=0){show('r','Escribe la velocidad.');return;}
+const [dr,df]=det(kmh,mu,t),dt=dr+df,s=kmh/3.6;
+let h='Distancia total para detenerte '+FN[fs]+':<b class="big">'+nf(dt,0)+' metros</b>Reacción: <b>'+nf(dr,0)+' m</b> ('+nf(t,1)+' s sin frenar) · Frenada: <b>'+nf(df,0)+' m</b> · Tardas unos '+nf(t+s/(mu*9.81),1)+' s en parar.';
+if(fs!='0.8'){const [a,b]=det(kmh,0.8,t);h+='<br>En seco te bastarían '+nf(a+b,0)+' m: necesitas <b>'+nf(dt-a-b,0)+' m más</b>.';}
+if(ob>0){if(ob>=dt)h+='<br>Con un obstáculo a '+nf(ob,0)+' m <b>te da tiempo a parar</b>, con '+nf(ob-dt,0)+' m de margen.';
+else{const rest=ob-dr,vi=rest<=0?kmh:Math.sqrt(Math.max(0,s*s-2*mu*9.81*rest))*3.6;let vs=kmh;while(vs>0){const [x,y]=det(vs,mu,t);if(x+y<=ob)break;vs--;}
+h+='<br>Con un obstáculo a '+nf(ob,0)+' m <b>no te da tiempo a parar</b>: llegarías a él a unos <b>'+nf(vi,0)+' km/h</b>'+(rest<=0?' (ni siquiera habrías empezado a frenar)':'')+'. Para poder detenerte tendrías que ir a '+(vs>0?nf(vs,0)+' km/h o menos':'muy poca velocidad')+'.';}}
+h+='<br>Distancia de seguridad mínima con el coche de delante (regla de los 2 s): <b>'+nf(s*2*(fs=='0.8'?1:2),0)+' m</b>'+(fs=='0.8'?'':' (doblada por el mal estado del firme)')+'.';
+show('r',h);}
 calc();"""))

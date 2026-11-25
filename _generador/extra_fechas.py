@@ -12,21 +12,32 @@ S['tools'] += [("calculadora-vacaciones", "Calculadora de días de vacaciones", 
                ("calculadora-horas", "Calculadora de horas trabajadas", "Horas entre entrada y salida, descansos y total semanal.", ""),
                ("que-dia-de-la-semana", "¿Qué día de la semana fue o será?", "El día de la semana de cualquier fecha.", "")]
 
-P.append(("calculadora-vacaciones", "Calculadora de días de vacaciones: ¿cuántos me corresponden? | CalculadoraDías",
-"Calcula los días de vacaciones que te corresponden según el tiempo trabajado: proporcional a 30 días naturales o 22 laborables al año.",
-"""<p class="lead">Calcula las vacaciones generadas según las fechas trabajadas en el año.</p>
-<div class="card"><div class="row"><div><label for="a">Fecha de inicio</label><input id="a" type="date" value="2026-01-01"></div>
-<div><label for="b">Fecha de fin (o hoy)</label><input id="b" type="date" data-today></div>
+P.append(("calculadora-vacaciones", "Calculadora de vacaciones: ¿cuántos días me corresponden en 2026? | CalculadoraDías",
+"Calcula los días de vacaciones que te corresponden según lo trabajado este año (30 naturales, 22 laborables o tu convenio), cuántos te quedan por disfrutar antes del 31 de diciembre y cuánto te pagarían en el finiquito.",
+"""<p class="lead">Pon desde cuándo trabajas este año y los días que ya has disfrutado. Te decimos las vacaciones generadas, las que te quedan y lo que valen si dejas la empresa.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de inicio (alta o 1 de enero)</label><input id="a" type="date" value="2026-01-01"></div>
+<div><label for="b">Fecha de fin (31 de diciembre, baja o hoy)</label><input id="b" type="date" value="2026-12-31"></div>
 <div><label for="d">Días de vacaciones al año</label><select id="d"><option value="30">30 días naturales</option><option value="22">22 días laborables</option><option value="x">Otro (convenio)</option></select></div>
 <div><label for="dx">Días según convenio</label><input id="dx" inputmode="numeric" value="23"></div>
-<div><label for="u">Días ya disfrutados</label><input id="u" inputmode="numeric" value="0"></div></div>
-<button onclick="calc()">Calcular vacaciones</button><div class="res" id="r"></div></div>
+<div><label for="u">Días ya disfrutados</label><input id="u" inputmode="numeric" value="0"></div>
+<div><label for="sm">Salario bruto mensual (opcional, para valorar los días)</label><input id="sm" inputmode="decimal" value=""></div></div>
+<button onclick="calc()">Calcular vacaciones</button><div class="res" id="r" aria-live="polite"></div></div>
 <p class="note">El Estatuto de los Trabajadores fija un mínimo de 30 días naturales al año; tu convenio puede mejorarlo. Si dejas la empresa, los días generados y no disfrutados se pagan en el finiquito.</p>
-<h2>Cómo se calculan</h2><p>Las vacaciones se generan de forma proporcional al tiempo trabajado: días trabajados ÷ 365 × días anuales. Si entraste el 1 de julio con 30 días naturales al año, a 31 de diciembre habrás generado unos 15 días.</p>""",
+<h2>Cómo se calculan</h2><p>Las vacaciones se generan de forma proporcional al tiempo trabajado: <b>días trabajados ÷ 365 × días anuales</b>. Si entraste el 1 de julio con 30 días naturales al año, a 31 de diciembre habrás generado unos 15 días (184 ÷ 365 × 30 = 15,1).</p>
+<table><tr><th>Alta en 2026</th><th>30 naturales</th><th>22 laborables</th></tr>
+<tr><td>1 de enero</td><td>30</td><td>22</td></tr><tr><td>1 de abril</td><td>22,6</td><td>16,6</td></tr><tr><td>1 de julio</td><td>15,1</td><td>11,1</td></tr><tr><td>1 de septiembre</td><td>10</td><td>7,4</td></tr><tr><td>1 de noviembre</td><td>5</td><td>3,7</td></tr></table>
+<h2>¿Se pierden las vacaciones que no gastes antes del 31 de diciembre?</h2><p>Por regla general, las vacaciones son del año natural y no se acumulan al siguiente: si tu convenio no dice otra cosa, lo normal es disfrutarlas antes de que acabe el año. Hay excepciones importantes. Si no pudiste cogerlas por una <b>incapacidad temporal</b>, embarazo, parto o lactancia, tienes derecho a disfrutarlas después, aunque haya terminado el año (en caso de baja por enfermedad, hasta 18 meses después del final del año en que se generaron). Y la empresa no puede alegar que se han perdido si no te dio la oportunidad real de disfrutarlas. El calendario de vacaciones debes conocerlo al menos dos meses antes del comienzo del disfrute (artículo 38 del Estatuto).</p>
+<p>Para planificar los días que te quedan, mira los <a href="calendario-laboral-2027.html">puentes del calendario laboral 2027</a> y cuenta los <a href="dias-habiles.html">días laborables entre dos fechas</a>. Si te vas de la empresa, calcula tu <a href="calcular-finiquito.html">finiquito</a> completo con las vacaciones y las pagas extra.</p>""",
 [("¿Cuántos días de vacaciones me corresponden al año?", "Como mínimo 30 días naturales (equivalen aproximadamente a 22 laborables), salvo que tu convenio establezca más."),
- ("¿Las vacaciones no disfrutadas se pagan?", "Solo cuando termina la relación laboral: se incluyen en el finiquito. Mientras sigues en la empresa no pueden sustituirse por dinero.")],
-None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b||b<a)return;const s=document.getElementById('d').value,an=s=='x'?v('dx'):parseFloat(s);const t=diff(a,b)+1,g=t/365*an;
-show('r','Vacaciones generadas:<b class="big">'+nf(g,1)+' días</b>Días trabajados: '+t+' · Pendientes de disfrutar: <b>'+nf(Math.max(0,g-v('u')),1)+'</b> ('+(s=='30'?'naturales':'laborables')+')');}"""))
+ ("¿Las vacaciones no disfrutadas se pagan?", "Solo cuando termina la relación laboral: se incluyen en el finiquito. Mientras sigues en la empresa no pueden sustituirse por dinero."),
+ ("¿Puedo pasar las vacaciones que me quedan al año que viene?", "Solo si lo permite tu convenio o lo acuerdas con la empresa, o si no pudiste disfrutarlas por una baja médica, por embarazo, parto o lactancia. En esos casos se pueden coger después del 31 de diciembre."),
+ ("¿Cuántos días de vacaciones me corresponden si entré a mitad de año?", "La parte proporcional: días trabajados ÷ 365 × 30. Entrando el 1 de julio te corresponden unos 15 días naturales hasta el 31 de diciembre.")],
+None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b||b<a){show('r','Revisa las fechas.');return;}const s=document.getElementById('d').value,an=s=='x'?v('dx'):parseFloat(s);const t=diff(a,b)+1,g=t/365*an,p=g-v('u'),sm=v('sm');
+const ud=s=='30'?'naturales':s=='22'?'laborables':'de convenio';
+let h='Vacaciones generadas:<b class="big">'+nf(g,1)+' días</b>Días trabajados: '+t+' · '+(p>=0?'Pendientes de disfrutar: <b>'+nf(p,1)+'</b>':'Has disfrutado <b>'+nf(-p,1)+' días de más</b>')+' ('+ud+')';
+if(sm>0&&p>0){const nat=s=='30'?p:p*30/an;h+='<br>Si dejas la empresa, en el finiquito valen unos <b>'+eur(nat*sm/30)+'</b> brutos ('+nf(nat,1)+' días naturales × '+eur(sm/30)+').';}
+const fin=new Date(b.getFullYear(),11,31),rest=diff(today,fin);if(p>0&&rest>=0&&rest<62&&b.getFullYear()==today.getFullYear())h+='<br>Quedan <b>'+rest+' días</b> para el 31 de diciembre: revisa si tu convenio permite pasarlas al año que viene.';
+show('r',h);}"""))
 
 P.append(("calculadora-horas", "Calculadora de horas trabajadas: entrada, salida y descansos | CalculadoraDías",
 "Calcula las horas trabajadas entre la hora de entrada y la de salida, restando descansos, y el total semanal y mensual.",
@@ -321,4 +332,53 @@ if(d1>720){d=Math.min(d1,42*365/12);tope=' (el tiempo anterior a 2012 ya supera 
 else{d=Math.min(33*m/12,730);tope=33*m/12>730?' (aplicado el tope de 24 mensualidades)':'';det='33 días × '+nf(m/12,2)+' años';}}
 const imp=d*sd;
 show('r','Indemnización:<b class="big">'+eur(imp)+'</b>'+ant+'<br>Días de indemnización: <b>'+nf(d,2)+'</b> = '+det+tope+'<br>Equivale a '+nf(imp/mens,1)+' mensualidades. Exenta de IRPF hasta lo que marca la ley'+(imp>180000?', con un máximo de 180.000 €':'')+'.');}
+calc();"""))
+
+# --- Finiquito: salario pendiente, vacaciones no disfrutadas (art. 38 ET), parte proporcional de pagas extra (art. 31 ET) y descuento de preaviso ---
+S['tools'].insert(4, ("calcular-finiquito", "Calculadora de finiquito", "Salario pendiente, vacaciones no disfrutadas y parte de las pagas extra al dejar la empresa.", ""))
+S['aff']["calcular-finiquito"] = amz("estatuto de los trabajadores 2026", "Estatuto de los Trabajadores") + amz("archivador documentos", "Archivadores para nóminas y papeles")
+P.append(("calcular-finiquito", "Calcular finiquito 2026: vacaciones, pagas extra y días del mes | CalculadoraDías",
+"Calcula tu finiquito con tus fechas exactas: días del último mes, vacaciones no disfrutadas, parte proporcional de las pagas extra y descuento por no avisar con 15 días. Baja voluntaria, despido o fin de contrato.",
+"""<p class="lead">Pon tu fecha de alta, el último día que trabajas y tu sueldo. Te desglosamos lo que tiene que pagarte la empresa al irte: el finiquito, que te corresponde siempre, te despidan o te vayas tú.</p>
+<div class="card"><div class="row"><div><label for="al">Fecha de alta en la empresa</label><input id="al" type="date" value="2024-03-01"></div>
+<div><label for="fb">Último día trabajado (fecha de baja)</label><input id="fb" type="date" value="2026-12-15"></div>
+<div><label for="sm">Salario bruto mensual sin pagas extra (€)</label><input id="sm" inputmode="decimal" value="1800"></div>
+<div><label for="pg">Pagas extra</label><select id="pg"><option value="a">2 pagas, cada una se genera en 12 meses</option><option value="s">2 pagas, cada una se genera en 6 meses</option><option value="p">Prorrateadas en la nómina mensual</option></select></div>
+<div><label for="pe">Importe de cada paga extra completa (€)</label><input id="pe" inputmode="decimal" value="1800"></div>
+<div><label for="dm">Días de este mes sin cobrar</label><input id="dm" inputmode="numeric" value="15"></div>
+<div><label for="va">Vacaciones al año (días naturales)</label><input id="va" inputmode="numeric" value="30"></div>
+<div><label for="vd">Vacaciones ya disfrutadas este año (días naturales)</label><input id="vd" inputmode="numeric" value="22"></div>
+<div><label for="pa">Días de preaviso que no has dado (solo baja voluntaria)</label><input id="pa" inputmode="numeric" value="0"></div>
+<div><label for="ir">Retención de IRPF de tu nómina (%)</label><input id="ir" inputmode="decimal" value="15"></div></div>
+<button onclick="calc()">Calcular finiquito</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Si tu convenio cuenta las vacaciones en días laborables (por ejemplo 22), pásalas a naturales multiplicando por 30 y dividiendo entre 22. Si tienes una tercera paga (de beneficios), súmala aparte con la misma regla.</p>
+<h2>Qué incluye el finiquito</h2><ul><li><b>Salario de los días trabajados</b> en el último mes que aún no has cobrado: salario mensual ÷ 30 × días.</li>
+<li><b>Vacaciones generadas y no disfrutadas</b>: se generan en proporción a lo trabajado en el año (días trabajados ÷ 365 × días de vacaciones). Las que no hayas disfrutado se pagan, ya que el <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430#a38" rel="noopener" target="_blank">artículo 38 del Estatuto</a> solo prohíbe cambiarlas por dinero mientras sigues en la empresa. Si disfrutaste más de las generadas, la empresa puede descontarlas.</li>
+<li><b>Parte proporcional de las pagas extra</b> generadas desde la última que cobraste (art. 31 ET). Con devengo anual, la de Navidad se genera de enero a diciembre y la de verano de julio a junio; con devengo semestral, la de verano de enero a junio y la de Navidad de julio a diciembre. Si están prorrateadas, ya las has cobrado cada mes.</li>
+<li><b>Descuento por falta de preaviso</b>: si te vas por tu cuenta sin avisar con la antelación de tu convenio (lo más habitual son 15 días), la empresa puede descontar un día de salario por cada día que falte.</li></ul>
+<p><b>Ejemplo:</b> alta el 1 de marzo de 2024, baja el 15 de diciembre de 2026, 1.800 € al mes y dos pagas de 1.800 € con devengo anual, 22 días de vacaciones disfrutados. Te corresponden 900 € de los 15 días de diciembre, 6,7 días de vacaciones (401 €), 1.721 € de la paga de Navidad (349 de 365 días) y 828 € de la de verano (168 días desde el 1 de julio): <b>3.851 € brutos</b>.</p>
+<h2>Finiquito e indemnización no son lo mismo</h2><p>El finiquito es lo que la empresa te debe por el trabajo ya hecho y se cobra en <b>todos los casos</b>, también en una baja voluntaria. La indemnización solo existe en algunos despidos y al terminar un contrato temporal: calcúlala con la <a href="indemnizacion-despido.html">calculadora de indemnización por despido</a>. El finiquito tributa en el IRPF y cotiza a la Seguridad Social como una nómina más. Antes de firmarlo, comprueba las cuentas: puedes firmar añadiendo «no conforme» y, si es por despido, pedir que esté presente un representante de los trabajadores (art. 49.2 ET). Para reclamar un despido tienes 20 días hábiles: calcula la fecha con <a href="sumar-dias.html">sumar días hábiles</a>.</p>
+<p>Revisa también la <a href="paga-extra-navidad.html">paga extra de Navidad</a> con su periodo de devengo o los <a href="calculadora-vacaciones.html">días de vacaciones que te corresponden</a>.</p>""",
+[("¿Cuánto me corresponde de finiquito si me voy de la empresa?", "El salario de los días trabajados del último mes, las vacaciones generadas y no disfrutadas y la parte proporcional de las pagas extra que no hayas cobrado. Si no avisas con el preaviso del convenio, te pueden descontar los días que falten."),
+ ("¿Se cobra finiquito en una baja voluntaria?", "Sí. El finiquito se paga siempre que termina el contrato, sea por despido, por fin de contrato o porque te vas tú. Lo que no hay en una baja voluntaria es indemnización ni, por lo general, derecho a paro."),
+ ("¿Cómo se calculan las vacaciones no disfrutadas en el finiquito?", "Se multiplican los días trabajados en el año por los días de vacaciones anuales y se divide entre 365. A esa cifra se le restan los días ya disfrutados y cada día pendiente se paga a tu salario diario (salario mensual ÷ 30)."),
+ ("¿Cuántos días de preaviso hay que dar al dejar un trabajo?", "Los que diga tu convenio o tu contrato; lo más habitual son 15 días naturales. Si no das el preaviso, la empresa puede descontarte del finiquito un día de salario por cada día que falte.")],
+"Calculadora de finiquito",
+DATEJS + """function per(t,b){const y=b.getFullYear(),m=b.getMonth();
+if(t=='a')return [['paga de Navidad',new Date(y,0,1),new Date(y,11,31)],['paga de verano',m<6?new Date(y-1,6,1):new Date(y,6,1),m<6?new Date(y,5,30):new Date(y+1,5,30)]];
+return m<6?[['paga de verano',new Date(y,0,1),new Date(y,5,30)]]:[['paga de Navidad',new Date(y,6,1),new Date(y,11,31)]];}
+function calc(){const al=pd('al'),b=pd('fb'),sm=v('sm'),t=document.getElementById('pg').value,pe=v('pe'),irp=v('ir');
+if(!al||!b||b<al||sm<=0){show('r','Revisa las fechas y el salario.');return;}
+const sd=sm/30,dm=Math.min(30,Math.max(0,v('dm'))),sal=sd*dm;
+const y0=new Date(b.getFullYear(),0,1),ini=al>y0?al:y0,dy=diff(ini,b)+1,dya=diff(y0,new Date(b.getFullYear(),11,31))+1;
+const gen=dy/dya*v('va'),pend=gen-v('vd'),vac=pend*sd;
+let pag=0,lp='';if(t!='p'){per(t,b).forEach(p=>{const i=al>p[1]?al:p[1],d=Math.max(0,diff(i,b)+1),tot=diff(p[1],p[2])+1,x=pe*d/tot;pag+=x;lp+='<br>Parte de la '+p[0]+': <b>'+eur(x)+'</b> ('+d+' de '+tot+' días)';});}
+const pre=sd*Math.max(0,v('pa')),br=sal+vac+pag-pre,ne=br*(1-irp/100)-(sal+vac-pre+pag)*0.065;
+let h='Finiquito (bruto):<b class="big">'+eur(br)+'</b>Salario de '+nf(dm,0)+' días de este mes: <b>'+eur(sal)+'</b>';
+h+='<br>Vacaciones '+(pend>=0?'pendientes: <b>'+nf(pend,1)+' días = '+eur(vac)+'</b>':'disfrutadas de más: <b>'+nf(-pend,1)+' días = −'+eur(-vac)+'</b>')+' (generadas '+nf(gen,1)+' de '+nf(v('va'),0)+' en '+dy+' días de este año)';
+h+=t=='p'?'<br>Pagas extra: ya cobradas cada mes (prorrateadas).':lp;
+if(pre>0)h+='<br>Descuento por falta de preaviso: <b>−'+eur(pre)+'</b>';
+h+='<br>Neto aproximado: <b>'+eur(Math.max(0,ne))+'</b> (con '+nf(irp,1)+' % de IRPF y un 6,5 % de cotización a la Seguridad Social).';
+h+='<br><span class="note">Salario diario usado: '+eur(sd)+' (salario mensual ÷ 30). Si te despiden, la indemnización va aparte.</span>';
+show('r',h);}
 calc();"""))
