@@ -440,5 +440,11 @@ if(ob>0){if(ob>=dt)h+='<br>Con un obstáculo a '+nf(ob,0)+' m <b>te da tiempo a 
 else{const rest=ob-dr,vi=rest<=0?kmh:Math.sqrt(Math.max(0,s*s-2*mu*9.81*rest))*3.6;let vs=kmh;while(vs>0){const [x,y]=det(vs,mu,t);if(x+y<=ob)break;vs--;}
 h+='<br>Con un obstáculo a '+nf(ob,0)+' m <b>no te da tiempo a parar</b>: llegarías a él a unos <b>'+nf(vi,0)+' km/h</b>'+(rest<=0?' (ni siquiera habrías empezado a frenar)':'')+'. Para poder detenerte tendrías que ir a '+(vs>0?nf(vs,0)+' km/h o menos':'muy poca velocidad')+'.';}}
 h+='<br>Distancia de seguridad mínima con el coche de delante (regla de los 2 s): <b>'+nf(s*2*(fs=='0.8'?1:2),0)+' m</b>'+(fs=='0.8'?'':' (doblada por el mal estado del firme)')+'.';
+const mx=Math.max(dt,ob||0),pc=x=>(x/mx*100).toFixed(1)+'%';
+h+='<div aria-hidden="true" style="margin-top:12px;position:relative;height:26px;background:#fff;border-radius:6px;overflow:hidden;font-size:.75rem;color:#fff"><div style="position:absolute;left:0;top:0;bottom:0;width:'+pc(dr)+';background:#f08c00;padding:4px 6px;white-space:nowrap">Reacción</div><div style="position:absolute;left:'+pc(dr)+';top:0;bottom:0;width:'+pc(df)+';background:#d9480f;padding:4px 6px;white-space:nowrap;overflow:hidden">Frenada</div>'+(ob>0?'<div title="Obstáculo" style="position:absolute;left:calc('+pc(ob)+' - 3px);top:0;bottom:0;width:3px;background:#1d2433"></div>':'')+'</div>'+(ob>0?'<span class="note">La raya negra marca dónde está el obstáculo.</span>':'');
+let tb='<table style="margin-top:10px;font-size:.9rem"><tr><th>Velocidad</th><th>Para en</th>'+(ob>0?'<th>Con obstáculo a '+nf(ob,0)+' m</th>':'')+'</tr>';
+[kmh-20,kmh-10,kmh,kmh+10].filter(x=>x>0).forEach(x=>{const [a,b2]=det(x,mu,t),tt=a+b2;let c='';if(ob>0){if(tt<=ob)c='Paras';else{const r2=ob-a,s2=x/3.6;c='Chocas a '+nf(r2<=0?x:Math.sqrt(Math.max(0,s2*s2-2*mu*9.81*r2))*3.6,0)+' km/h';}}
+tb+='<tr'+(x==kmh?' style="font-weight:700"':'')+'><td>'+nf(x,0)+' km/h</td><td>'+nf(tt,0)+' m</td>'+(ob>0?'<td>'+c+'</td>':'')+'</tr>';});
+h+=tb+'</table>';
 show('r',h);}
 calc();"""))

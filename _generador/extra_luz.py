@@ -341,8 +341,11 @@ function pm(h0,du){let s=0,w=0;for(let t=0;t<du;t+=0.25){s+=HP[Math.floor(h0+t)%
 function calc(){const kw=v('w')/1000*v('f')/100,hd=Math.min(24,v('hd')),dm=v('dm'),h0=+hs.value,rk=v('rw')/1000*0.8;
 if(kw<=0||hd<=0){show('r','Escribe la potencia y las horas de uso.');return;}
 let pr=v('p'),tx='';if(HP){pr=pm(h0,hd);let bh=0,bp=1e9;for(let h=0;h<24;h++){const x=pm(h,hd);if(x<bp){bp=x;bh=h;}}tx='<br>Hoy, la franja más barata empieza a las <b>'+String(bh).padStart(2,'0')+':00</b> ('+nf(bp,3)+' €/kWh).';}
-const e=kw*hd,c=e*pr,cr=rk*hd*pr;
-show('r','Coste al mes:<b class="big">'+eur(c*dm)+'</b>Por hora: '+eur(kw*pr)+' · Al día: <b>'+eur(c)+'</b> ('+nf(e,2)+' kWh a '+nf(pr,3)+' €/kWh'+(HP?', PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00 con impuestos':'')+')<br>Un radiador de '+nf(v('rw'),0)+' W (al 80 %) las mismas horas: <b>'+eur(cr*dm)+' al mes</b>. '+(cr>c?'Ahorras <b>'+eur((cr-c)*dm)+'</b> al mes ('+nf((1-c/cr)*100,0)+' % menos).':'')+tx);}
+const e=kw*hd,c=e*pr,cr=rk*hd*pr,ct=x=>x<1?nf(x*100,1)+' céntimos':eur(x);
+let h='Coste al mes:<b class="big">'+eur(c*dm)+'</b>Por hora: <b>'+ct(kw*pr)+'</b> · Al día: <b>'+ct(c)+'</b> · '+nf(e,2)+' kWh al día a '+nf(pr,3)+' €/kWh'+(HP?' (PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00, con impuestos)':'');
+h+='<table style="margin-top:10px;font-size:.9rem"><tr><th></th><th>Al día</th><th>Al mes</th><th>Invierno (5 meses)</th></tr><tr><td>Tu aparato</td><td>'+ct(c)+'</td><td><b>'+eur(c*dm)+'</b></td><td>'+eur(c*dm*5)+'</td></tr><tr><td>Radiador '+nf(v('rw'),0)+' W</td><td>'+ct(cr)+'</td><td>'+eur(cr*dm)+'</td><td>'+eur(cr*dm*5)+'</td></tr></table>';
+if(cr>c)h+='Usando tu aparato en lugar del radiador ahorras <b>'+eur((cr-c)*dm)+' al mes</b> ('+nf((1-c/cr)*100,0)+' % menos).';
+show('r',h+tx);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
 calc();"""))
