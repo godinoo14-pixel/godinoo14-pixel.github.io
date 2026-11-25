@@ -424,7 +424,7 @@ P.append(("distancia-frenado", "Distancia de frenado: calculadora con lluvia, ni
 <p><b>Ejemplo:</b> un peatón cruza a 35 metros en una calle seca. A 60 km/h paras justo a tiempo (34 m). A 70 km/h necesitas 40 m: llegas a él todavía a unos <b>42 km/h</b>. Diez kilómetros por hora de más convierten un susto en un atropello.</p>
 <h2>La regla de la autoescuela: (velocidad ÷ 10)²</h2><p>En muchas autoescuelas se enseña un cálculo mental para la distancia total de detención: quita el cero a la velocidad y elévalo al cuadrado. A 50 km/h, 5² = 25 m; a 100 km/h, 10² = 100 m. Para la distancia de reacción se usa (velocidad ÷ 10) × 3: unos 30 m a 100 km/h. Es una buena aproximación en seco con un conductor atento (a 100 km/h nuestra calculadora da 77 m, y 106 m en mojado), pero se queda corta a velocidades altas y con lluvia, nieve o hielo, donde la frenada crece mucho más.</p>
 <h2>Qué distancia dejar con el coche de delante</h2><p>La regla práctica que recomienda la DGT es la de los <b>dos segundos</b>: cuando el coche de delante pase por un punto fijo (una señal, un puente), cuenta «mil uno, mil dos»; si llegas a ese punto antes de terminar, vas demasiado cerca. Con lluvia, niebla o de noche, déjalo al menos en el doble, y con nieve o hielo mucho más. En estas fechas, antes de un viaje largo, revisa la profundidad del dibujo de los neumáticos (mínimo legal 1,6 mm) y lleva cadenas si vas a zonas de montaña.</p>
-<p>Calcula también lo que te costaría una <a href="multa-exceso-velocidad.html">multa por exceso de velocidad</a>, el <a href="coste-viaje-coche.html">coste de tu viaje en coche</a> con el precio de hoy del combustible o si una <a href="equivalencia-neumaticos.html">medida de neumático distinta</a> es compatible con tu coche.</p>""",
+<p>Calcula también lo que te costaría una <a href="multa-exceso-velocidad.html">multa por exceso de velocidad</a>, tu <a href="calculadora-alcoholemia.html">tasa de alcoholemia estimada</a>, el <a href="coste-viaje-coche.html">coste de tu viaje en coche</a> con el precio de hoy del combustible o si una <a href="equivalencia-neumaticos.html">medida de neumático distinta</a> es compatible con tu coche.</p>""",
 [("¿Cuántos metros necesita un coche para frenar a 120 km/h?", "En seco y con un conductor atento, unos 104 metros en total: 33 m mientras reacciona y 71 m frenando. Con la carretera mojada pasa a unos 147 metros, y con nieve a más de 300."),
  ("¿Cómo se calcula la distancia de frenado?", "Distancia de frenado = v² ÷ (2 × μ × 9,81), con la velocidad en m/s y μ el agarre del firme (0,8 en seco, 0,5 en mojado). Como depende del cuadrado de la velocidad, si vas el doble de rápido necesitas cuatro veces más metros para frenar."),
  ("¿Cuánto aumenta la distancia de frenado con lluvia?", "Alrededor de un 60 % solo en la parte de frenado, y más si los neumáticos tienen poco dibujo. Con nieve compacta se multiplica por cuatro y en hielo por ocho respecto al asfalto seco."),
@@ -449,4 +449,60 @@ tb+='<tr'+(x==kmh?' style="font-weight:700"':'')+'><td>'+nf(x,0)+' km/h</td><td>
 h+=tb+'</table>';
 show('r',h);}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'||e.type=='date'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Calculadora de alcoholemia (fórmula de Widmark) con límites y sanciones de la DGT ---
+S['tools'].insert(8, ("calculadora-alcoholemia", "Calculadora de alcoholemia", "Tasa estimada de alcohol en sangre y aire, cuándo bajará y qué multa supone.", ""))
+S['aff']["calculadora-alcoholemia"] = amz("alcoholimetro digital", "Alcoholímetros digitales") + ext("https://www.dgt.es/", "Normas y campañas de la DGT")
+P.append(("calculadora-alcoholemia", "Calculadora de alcoholemia: tasa de alcohol en aire y sangre | CocheCuentas",
+"Estima tu tasa de alcohol en sangre y en aire espirado según lo que has bebido, tu peso y el tiempo pasado, cuánto tardará en bajar y qué multa y puntos supone según la DGT.",
+"""<p class="lead">Indica qué has bebido, tu peso y cuánto hace que empezaste. Te damos una estimación de tu tasa de alcohol en sangre y en aire espirado (la que mide el etilómetro de la Guardia Civil) y cuántas horas tardará en bajar.</p>
+<div class="card" style="border-left:4px solid #d9480f"><p style="margin:0"><b>Importante:</b> es una estimación matemática. El alcohol afecta muy distinto a cada persona y depende de lo que hayas comido, de tu salud y de la medicación. <b>No la uses para decidir si puedes conducir:</b> si has bebido, no conduzcas. La única tasa segura es 0,0.</p></div>
+<div class="card"><div class="row"><div><label for="sx">Sexo</label><select id="sx"><option value="0.68">Hombre</option><option value="0.55">Mujer</option></select></div>
+<div><label for="pe">Peso (kg)</label><input id="pe" inputmode="numeric" value="75"></div>
+<div><label for="b1">Cañas de cerveza (200 ml, 5 %)</label><input id="b1" type="number" min="0" value="2"></div>
+<div><label for="b2">Tercios o latas de cerveza (330 ml, 5 %)</label><input id="b2" type="number" min="0" value="0"></div>
+<div><label for="b3">Copas de vino (150 ml, 13 %)</label><input id="b3" type="number" min="0" value="2"></div>
+<div><label for="b4">Copas de cava (100 ml, 11,5 %)</label><input id="b4" type="number" min="0" value="0"></div>
+<div><label for="b5">Copas o cubatas (60 ml de destilado, 38 %)</label><input id="b5" type="number" min="0" value="0"></div>
+<div><label for="b6">Chupitos (30 ml, 40 %)</label><input id="b6" type="number" min="0" value="0"></div>
+<div><label for="h">Horas desde la primera copa</label><input id="h" inputmode="decimal" value="2"></div>
+<div><label for="cd">Tipo de conductor</label><select id="cd"><option value="g">General</option><option value="n">Novel (menos de 2 años) o profesional</option></select></div></div>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula la tasa de alcohol</h2><p>Usamos la <b>fórmula de Widmark</b>, la más empleada en medicina forense: tasa en sangre (g/l) = gramos de alcohol ÷ (peso × r) − 0,15 × horas. El factor r refleja el agua corporal en la que se reparte el alcohol: 0,68 en hombres y 0,55 en mujeres. El hígado elimina de media unos 0,15 g/l por hora, aunque varía entre 0,10 y 0,20. Los gramos de alcohol de una bebida son mililitros × graduación ÷ 100 × 0,8 (la densidad del alcohol).</p>
+<p>En España el etilómetro mide el alcohol en <b>aire espirado</b>, en mg/l. La equivalencia legal es dividir la tasa en sangre entre dos: 0,5 g/l en sangre son 0,25 mg/l en aire.</p>
+<p><b>Ejemplo:</b> un hombre de 75 kg toma dos cañas (8 g de alcohol cada una) y dos copas de vino (15,6 g cada una): 47,2 g. Su tasa máxima teórica es 47,2 ÷ (75 × 0,68) = 0,93 g/l. Dos horas después, tras eliminar 0,30 g/l, sigue en torno a <b>0,63 g/l en sangre, 0,31 mg/l en aire</b>: por encima del límite general. Necesitaría unas 4 horas más para eliminarlo todo.</p>
+<h2>Límites y sanciones en España</h2><table><tr><th>Tasa en aire espirado</th><th>Conductor general</th><th>Novel o profesional</th></tr>
+<tr><td>Hasta 0,15 mg/l</td><td>Permitido</td><td>Permitido</td></tr>
+<tr><td>0,15 a 0,25 mg/l</td><td>Permitido</td><td>500 € y 4 puntos</td></tr>
+<tr><td>0,25 a 0,30 mg/l</td><td>500 € y 4 puntos</td><td>500 € y 4 puntos</td></tr>
+<tr><td>0,30 a 0,50 mg/l</td><td>500 € y 4 puntos</td><td>1.000 € y 6 puntos</td></tr>
+<tr><td>0,50 a 0,60 mg/l</td><td>1.000 € y 6 puntos</td><td>1.000 € y 6 puntos</td></tr>
+<tr><td>Más de 0,60 mg/l</td><td colspan="2">Delito (art. 379 del Código Penal): prisión de 3 a 6 meses o multa o trabajos para la comunidad, y retirada del carné de 1 a 4 años</td></tr></table>
+<p class="note">La multa es de 1.000 € también si ya te sancionaron por alcohol en el año anterior. Negarse a la prueba es delito. En septiembre de 2026 el Congreso admitió a trámite una ley para bajar el límite general a 0,2 g/l en sangre (0,1 mg/l en aire); cuando se apruebe actualizaremos esta calculadora.</p>
+<h2>Mitos que no bajan la tasa</h2><p>Ni el café, ni una ducha fría, ni los caramelos de menta, ni hacer ejercicio aceleran la eliminación del alcohol: solo el tiempo. Comer antes de beber retrasa la absorción y reduce algo el pico, pero no evita que el alcohol llegue a la sangre. En las comidas y cenas de Navidad, lo más sencillo es elegir quién conduce o volver en taxi o transporte público.</p>
+<p>Consulta también qué supone una <a href="multa-exceso-velocidad.html">multa por exceso de velocidad</a>, la <a href="distancia-frenado.html">distancia de frenado</a> según tu velocidad (con alcohol, el tiempo de reacción se dispara) o el <a href="coste-viaje-coche.html">coste de tu viaje de Navidad en coche</a>.</p>""",
+[("¿Cuál es la tasa de alcohol permitida para conducir?", "Para conductores en general, 0,5 g/l en sangre o 0,25 mg/l en aire espirado. Para noveles (menos de dos años de carné) y profesionales, 0,3 g/l en sangre o 0,15 mg/l en aire."),
+ ("¿Cuánto tarda en bajar el alcohol?", "El hígado elimina de media 0,15 g/l por hora (0,075 mg/l en aire). Una tasa de 0,6 g/l tarda unas 4 horas en desaparecer. Ni el café ni dormir un rato lo aceleran."),
+ ("¿Cuánto alcohol tiene una caña?", "Una caña de 200 ml de cerveza al 5 % tiene unos 8 gramos de alcohol, casi una unidad de bebida estándar (10 g). Una copa de vino tiene unos 15 g y un cubata, en torno a 18 g."),
+ ("¿Qué multa hay por dar positivo en alcoholemia?", "Entre 0,25 y 0,50 mg/l en aire, 500 € y 4 puntos; más de 0,50 mg/l, 1.000 € y 6 puntos. Por encima de 0,60 mg/l es delito, con retirada del carné de 1 a 4 años.")],
+"Calculadora de alcoholemia",
+"""const BB=[[200,5],[330,5],[150,13],[100,11.5],[60,38],[30,40]];
+function sanc(a,nov){if(a>0.6)return '<b>Delito</b>: prisión de 3 a 6 meses o multa o trabajos para la comunidad, y retirada del carné de 1 a 4 años';
+if(a>0.5)return '<b>1.000 € y 6 puntos</b>';if(nov){if(a>0.3)return '<b>1.000 € y 6 puntos</b>';if(a>0.15)return '<b>500 € y 4 puntos</b>';}else if(a>0.25)return '<b>500 € y 4 puntos</b>';return '';}
+const hm=x=>{const m=Math.round(x*60);return m<60?m+' min':Math.floor(m/60)+' h'+(m%60?' '+(m%60)+' min':'');};
+function calc(){const r=parseFloat(document.getElementById('sx').value),p=v('pe'),t=Math.max(0,v('h')),nov=document.getElementById('cd').value=='n';
+let g=0;BB.forEach((b,i)=>{g+=Math.max(0,v('b'+(i+1)))*b[0]*b[1]/100*0.8;});
+if(p<30||p>250){show('r','Escribe tu peso en kilos.');return;}if(g<=0){show('r','Indica lo que has bebido.');return;}
+const c0=g/(p*r),c=Math.max(0,c0-0.15*t),a=c/2,lim=nov?0.3:0.5;
+const tl=Math.max(0,(c0-lim)/0.15-t),t0=Math.max(0,c0/0.15-t),s=sanc(a,nov);
+let h='Tasa estimada ahora:<b class="big">'+nf(a,2)+' mg/l en aire</b>'+nf(c,2)+' g/l en sangre · Has tomado '+nf(g,0)+' g de alcohol ('+nf(g/10,1)+' unidades de bebida estándar) · Pico teórico: '+nf(c0,2)+' g/l';
+if(c<=0)h+='<br>Según la fórmula, ya habrías eliminado el alcohol. Aun así, cada organismo es distinto.';
+else{h+='<br>Límite para ti: '+nf(lim/2,2)+' mg/l en aire. '+(c>lim?'Estarías <b>por encima del límite</b>: '+s+'.':'Estarías por debajo del límite legal, pero el alcohol ya afecta a tus reflejos.');
+const rg=(x,y)=>hm(Math.max(0,x/0.2-t))+' y '+hm(Math.max(0,x/0.1-t));
+if(c>lim)h+='<br>Para bajar del límite necesitarías, según cada persona, entre <b>'+rg(c0-lim)+'</b> más (media: '+hm(tl)+').';h+='<br>Para eliminarlo del todo: entre <b>'+rg(c0)+'</b> más.';}
+let tb='<table style="margin-top:10px;font-size:.9rem"><tr><th>Dentro de</th><th>Sangre</th><th>Aire</th></tr>';[0,1,2,3,4,6].forEach(x=>{const cx=Math.max(0,c0-0.15*(t+x));tb+='<tr><td>'+(x?x+' h':'Ahora')+'</td><td>'+nf(cx,2)+' g/l</td><td>'+(cx/2>lim/2?'<b>'+nf(cx/2,2)+' mg/l</b>':nf(cx/2,2)+' mg/l')+'</td></tr>';});
+h+=tb+'</table><span class="note">Estimación orientativa con eliminación media de 0,15 g/l por hora. Si has bebido, no conduzcas.</span>';
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

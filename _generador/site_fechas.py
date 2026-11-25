@@ -71,19 +71,34 @@ None, DATEJS + """function calc(){const a=pd('a');if(!a)return;let n=Math.round(
 if(document.getElementById('t').value=='n'){d.setDate(d.getDate()+s*n);}else{const h=hol();let c=0;while(c<n){d.setDate(d.getDate()+s);const g=d.getDay();if(g==0||g==6||h.has(iso(d)))continue;c++;}}
 show('r','Fecha resultante:<b class="big">'+fmt(d)+'</b>');}"""))
 
-P.append(("calcular-edad", "Calculadora de edad exacta: años, meses y días | CalculadoraDías",
-"Calcula tu edad exacta en años, meses y días a partir de tu fecha de nacimiento, y cuántos días faltan para tu próximo cumpleaños.",
-"""<p class="lead">Introduce tu fecha de nacimiento y descubre tu edad exacta y cuánto queda para tu cumpleaños.</p>
-<div class="card"><div class="row"><div><label for="a">Fecha de nacimiento</label><input id="a" type="date" value="2000-01-01"></div>
-<div><label for="b">Calcular a fecha de</label><input id="b" type="date" data-today></div></div>
-<button onclick="calc()">Calcular edad</button><div class="res" id="r"></div></div>
-<h2>Curiosidades</h2><p>Si naciste un 29 de febrero, en los años no bisiestos legalmente cumples años el 1 de marzo en España. Y a los 10.000 días de vida tienes unos 27 años y 4 meses: buena excusa para una segunda fiesta.</p>""",
-[("¿Cómo se calcula la edad exacta?", "Se restan los años completos cumplidos y luego los meses y días transcurridos desde el último cumpleaños."),
- ("¿Cuántos días he vivido?", "La calculadora te muestra también el total de días vividos hasta la fecha indicada.")],
-None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b||a>b)return;let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();
+P.append(("calcular-edad", "Calcular edad exacta: años, meses, días y días vividos | CalculadoraDías",
+"Calcula tu edad exacta en años, meses y días, cuántos días, semanas y horas has vivido, qué día de la semana es tu próximo cumpleaños y cuándo cumples 10.000 días.",
+"""<p class="lead">Pon una fecha de nacimiento y te decimos la edad exacta, cuántos días has vivido y cuánto falta para el próximo cumpleaños. Cambia la segunda fecha para saber qué edad tendrás (o tenías) un día concreto.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de nacimiento</label><input id="a" type="date" value="1990-06-15"></div>
+<div><label for="b">Calcular la edad a fecha de</label><input id="b" type="date" data-today></div></div>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula la edad exacta</h2><p>Primero se cuentan los <b>años completos</b>: los que han pasado desde el nacimiento hasta el último cumpleaños. Luego, los <b>meses completos</b> desde ese cumpleaños y, por último, los <b>días</b> que sobran. Si el día del mes actual es menor que el de nacimiento, se «pide prestado» un mes y se suman los días que tenía el mes anterior.</p>
+<p><b>Ejemplo:</b> alguien nacido el 15 de junio de 1990 tiene, el 25 de noviembre de 2026, 36 años, 5 meses y 10 días. Ha vivido 13.312 días (unas 1901 semanas) y celebrará su 37 cumpleaños el martes 15 de junio de 2027.</p>
+<h2>Cumpleaños el 29 de febrero</h2><p>Si naciste en un año bisiesto el 29 de febrero, los demás años la calculadora toma como cumpleaños el 1 de marzo. Para los plazos legales que se cuentan por años, el artículo 5 del Código Civil dice que, si el mes de vencimiento no tiene el día equivalente, el plazo termina el último día de ese mes: el 28 de febrero.</p>
+<h2>Para qué sirve saber la edad exacta</h2><ul><li><b>Trámites y requisitos:</b> becas, oposiciones, carné de conducir o descuentos que exigen tener una edad cumplida en una fecha concreta. Pon esa fecha en el segundo campo.</li><li><b>Jubilación:</b> la edad se cuenta en años y meses. Calcula la tuya con la <a href="calculadora-jubilacion.html">calculadora de jubilación</a>.</li><li><b>Bebés:</b> en los primeros meses la edad se cuenta en semanas y meses; aquí tienes ambas.</li></ul>
+<p>¿Quieres saber cuántos días hay entre dos fechas cualquiera? Usa la calculadora de <a href="dias-entre-fechas.html">días entre fechas</a>, o mira <a href="que-dia-de-la-semana.html">qué día de la semana</a> naciste.</p>""",
+[("¿Cómo se calcula la edad exacta?", "Se cuentan los años completos hasta el último cumpleaños, después los meses completos desde ese cumpleaños y, por último, los días restantes."),
+ ("¿Cuántos días he vivido?", "Pon tu fecha de nacimiento y la calculadora te muestra el total de días vividos hasta hoy o hasta la fecha que elijas, además de las semanas y las horas aproximadas."),
+ ("¿Cuándo cumplo 10.000 días?", "A los 27 años, 4 meses y unos 18 días, según los bisiestos que te toquen. La calculadora te dice la fecha exacta y el día de la semana."),
+ ("¿Cuándo cumple años alguien nacido el 29 de febrero?", "En los años no bisiestos se suele celebrar el 28 de febrero o el 1 de marzo. Para plazos legales por años, el Código Civil fija el último día del mes: el 28 de febrero.")],
+"Calculadora de edad exacta", DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b){show('r','Escribe las dos fechas.');return;}if(a>b){show('r','La fecha de nacimiento tiene que ser anterior a la segunda fecha.');return;}
+let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();
 if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}
-let nx=new Date(b.getFullYear(),a.getMonth(),a.getDate());if(nx<b)nx.setFullYear(b.getFullYear()+1);
-show('r','Tienes:<b class="big">'+y+' años</b>'+y+' años, '+m+' meses y '+d+' días · '+nf(diff(a,b),0)+' días vividos<br>Faltan <b>'+diff(b,nx)+' días</b> para tu cumpleaños ('+fmt(nx)+')');}"""))
+let nx=new Date(b.getFullYear(),a.getMonth(),a.getDate());if(nx<b)nx=new Date(b.getFullYear()+1,a.getMonth(),a.getDate());
+const dv=diff(a,b),fn=diff(b,nx),na=nx.getFullYear()-a.getFullYear();
+let h='Edad:<b class="big">'+y+' años</b>'+y+' años, '+m+' '+(m==1?'mes':'meses')+' y '+d+' '+(d==1?'día':'días')+' · '+nf(y*12+m,0)+' meses en total';
+h+='<br>Días vividos: <b>'+nf(dv,0)+'</b> · '+nf(Math.floor(dv/7),0)+' semanas · unas '+nf(dv*24,0)+' horas';
+h+='<br>'+(fn==0?'<b>¡Hoy cumple '+y+' años!</b>':'Faltan <b>'+fn+' días</b> para cumplir '+na+' años: '+fmt(nx));
+const hi=[5000,10000,15000,20000,25000,30000].find(x=>x>dv);if(hi){const t=new Date(a.getFullYear(),a.getMonth(),a.getDate()+hi);h+='<br>Cumplirá <b>'+nf(hi,0)+' días</b> el '+fmt(t)+'.';}
+h+='<br>Nació en '+fmt(a).split(',')[0]+'.';
+show('r',h);}
+document.querySelectorAll('.card input').forEach(e=>e.addEventListener('change',()=>calc()));
+calc();"""))
 
 P.append(("cuantos-dias-faltan", "¿Cuántos días faltan para Navidad? Cuenta atrás en directo | CalculadoraDías",
 "Cuenta atrás en directo: cuántos días, horas y minutos faltan para Navidad, Nochebuena, la Lotería, Nochevieja, Reyes, Semana Santa, el verano o la fecha que quieras.",

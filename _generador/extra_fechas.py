@@ -100,6 +100,7 @@ P.append(("calendario-laboral-2027", "Calendario laboral 2027: festivos por comu
 <div id="r2" style="margin-top:16px"></div></div>
 <h2>Festivos comunes a toda España en 2027</h2><p>Nueve fiestas son iguales en todo el país: 1 de enero (Año Nuevo), 6 de enero (Epifanía), 26 de marzo (Viernes Santo), 1 de mayo (Fiesta del Trabajo), 12 de octubre (Fiesta Nacional), 1 de noviembre (Todos los Santos), 6 de diciembre (Constitución), 8 de diciembre (Inmaculada) y 25 de diciembre (Navidad). En 2027 el 15 de agosto cae en domingo, así que varias comunidades lo pasan al lunes 16 y otras lo sustituyen por otra fiesta.</p>
 <h2>Festivos locales</h2><p>Además de estos, cada municipio tiene dos fiestas locales, que publica el boletín oficial de cada comunidad o provincia. Añádelas arriba para ver tu calendario completo y tus días laborables exactos.</p>
+<p>¿Quieres saber qué días pedir de vacaciones para encadenar más descanso? Usa el <a href="puentes-2027.html">planificador de puentes 2027</a>.</p>
 <p class="note">Fuente: Resolución de 8 de octubre de 2026, de la Dirección General de Trabajo, por la que se publica relación de fiestas laborales para el año 2027 (BOE núm. 254, de 13 de octubre de 2026, BOE-A-2026-21254). En el Valle de Arán, el 29 de marzo se sustituye por el 17 de junio (Fiesta de Arán).</p>""",
 [("¿Cuántos festivos hay en 2027?", "Doce festivos de ámbito nacional y autonómico en cada comunidad (once en Canarias más la fiesta de cada isla), a los que se suman dos fiestas locales de cada municipio: catorce en total."),
  ("¿Qué festivos son iguales en toda España en 2027?", "Año Nuevo, Epifanía, Viernes Santo, Fiesta del Trabajo, Fiesta Nacional de España, Todos los Santos, Día de la Constitución, Inmaculada Concepción y Navidad."),
@@ -390,4 +391,60 @@ h+='<button type="button" onclick="window.print()" style="width:auto;padding:9px
 h+='<span class="note">La parte de las pagas extra no vuelve a cotizar: ya se cotizó repartida en cada nómina. Si te despiden, la indemnización va aparte.</span>';
 show('r',h);}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'||e.type=='date'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Puentes 2027: planificador de vacaciones con los festivos oficiales del BOE (usa FEST27, CCAA e ISLAS) ---
+S['tools'].insert(1, ("puentes-2027", "Puentes 2027: aprovecha tus vacaciones", "Qué días pedir para encadenar el máximo de descanso con los festivos de tu comunidad.", "Puentes 2027"))
+S['aff']["puentes-2027"] = amz("calendario pared 2027", "Calendarios 2027") + amz("maleta cabina", "Maletas de cabina") + ext("https://www.booking.com/", "Buscar alojamiento para tu escapada")
+_opts2 = "".join(f'<option value="{c}"{" selected" if c=="MD" else ""}>{n}</option>' for c, n in CCAA)
+P.append(("puentes-2027", "Puentes 2027: qué días pedir para tener más vacaciones | CalculadoraDías",
+"Puentes 2027 en tu comunidad y planificador de vacaciones: dinos cuántos días tienes y te decimos qué fechas pedir para encadenar el máximo de días libres. Festivos oficiales del BOE.",
+"""<p class="lead">Elige tu comunidad y cuántos días de vacaciones quieres usar. Te decimos qué días pedir en 2027 para juntarlos con fines de semana y festivos y conseguir el máximo de días libres seguidos.</p>
+<div class="card"><div class="row"><div><label for="cc">Comunidad autónoma</label><select id="cc">""" + _opts2 + """</select></div>
+<div><label for="n">Días de vacaciones (laborables) a usar</label><input id="n" inputmode="numeric" value="10"></div>
+<div><label for="mx">Días como máximo por escapada</label><select id="mx"><option value="99">Sin límite</option><option value="5" selected>Hasta 5 días (una semana)</option><option value="3">Hasta 3 días (puentes cortos)</option><option value="1">Solo 1 día (puentes)</option></select></div>
+<div id="isw" style="display:none"><label for="is">Isla</label><select id="is">""" + _isl + """</select></div></div>
+<label for="lo">Tus festivos locales (opcional, dd/mm)</label><input id="lo" placeholder="15/05, 09/11">
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo elegimos los días</h2><p>Para cada combinación posible de fines de semana y festivos de tu comunidad, contamos cuántos días laborables tendrías que pedir para unirlos y cuántos días libres seguidos conseguirías. Después elegimos el reparto que, con los días que indiques, te da <b>más días de descanso en total</b>. Los días que pides son siempre de lunes a viernes no festivos: sábados, domingos y festivos no gastan vacaciones.</p>
+<p><b>Ejemplo en la Comunidad de Madrid:</b> el 12 de octubre de 2027 cae en martes. Pidiendo solo el lunes 11 tienes 4 días libres (del sábado 9 al martes 12). Y en diciembre, con el 6 en lunes y el 8 en miércoles, pidiendo el martes 7 enlazas cinco días, del sábado 4 al miércoles 8; si añades el jueves 9 y el viernes 10, son 9 días seguidos gastando solo 3.</p>
+<h2>Los puentes de 2027 en toda España</h2><ul><li><b>Año Nuevo y Reyes:</b> el 1 de enero es viernes (fin de semana de tres días) y el 6 de enero, miércoles.</li>
+<li><b>Semana Santa:</b> Jueves Santo 25 de marzo (en casi todas las comunidades) y Viernes Santo 26. En las comunidades con Lunes de Pascua (29 de marzo) son cinco días seguidos sin pedir ninguno.</li>
+<li><b>1 de mayo:</b> cae en sábado, así que no hay puente nacional.</li>
+<li><b>15 de agosto:</b> es domingo. Seis comunidades lo pasan al lunes 16.</li>
+<li><b>12 de octubre:</b> martes; puente pidiendo el lunes 11.</li>
+<li><b>1 de noviembre:</b> lunes; fin de semana largo de tres días.</li>
+<li><b>Constitución e Inmaculada:</b> lunes 6 y miércoles 8 de diciembre: el gran puente del año.</li>
+<li><b>Navidad:</b> el 25 de diciembre es sábado. Algunas comunidades podrían trasladarlo; consulta el <a href="calendario-laboral-2027.html">calendario laboral 2027</a> de la tuya.</li></ul>
+<p class="note">Fuente de los festivos: Resolución de 8 de octubre de 2026 de la Dirección General de Trabajo (BOE-A-2026-21254). Los festivos locales los fija cada ayuntamiento: añádelos arriba. Si trabajas a turnos o en fin de semana, tu cuadrante manda. Las vacaciones se fijan de común acuerdo con la empresa: pídelas con antelación. ¿Cuántos días te corresponden? Calcúlalo con la <a href="calculadora-vacaciones.html">calculadora de vacaciones</a>.</p>""",
+[("¿Cuáles son los mejores puentes de 2027?", "En casi toda España: el 12 de octubre (martes), pidiendo el lunes 11, y el puente de diciembre, con el 6 en lunes y el 8 en miércoles: pidiendo el martes 7 tienes cinco días libres, y con tres días de vacaciones, nueve. Además, Semana Santa (25 y 26 de marzo) y el 1 de noviembre, que cae en lunes."),
+ ("¿Cuántos días de vacaciones tengo al año?", "El Estatuto de los Trabajadores fija un mínimo de 30 días naturales al año, que suelen equivaler a 22 días laborables. Tu convenio puede mejorarlo."),
+ ("¿Los festivos que caen en sábado se recuperan?", "No automáticamente. Si un festivo nacional cae en domingo, las comunidades pueden trasladarlo al lunes; los que caen en sábado, como el 1 de mayo y el 25 de diciembre de 2027, normalmente se pierden salvo que tu comunidad decida otra cosa."),
+ ("¿Puedo pedir solo días sueltos para hacer puente?", "Sí, si tu empresa lo acepta. Las vacaciones se acuerdan con la empresa; muchos convenios permiten fraccionarlas, aunque a veces exigen un periodo mínimo seguido. Revisa tu convenio.")],
+"Puentes 2027: qué días pedir de vacaciones",
+"""const F=""" + _fj + """;
+const D0=new Date(2027,0,1),ND=365,k2=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const DAY=i=>new Date(2027,0,1+i),fc=d=>d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
+function plan(cc,isla,locs,N,MX){const fs={};F.forEach(f=>{if(f[2].includes(cc))fs[f[0]]=f[1];});if(cc=='CN'&&isla){const p=isla.split('|');fs[p[0]]='Fiesta insular de '+p[1];}locs.forEach(k=>{if(!fs[k])fs[k]='Festivo local';});
+const off=[];for(let i=0;i<ND;i++){const d=DAY(i),w=d.getDay();off.push(w==0||w==6||!!fs[k2(d)]);}
+const B=[];for(let i=0;i<ND;i++){if(off[i]&&(i==0||!off[i-1])){let j=i;while(j+1<ND&&off[j+1])j++;B.push([i,j]);}}
+const m=B.length;
+const C=[];for(let a=0;a<m;a++){C[a]=[];let c=0;C[a][a]=0;for(let b=a+1;b<m;b++){c+=B[b][0]-B[b-1][1]-1;C[a][b]=c;}}
+const W=[];for(let a=0;a<m;a++)for(let b=a+1;b<m;b++){const c=C[a][b];if(c>MX)break;if(c>=1&&c<=N)W.push([a,b,c,B[b][1]-B[a][0]+1]);}
+const f=[],ch=[];for(let i=0;i<=m;i++){f.push(new Array(N+1).fill(0));ch.push(new Array(N+1).fill(null));}
+for(let i=1;i<=m;i++)for(let n=0;n<=N;n++){f[i][n]=f[i-1][n];ch[i][n]=null;W.forEach((w,x)=>{if(w[1]==i-1&&w[2]<=n){const val=f[w[0]][n-w[2]]+w[3]+w[3]*w[3]/1e4;if(val>f[i][n]){f[i][n]=val;ch[i][n]=x;}}});}
+const sel=[];let i=m,n=N;while(i>0){const x=ch[i][n];if(x===null){i--;}else{const w=W[x];sel.unshift(w);n-=w[2];i=w[0];}}
+const pide=w=>{const r=[];for(let t=B[w[0]][0];t<=B[w[1]][1];t++)if(!off[t])r.push(DAY(t));return r;};
+const top=W.filter(w=>w[2]<=2).map(w=>[w,w[3]/w[2]]).sort((p,q)=>q[1]-p[1]||q[0][3]-p[0][3]).slice(0,8).map(p=>p[0]);
+return {fs,sel,top,pide,B,tot:sel.reduce((s,w)=>s+w[3],0),used:sel.reduce((s,w)=>s+w[2],0)};}
+function calc(){const cc=document.getElementById('cc').value;document.getElementById('isw').style.display=cc=='CN'?'block':'none';
+const locs=[];document.getElementById('lo').value.split(/[,;\\s]+/).forEach(x=>{const mm=x.match(/^(\\d{1,2})[\\/.-](\\d{1,2})$/);if(mm)locs.push('2027-'+mm[2].padStart(2,'0')+'-'+mm[1].padStart(2,'0'));});
+const N=Math.max(0,Math.min(40,Math.round(v('n')))),MX=+document.getElementById('mx').value;if(N<1){show('r','Escribe cuántos días de vacaciones quieres usar.');return;}
+const p=plan(cc,document.getElementById('is').value,locs,N,MX);
+if(!p.sel.length){show('r','Con estos datos no encontramos ninguna combinación. Prueba con más días o sin límite por escapada.');return;}
+let h='Con <b>'+p.used+' días</b> de vacaciones consigues:<b class="big">'+p.tot+' días libres</b>en '+p.sel.length+' '+(p.sel.length==1?'escapada':'escapadas')+(p.used<N?' (te sobran '+(N-p.used)+' días: úsalos cuando quieras)':'')+'.';
+h+='<table style="margin-top:10px;font-size:.92rem"><tr><th>Descansas</th><th>Días libres</th><th>Pide</th></tr>'+p.sel.map(w=>{const a=DAY(p.B[w[0]][0]),b=DAY(p.B[w[1]][1]);return '<tr><td>'+fc(a)+' – '+fc(b)+'</td><td><b>'+w[3]+'</b></td><td>'+p.pide(w).map(fc).join(', ')+'</td></tr>';}).join('')+'</table>';
+if(p.top.length)h+='<h3 style="margin-bottom:4px">Mejores puentes pidiendo 1 o 2 días</h3><ul style="margin-top:4px">'+p.top.map(w=>'<li>'+fc(DAY(p.B[w[0]][0]))+' – '+fc(DAY(p.B[w[1]][1]))+': <b>'+w[3]+' días</b> pidiendo '+p.pide(w).map(fc).join(' y ')+'</li>').join('')+'</ul>';
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

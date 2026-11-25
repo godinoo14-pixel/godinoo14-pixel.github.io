@@ -61,18 +61,42 @@ PW = [("Frigorífico", 200, 1), ("Iluminación", 200, 1), ("TV y ordenador", 300
       ("Lavadora", 2000, 1), ("Lavavajillas", 1800, 0), ("Secadora", 2500, 0), ("Microondas", 1000, 1), ("Termo eléctrico", 1500, 0),
       ("Aire acondicionado", 1200, 0), ("Calefactor / radiador", 2000, 0), ("Plancha", 2000, 0), ("Cargador coche eléctrico", 3700, 0)]
 pwh = "".join(f'<label class="chk"><input type="checkbox" {"checked" if c else ""}><span>{n}</span><input type="number" value="{w}"> W</label>' for n, w, c in PW)
-P.append(("potencia-contratada", "¿Qué potencia de luz contratar? Calculadora de kW | GastoLuz",
-"Calcula la potencia eléctrica que necesitas contratar según los aparatos que usas a la vez y deja de pagar potencia de más.",
-"""<p class="lead">Marca los aparatos que <b>sueles usar a la vez</b> en el momento de más consumo del día.</p>
-<div class="card">""" + pwh + """<label for="p">Precio de la potencia (€/kW y año)</label><input id="p" inputmode="decimal" value="30">
-<button onclick="calc()">Calcular potencia</button><div class="res" id="r"></div></div>
-<p class="note">Si «salta el ICP» (el interruptor general) a menudo, necesitas más potencia o repartir mejor el uso. Si nunca salta, quizá puedas bajarla y ahorrar.</p>
-<h2>Cómo ahorrar en el término de potencia</h2><p>Pagas la potencia todos los días aunque no la uses. Bajar un tramo (por ejemplo, de 5,75 a 4,6 kW) puede ahorrar decenas de euros al año. Con la tarifa 2.0TD puedes contratar potencias distintas en punta y en valle: si cargas un coche eléctrico por la noche, sube solo la del periodo valle.</p>""",
-[("¿Cuánta potencia necesita un piso normal?", "Un piso medio sin calefacción eléctrica suele ir bien con 3,45 a 4,6 kW. Con aire acondicionado, horno y vitro a la vez, 5,75 kW o más."),
- ("¿Cuesta dinero cambiar la potencia?", "Bajar potencia suele ser gratis o barato; subirla puede tener costes de derechos de acometida. Consulta con tu comercializadora.")],
-None, """const T=[2.3,3.45,4.6,5.75,6.9,8.05,9.2,10.35,11.5,14.49];
-function calc(){let w=0;document.querySelectorAll('.chk').forEach(l=>{const c=l.querySelector('[type=checkbox]'),n=l.querySelector('[type=number]');if(c.checked)w+=parseFloat(n.value)||0;});
-const kw=w/1000,r=T.find(t=>t>=kw*1.1)||T[T.length-1];show('r','Potencia recomendada:<b class="big">'+nf(r,2)+' kW</b>Consumo simultáneo: '+nf(kw,2)+' kW (+10 % de margen) · Coste aprox. del término de potencia: <b>'+eur(r*v('p'))+'/año</b>');}"""))
+P.append(("potencia-contratada", "Qué potencia de luz contratar: calculadora de kW y ahorro | GastoLuz",
+"Calcula qué potencia eléctrica necesitas según los aparatos que usas a la vez, si te conviene bajarla o subirla y cuánto ahorras al año en el término de potencia, impuestos incluidos.",
+"""<p class="lead">Marca los aparatos que <b>sueles usar a la vez</b> en el momento de más consumo del día y escribe la potencia que tienes ahora (viene en tu factura). Te decimos la potencia que necesitas y cuánto ahorrarías o pagarías de más al año.</p>
+<div class="card">""" + pwh + """<div class="row"><div><label for="ka">Potencia contratada ahora (kW)</label><input id="ka" inputmode="decimal" value="5,75"></div>
+<div><label for="mg">Margen de seguridad</label><select id="mg"><option value="1.1">10 % (recomendado)</option><option value="1">Ninguno: ajustado al máximo</option><option value="1.2">20 %: prefiero que no salte nunca</option></select></div>
+<div><label for="p1">Precio potencia punta (€/kW y día)</label><input id="p1" inputmode="decimal" value="0,10"></div>
+<div><label for="p2">Precio potencia valle (€/kW y día)</label><input id="p2" inputmode="decimal" value="0,04"></div></div>
+<p class="note">Los precios de ejemplo son orientativos: pon los de tu contrato (en la factura, «término de potencia»). El cálculo incluye el impuesto eléctrico (5,11 %) y el IVA (21 %).</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo calcular la potencia que necesitas</h2><p>La potencia contratada es el máximo de kilovatios que puedes usar <b>a la vez</b>. Si la superas, el interruptor de control de potencia del contador corta la luz («salta el automático») y tienes que apagar algo y volver a subirlo. Por eso no importa cuánto gastas al mes, sino qué aparatos coinciden encendidos: horno, vitrocerámica, lavadora y radiador al mismo tiempo pueden sumar más de 8 kW, mientras que la nevera, la tele y las luces juntas no llegan a 1 kW.</p>
+<p><b>Fórmula:</b> potencia necesaria = suma de los vatios de los aparatos simultáneos ÷ 1.000 × margen. Después se elige el escalón inmediatamente superior. El coste anual del término de potencia es kW × 365 días × (precio punta + precio valle), más impuestos.</p>
+<table><tr><th>Potencia</th><th>Para qué casa suele bastar</th><th>Coste al año*</th></tr>
+<tr><td>3,45 kW</td><td>Piso pequeño con gas o sin calefacción eléctrica; no usar horno y lavadora a la vez</td><td>224 €</td></tr>
+<tr><td>4,6 kW</td><td>Piso medio con vitro o inducción, horno y lavadora repartidos</td><td>299 €</td></tr>
+<tr><td>5,75 kW</td><td>Casa con aire acondicionado o algún radiador eléctrico</td><td>374 €</td></tr>
+<tr><td>6,9 kW o más</td><td>Calefacción eléctrica, bomba de calor o cargador de coche eléctrico</td><td>448 €</td></tr></table>
+<p class="note">*Con 0,10 €/kW·día en punta y 0,04 €/kW·día en valle, impuesto eléctrico e IVA incluidos. Cada kW de más cuesta unos 65 € al año con estos precios.</p>
+<p><b>Ejemplo:</b> una familia tiene 5,75 kW. En su peor momento coinciden la vitrocerámica (2.500 W), el frigorífico, las luces, la tele y el microondas: unos 4,2 kW. Con un 10 % de margen necesita 4,6 kW. Bajando de 5,75 a 4,6 kW ahorra unos <b>75 € al año</b>, solo con no poner la lavadora mientras cocina.</p>
+<h2>Potencia distinta de día y de noche</h2><p>Con la tarifa 2.0TD puedes contratar dos potencias: una para punta y llano (de 8:00 a 24:00 los días laborables) y otra para el valle (de 0:00 a 8:00 y todo el fin de semana y festivos). Si cargas un <a href="coste-cargar-coche-electrico.html">coche eléctrico</a> por la noche, sube solo la potencia de valle, que es mucho más barata, y mantén baja la de punta.</p>
+<p>Antes de cambiar, revisa en tu área de cliente de la distribuidora tu curva de consumo: muchas muestran la potencia máxima que has alcanzado cada mes. Calcula tu recibo completo con la <a href="calcular-factura-luz.html">calculadora de la factura de la luz</a> y mira qué aparatos pesan más en la <a href="consumo-electrodomesticos.html">de consumo de electrodomésticos</a>.</p>""",
+[("¿Cuánta potencia necesita un piso normal?", "Un piso medio sin calefacción eléctrica suele ir bien con 3,45 a 4,6 kW si no coinciden horno, vitro y lavadora. Con aire acondicionado o radiadores eléctricos, 5,75 kW o más."),
+ ("¿Cuánto ahorro bajando la potencia contratada?", "Cada kW menos ahorra el precio del término de potencia por 365 días, más impuestos: con 0,14 €/kW·día entre punta y valle, unos 65 € al año."),
+ ("¿Qué pasa si contrato menos potencia de la que necesito?", "Que el interruptor de control de potencia del contador cortará la luz cuando enciendas a la vez aparatos que superen esa potencia. No hay recargo en la factura: solo el corte, que se arregla apagando algo y volviendo a subir el interruptor."),
+ ("¿Cuesta dinero cambiar la potencia?", "Bajarla suele costar poco o nada; subirla puede tener costes de derechos de acceso y extensión, que dependen de los kW que añadas. Además, la distribuidora puede no aceptar un nuevo cambio hasta que pasen 12 meses del anterior, así que conviene calcularlo bien.")],
+"¿Qué potencia de luz contratar?", """const T=[2.3,3.45,4.6,5.75,6.9,8.05,9.2,10.35,11.5,14.49];
+function calc(){let w=0,ev=false;document.querySelectorAll('.chk').forEach(l=>{const c=l.querySelector('[type=checkbox]'),n=l.querySelector('[type=number]');if(c.checked){w+=parseFloat(n.value)||0;if(/coche/i.test(l.textContent))ev=true;}});
+const mg=parseFloat(document.getElementById('mg').value),kw=w/1000,r=T.find(t=>t>=kw*mg-1e-9)||T[T.length-1],ka=v('ka'),pk=(v('p1')+v('p2'))*365*1.0511269632*1.21;
+if(kw<=0){show('r','Marca al menos un aparato.');return;}
+let h='Potencia recomendada:<b class="big">'+nf(r,2)+' kW</b>Aparatos a la vez: '+nf(kw,2)+' kW'+(mg>1?' (+'+nf((mg-1)*100,0)+' % de margen)':'')+' · Término de potencia con '+nf(r,2)+' kW: <b>'+eur(r*pk)+' al año</b>';
+if(ka>0){const d=(ka-r)*pk;if(d>1)h+='<br>Con tus '+nf(ka,2)+' kW pagas potencia de más: bajando a '+nf(r,2)+' kW ahorrarías <b>'+eur(d)+' al año</b> ('+eur(d/12)+' al mes).';
+else if(d<-1)h+='<br>Con tus '+nf(ka,2)+' kW es probable que salte el automático si usas todo eso a la vez. Subir a '+nf(r,2)+' kW costaría <b>'+eur(-d)+' más al año</b>; la alternativa gratuita es no encender esos aparatos al mismo tiempo.';
+else h+='<br>Tu potencia actual ('+nf(ka,2)+' kW) es la adecuada.';}
+if(ev)h+='<br>Como cargas un coche eléctrico, plantéate contratar esta potencia solo en valle (noche) y una más baja en punta.';
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.type=='checkbox'||e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
 
 P.append(("calculadora-kwh", "Pasar vatios a kWh y euros: calculadora de consumo eléctrico | GastoLuz",
 "Convierte vatios (W) a kilovatios hora (kWh) y calcula cuánto te cuesta en euros cualquier aparato según las horas que lo usas. Con ejemplos y la fórmula explicada.",

@@ -289,7 +289,7 @@ P.append(("consumo-secadora", "¿Cuánto gasta una secadora? Coste por ciclo y m
 <p class="note">* Con la luz a 0,15 €/kWh y 4 secados a la semana. Valores típicos de referencia. El dato exacto está en la etiqueta energética o el manual: si indica kWh por 100 ciclos, divide entre 100; en etiquetas antiguas que dan kWh al año, divide entre 160 ciclos.</p>
 <p><b>Fórmula:</b> coste por ciclo = kWh del ciclo × carga × precio medio de la luz durante las horas que funciona. Con la tarifa regulada (PVPC), el mismo secado puede costar el doble a las 20:00 que de madrugada o a mediodía.</p>
 <h2>Trucos para gastar menos</h2><ul><li>Centrifuga la ropa en la lavadora a 1.200-1.400 rpm: cuanta menos agua lleve, menos tiempo de secadora.</li><li>Limpia el filtro de pelusa en cada uso y el condensador cada mes.</li><li>Llénala sin apretar: a media carga gasta más por cada kilo de ropa.</li><li>Ponla en las horas más baratas: mira el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>.</li></ul>
-<p>Compara con el resto de tu casa en el <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a>, comprueba si cabe en tu <a href="potencia-contratada.html">potencia contratada</a> junto con la calefacción o calcula tu <a href="calcular-factura-luz.html">factura de la luz</a>.</p>""",
+<p>¿Secas la ropa dentro de casa? Mira cuánto cuesta hacerlo con un <a href="consumo-deshumidificador.html">deshumidificador</a>. Compara con el resto de tu casa en el <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a>, comprueba si cabe en tu <a href="potencia-contratada.html">potencia contratada</a> junto con la calefacción o calcula tu <a href="calcular-factura-luz.html">factura de la luz</a>.</p>""",
 [("¿Cuánto gasta una secadora por ciclo?", "Una de bomba de calor de 8 kg gasta entre 1,5 y 2 kWh por ciclo completo, unos 0,27 € con la luz a 0,15 €/kWh. Una de condensación o evacuación, entre 4 y 5 kWh: unos 0,70 € por secado."),
  ("¿Cuánto gasta una secadora al mes?", "Con 4 secados a la semana, unos 4,70 € al mes una de bomba de calor y entre 11,70 y 12,50 € una de condensación o evacuación, con el kWh a 0,15 €."),
  ("¿A qué hora es más barato poner la secadora?", "Con la tarifa regulada (PVPC), en las horas valle de madrugada (de 0 a 8 h) y, muchos días, a mediodía cuando hay mucha producción solar. Las horas más caras suelen ser de 19 a 22 h. Con tarifa de precio fijo da igual la hora.")],
@@ -350,4 +350,50 @@ show('r',h+tx);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'||e.type=='date'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Consumo del deshumidificador con PVPC por horas ---
+S['tools'].insert(6, ("consumo-deshumidificador", "Consumo del deshumidificador", "Cuánto cuesta al día y al mes, y por litro de agua, con el precio de la luz de hoy.", ""))
+S['aff']["consumo-deshumidificador"] = amz("deshumidificador compresor 20 litros", "Deshumidificadores de compresor") + amz("deshumidificador desecante", "Deshumidificadores desecantes") + amz("higrometro digital", "Higrómetros para medir la humedad")
+P.append(("consumo-deshumidificador", "¿Cuánto gasta un deshumidificador? Coste al día y al mes | GastoLuz",
+"Calcula cuánto gasta tu deshumidificador de compresor o desecante al día y al mes con el precio de la luz por horas de hoy, cuánto cuesta cada litro de agua y si sale más barato que la secadora.",
+"""<p class="lead">Elige el tipo de deshumidificador, cuántas horas lo tienes encendido y a qué hora. Te decimos lo que cuesta con el precio real de la luz de esas horas y cuánto pagas por cada litro de agua que saca.</p>
+<div class="card"><div class="row"><div><label for="ap">Tipo de deshumidificador</label><select id="ap"><option value="200|10|70">Compresor pequeño (200 W, 10 l/día)</option><option value="300|20|70" selected>Compresor mediano (300 W, 20 l/día)</option><option value="450|30|75">Compresor grande (450 W, 30 l/día)</option><option value="600|10|80">Desecante (600 W, 10 l/día)</option><option value="30|0.3|100">Peltier mini (30 W, 0,3 l/día)</option></select></div>
+<div><label for="w">Potencia (W)</label><input id="w" inputmode="decimal" value="300"></div>
+<div><label for="l">Capacidad de extracción (litros/día)</label><input id="l" inputmode="decimal" value="20"></div>
+<div><label for="f">Tiempo que funciona el motor (%)</label><input id="f" inputmode="decimal" value="70"></div>
+<div><label for="hd">Horas encendido al día</label><input id="hd" inputmode="decimal" value="8"></div>
+<div><label for="ho">Hora a la que lo enciendes</label><select id="ho"></select></div>
+<div><label for="dm">Días al mes</label><input id="dm" inputmode="numeric" value="30"></div>
+<div><label for="p">Precio de la luz (€/kWh, si no usas el PVPC de hoy)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
+<p class="note" id="pn">Cargando el precio de la luz por horas de hoy…</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto gasta cada tipo</h2><p>Los deshumidificadores domésticos gastan poco comparados con un radiador: entre 200 y 600 W. Además, con el higrostato puesto (por ejemplo, en el 55 %), el motor se para cuando alcanza esa humedad, así que el consumo real queda por debajo de la potencia de la etiqueta. Por eso pedimos el <b>tiempo que funciona el motor</b>: un 60-80 % es lo habitual en una casa húmeda.</p>
+<table><tr><th>8 horas al día (0,15 €/kWh)</th><th>kWh al día</th><th>Al día</th><th>Al mes</th></tr>
+<tr><td>Compresor 200 W al 70 %</td><td>1,12</td><td>0,17 €</td><td>5,04 €</td></tr>
+<tr><td>Compresor 300 W al 70 %</td><td>1,68</td><td>0,25 €</td><td>7,56 €</td></tr>
+<tr><td>Desecante 600 W al 80 %</td><td>3,84</td><td>0,58 €</td><td>17,28 €</td></tr></table>
+<p><b>Fórmula:</b> coste = potencia (W) × % de funcionamiento × horas ÷ 1.000 × precio del kWh. El coste por litro es ese importe dividido entre los litros que saca en esas horas.</p>
+<h2>¿Compresor o desecante?</h2><p>La capacidad que anuncian los fabricantes de compresor (10, 20 o 30 litros al día) se mide a 30 °C y 80 % de humedad. En una casa en invierno, a 15-18 °C, sacan bastante menos agua, a veces la mitad. Por debajo de unos 15 °C (trasteros, segundas residencias, garajes), los <b>desecantes</b> rinden mejor y además sueltan aire templado, aunque gastan el doble. Para un piso con calefacción, uno de compresor de 12-20 litros suele ser lo más eficiente.</p>
+<h2>¿Secar la ropa con deshumidificador o con secadora?</h2><p>Una lavadora de 7 kg centrifugada a 1.200 rpm deja en la ropa unos 3-4 litros de agua. Un deshumidificador de compresor en un cuarto cerrado la seca en unas horas gastando alrededor de 1 kWh, frente a los 2-4 kWh de una secadora de condensación. Tarda más, pero cuesta menos y evita las paredes empañadas y el moho de tender dentro de casa. Compara con el <a href="consumo-secadora.html">consumo de la secadora</a>.</p>
+<p>La humedad cómoda en casa está entre el 40 y el 60 %. Por encima del 65-70 % aparecen condensaciones y moho, y la sensación de frío aumenta, así que bajar la humedad también ayuda a no subir tanto la <a href="coste-calefaccion-electrica.html">calefacción eléctrica</a>. Mira las <a href="precio-luz-hoy.html">horas más baratas de la luz hoy</a> para encenderlo.</p>""",
+[("¿Cuánto gasta un deshumidificador al mes?", "Uno de compresor de 300 W encendido 8 horas al día, con el motor funcionando el 70 % del tiempo, gasta unos 50 kWh al mes: alrededor de 7,50 € con la luz a 0,15 €/kWh. Uno desecante de 600 W, más del doble."),
+ ("¿Gasta mucha luz un deshumidificador?", "Poco comparado con la calefacción: un modelo de compresor gasta lo que una bombilla antigua de 200-300 W. Un radiador eléctrico de 1.500 W gasta cinco veces más en el mismo tiempo."),
+ ("¿Es mejor dejar el deshumidificador encendido toda la noche?", "Si tiene higrostato, puedes dejarlo programado en el 50-55 %: se para solo al alcanzarlo. Con tarifa PVPC, la madrugada suele ser la franja más barata."),
+ ("¿Qué consume más, un deshumidificador o una secadora?", "La secadora. Secar una lavadora en una secadora de condensación cuesta 2-4 kWh; con un deshumidificador de compresor en un cuarto cerrado, alrededor de 1 kWh, aunque tarda más.")],
+"¿Cuánto gasta un deshumidificador?",
+"""let HP=null;const hs=document.getElementById('ho');for(let i=0;i<24;i++)hs.add(new Option(String(i).padStart(2,'0')+':00',i));hs.value=22;
+document.getElementById('ap').addEventListener('change',()=>{const t=document.getElementById('ap').value.split('|');document.getElementById('w').value=t[0];document.getElementById('l').value=t[1].replace('.',',');document.getElementById('f').value=t[2];calc();});
+function pm(h0,du){let s=0,w=0;for(let t=0;t<du;t+=0.25){s+=HP[Math.floor(h0+t)%24];w++;}return s/w*1.0511*1.21;}
+function calc(){const fr=Math.min(100,v('f'))/100,kw=v('w')/1000*fr,hd=Math.min(24,v('hd')),dm=v('dm'),h0=+hs.value,lt=v('l')/24*hd*fr;
+if(kw<=0||hd<=0){show('r','Escribe la potencia y las horas de uso.');return;}
+let pr=v('p'),tx='';if(HP){pr=pm(h0,hd);let bh=0,bp=1e9;for(let h=0;h<24;h++){const x=pm(h,hd);if(x<bp){bp=x;bh=h;}}tx='<br>Hoy, la franja de '+nf(hd,1)+' h más barata empieza a las <b>'+String(bh).padStart(2,'0')+':00</b> ('+nf(bp,3)+' €/kWh): al mes serían '+eur(kw*hd*bp*dm)+'.';}
+const e=kw*hd,c=e*pr,ct=x=>x<1?nf(x*100,1)+' céntimos':eur(x);
+let h='Coste al mes:<b class="big">'+eur(c*dm)+'</b>Al día: <b>'+ct(c)+'</b> · '+nf(e,2)+' kWh al día a '+nf(pr,3)+' €/kWh'+(HP?' (PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00, con impuestos)':'');
+if(lt>0)h+='<br>Saca hasta unos <b>'+nf(lt,1)+' litros al día</b> en condiciones de laboratorio: '+ct(c/lt)+' por litro. En una casa fría saca menos agua y cada litro sale más caro.';
+h+='<br>En todo el invierno (5 meses): <b>'+eur(c*dm*5)+'</b>.';
+show('r',h+tx);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

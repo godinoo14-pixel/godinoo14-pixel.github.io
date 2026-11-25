@@ -83,8 +83,8 @@ const dp=v('dp');let am='';if(dp>0)am=a>0?'<br>Recuperas los '+eur(dp)+' de dife
 show('r','Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Eléctrico: '+nf(e,3)+' €/km ('+eur(e*k)+'/año) · Combustión: '+nf(c,3)+' €/km ('+eur(c*k)+'/año)<br>En 5 años: <b>'+eur(a*5)+'</b>'+am);}
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias||!j.medias.g95)return;document.getElementById('pc').value=j.medias.g95.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio del litro: media de la gasolina 95 en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si comparas con un diésel, pon su precio. ¿No sabes cuánto gasta tu coche? Calcúlalo con tu <a href="consumo-real-coche.html">consumo real</a>.';calc();}).catch(()=>{});"""))
 
-P.append(("coste-anual-coche", "¿Cuánto cuesta mantener un coche al año? Calculadora | CocheCuentas",
-"Suma seguro, impuesto de circulación, ITV, mantenimiento, neumáticos, combustible, aparcamiento y depreciación para saber el coste real de tu coche.",
+P.append(("coste-anual-coche", "Cuánto cuesta mantener un coche al año: calculadora de todos los gastos | CocheCuentas",
+"Calcula cuánto cuesta mantener tu coche al año, al mes y por kilómetro: seguro, impuesto de circulación, ITV, revisiones, neumáticos, combustible, parking, financiación y pérdida de valor, con el peso de cada gasto.",
 """<p class="lead">Rellena lo que pagas por cada concepto (puedes dejar en 0 lo que no aplique) y verás el coste real anual, mensual y por kilómetro.</p>
 <div class="card"><div class="row">
 <div><label for="a1">Seguro (€/año)</label><input id="a1" inputmode="decimal" value="450"></div>
@@ -97,14 +97,25 @@ P.append(("coste-anual-coche", "¿Cuánto cuesta mantener un coche al año? Calc
 <div><label for="a8">Cuota de financiación (€/mes)</label><input id="a8" inputmode="decimal" value="0"></div>
 <div><label for="a9">Pérdida de valor (€/año)</label><input id="a9" inputmode="decimal" value="1500"></div>
 <div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div></div>
-<button onclick="calc()">Calcular coste real</button><div class="res" id="r"></div></div>
+<div class="res" id="r" aria-live="polite"></div></div>
 <p class="note">¿No sabes cuánto pierde de valor tu coche? Usa la <a href="depreciacion-coche.html">calculadora de depreciación</a>. ¿Y el combustible? Sácalo con la de <a href="coste-por-km.html">coste por km</a>. Y para el impuesto de tu ayuntamiento, usa la del <a href="impuesto-circulacion.html">impuesto de circulación</a>.</p>
+<h2>Cómo se calcula el coste real</h2><p>Sumamos todos los gastos anuales, pasamos la cuota de financiación a año (× 12) y dividimos entre 12 para el coste mensual y entre los kilómetros que haces para el coste por kilómetro. Este último es el dato más útil para comparar: te dice cuánto te cuesta de verdad cada trayecto, no solo la gasolina.</p>
+<p><b>Ejemplo con los valores de arriba:</b> un compacto de gasolina de 5 años que hace 15.000 km al año suma 4.465 € anuales: 372 € al mes y unos 0,30 € por kilómetro. El combustible es solo un tercio; la pérdida de valor pesa lo mismo, y el resto (seguro, revisiones, neumáticos, impuesto, ITV y parking) se lleva el otro tercio.</p>
+<h2>Dónde está el ahorro</h2><ul><li><b>Seguro:</b> es el gasto fijo más fácil de rebajar. Antes de renovar, pide precio a otras aseguradoras con las mismas coberturas y usa esa oferta para negociar con la tuya.</li><li><b>Combustible:</b> repostar en las <a href="gasolineras-baratas.html">gasolineras más baratas de tu zona</a> puede ahorrarte 5-10 € por depósito, porque entre estaciones cercanas hay a menudo 10-20 céntimos por litro de diferencia; comprueba tu <a href="consumo-real-coche.html">consumo real</a>.</li><li><b>Neumáticos y revisiones:</b> llevar la presión correcta reduce el consumo y el desgaste.</li><li><b>Pérdida de valor:</b> comprar un seminuevo de 2-3 años evita la mayor caída de precio.</li></ul>
 <h2>El gasto que nadie cuenta: la depreciación</h2><p>Para muchos coches nuevos o seminuevos, la pérdida de valor es el mayor gasto del año, por encima del combustible. Un coche de 25.000 € puede perder entre 3.000 y 5.000 € solo en su primer año. Por eso comprar un seminuevo de 2-3 años suele ser la opción más eficiente.</p>""",
 [("¿Cuánto cuesta de media mantener un coche en España?", "Depende mucho del coche y del uso, pero sumando todos los conceptos y la depreciación es habitual moverse entre 3.000 y 6.000 € al año para un turismo medio."),
+ ("¿Cuánto cuesta un coche al mes?", "Sumando todos los gastos y la pérdida de valor, un turismo medio que hace 15.000 km al año cuesta entre 250 y 500 € al mes. Sin contar la depreciación ni la financiación, normalmente entre 150 y 300 €."),
+ ("¿Cuánto cuesta cada kilómetro en coche?", "Contando solo el combustible, entre 0,06 y 0,12 € por km según el coche. Con todos los gastos, entre 0,25 y 0,45 €. Calcúlalo con tus datos arriba o solo el combustible en la calculadora de coste por kilómetro."),
  ("¿Sale más barato el renting?", "El renting incluye seguro, mantenimiento e impuestos en la cuota y elimina el riesgo de depreciación. Compara su cuota mensual con el coste mensual que te da esta calculadora.")],
 None,
-"""function calc(){let t=0;for(let i=1;i<=9;i++){if(i==8)continue;t+=v('a'+i);}t+=v('a8')*12;const k=v('k')||1;
-show('r','Coste real al año:<b class="big">'+eur(t)+'</b>Al mes: <b>'+eur(t/12)+'</b> · Por km: <b>'+nf(t/k,3)+' €</b>');}"""))
+"""const L=['Seguro','Impuesto de circulación','ITV','Revisiones y averías','Neumáticos','Combustible','Parking, peajes y lavados','Financiación','Pérdida de valor'];
+function calc(){const x=[];for(let i=1;i<=9;i++)x.push(Math.max(0,v('a'+i))*(i==8?12:1));const t=x.reduce((p,q)=>p+q,0),k=v('k');
+if(t<=0){show('r','Escribe al menos un gasto.');return;}
+let h='Coste real al año:<b class="big">'+eur(t)+'</b>Al mes: <b>'+eur(t/12)+'</b>'+(k>0?' · Por km: <b>'+nf(t/k,3)+' €</b>':'')+' · Sin pérdida de valor: '+eur((t-x[8])/12)+' al mes';
+h+='<table style="margin-top:10px;font-size:.9rem">'+x.map((y,i)=>[y,i]).filter(p=>p[0]>0).sort((p,q)=>q[0]-p[0]).map(p=>'<tr><td>'+L[p[1]]+'</td><td style="text-align:right">'+eur(p[0])+'</td><td style="width:40%"><div style="background:#d9480f;height:10px;border-radius:5px;width:'+(p[0]/t*100).toFixed(1)+'%"></div></td><td style="text-align:right">'+nf(p[0]/t*100,0)+' %</td></tr>').join('')+'</table>';
+show('r',h);}
+document.querySelectorAll('.card input').forEach(e=>e.addEventListener('input',()=>calc()));
+calc();"""))
 
 P.append(("depreciacion-coche", "Depreciación de un coche: calcula cuánto valdrá dentro de X años | CocheCuentas",
 "Calcula cuánto valdrá tu coche dentro de 1, 3 o 5 años y cuánto dinero pierde cada año. Hecha por un tasador profesional: útil para vender, comprar o elegir entre nuevo y seminuevo.",
