@@ -10,6 +10,7 @@ def amz(q, label):
     return f'<a class="afl" href="{u}" rel="sponsored nofollow noopener" target="_blank">{label}</a>'
 def ext(u, label):
     return f'<a class="afl" href="{u}" rel="sponsored nofollow noopener" target="_blank">{label}</a>'
+INDEXNOW_KEY = "8e05f4ba4cd46c3058928bdd08a6dd0e"   # clave IndexNow (Bing, DuckDuckGo, Yandex): se publica como <clave>.txt en la raíz
 NETWORK = [("CocheCuentas", "https://cochecuentas.es/"), ("CalculadoraDías", "https://calculadoradias.es/"), ("GastoLuz", "https://gastoluz.es/")]
 OWNER = "Juan Pedro Godino Moreno"
 MAIL = 'el correo indicado en el <a href="/aviso-legal.html">aviso legal general del sitio</a>'
@@ -210,6 +211,7 @@ const rows=[];for(const [s,n] of P){{rows.push([n,s,(await g('p-'+s,150))||0]);r
     og_images(site, [("index", site['home_h1'])] + [(p[0], p[5] if len(p) > 5 and p[5] else p[1].split(' | ')[0]) for p in pages] + [("sobre-nosotros", "Sobre " + site['name'])] + [(x[0], x[1].split(' | ')[0]) for x in legal(site)] + [("404", "Página no encontrada")])
     open(f"{d}/CNAME", "w").write(site["domain"] + "\n")
     open(f"{d}/.nojekyll", "w").write("")
+    open(f"{d}/{INDEXNOW_KEY}.txt", "w").write(INDEXNOW_KEY)
     open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
     # Anuncios automáticos de AdSense: con ADSENSE_CLIENT relleno se carga el script en <head> y Google coloca los anuncios solo.
     if ADSENSE_CLIENT:

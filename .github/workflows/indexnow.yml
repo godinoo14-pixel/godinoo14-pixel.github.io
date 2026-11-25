@@ -1,0 +1,29 @@
+name: Avisar a Bing (IndexNow)
+# Envía las URL de los sitemaps de CocheCuentas, CalculadoraDías y GastoLuz a IndexNow
+# (Bing, DuckDuckGo, Ecosia, Yandex). Google no usa IndexNow: para Google, Search Console.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * 1"
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar URLs
+        run: |
+          python3 - <<'PY'
+          import json, re, urllib.request, urllib.error
+          KEY = "8e05f4ba4cd46c3058928bdd08a6dd0e"
+          fallo = False
+          for host in ["cochecuentas.es", "calculadoradias.es", "gastoluz.es"]:
+              xml = urllib.request.urlopen(f"https://{host}/sitemap.xml", timeout=30).read().decode()
+              urls = re.findall(r"<loc>([^<]+)</loc>", xml)
+              body = json.dumps({"host": host, "key": KEY, "keyLocation": f"https://{host}/{KEY}.txt", "urlList": urls}).encode()
+              req = urllib.request.Request("https://api.indexnow.org/indexnow", data=body, headers={"Content-Type": "application/json; charset=utf-8"})
+              try:
+                  r = urllib.request.urlopen(req, timeout=30)
+                  print(host, len(urls), "URLs ->", r.status)
+              except urllib.error.HTTPError as e:
+                  print(host, "ERROR", e.code, e.read()[:300]); fallo = True
+          raise SystemExit(1 if fallo else 0)
+          PY
