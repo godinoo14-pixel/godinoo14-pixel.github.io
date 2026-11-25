@@ -55,7 +55,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
     base = site['base']
     url = base + ("" if slug == "index" else slug + ".html")
     is_tool = slug not in ("index", "aviso-legal", "privacidad", "cookies", "404", "sobre-nosotros")
-    ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": title, "description": desc, "url": url, "inLanguage": "es-ES", "dateModified": "2026-11-24"}]
+    ld = [{"@context": "https://schema.org", "@type": "WebPage", "name": title, "description": desc, "url": url, "inLanguage": "es-ES", "dateModified": TODAY, "publisher": {"@type": "Organization", "name": site['name'], "url": base, "logo": base + "favicon.svg"}}]
     if slug == "index":
         ld.append({"@context": "https://schema.org", "@type": "WebSite", "name": site['name'], "url": base, "inLanguage": "es-ES"})
     else:
@@ -212,7 +212,14 @@ const rows=[];for(const [s,n] of P){{rows.push([n,s,(await g('p-'+s,150))||0]);r
     open(f"{d}/CNAME", "w").write(site["domain"] + "\n")
     open(f"{d}/.nojekyll", "w").write("")
     open(f"{d}/{INDEXNOW_KEY}.txt", "w").write(INDEXNOW_KEY)
-    open(f"{d}/robots.txt", "w").write(f"User-agent: *\nAllow: /\nSitemap: {site['base']}sitemap.xml\n")
+    bots = ["Googlebot", "Bingbot", "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot", "Applebot-Extended", "DuckDuckBot", "YandexBot"]
+    open(f"{d}/robots.txt", "w").write("".join(f"User-agent: {b}\nAllow: /\n\n" for b in bots) + f"User-agent: *\nAllow: /\nDisallow: /estadisticas.html\n\nSitemap: {site['base']}sitemap.xml\n")
+    # llms.txt: resumen de la web para buscadores con IA (ChatGPT, Claude, Perplexity, Gemini)
+    tl = {p[0]: (p[1].split(' | ')[0], p[2]) for p in pages}
+    llms = f"# {site['name']}\n\n> {site['home_desc']}\n\nCalculadoras gratuitas en español para España, sin registro. Cada página explica la fórmula, incluye un ejemplo y cita la fuente oficial cuando la hay. Web: {site['base']}\n\n## Herramientas\n\n"
+    llms += "".join(f"- [{tl[t[0]][0]}]({site['base']}{t[0]}.html): {tl[t[0]][1]}\n" for t in site['tools'] if t[0] in tl)
+    llms += f"\n## Sobre el sitio\n\n- [Sobre nosotros]({site['base']}sobre-nosotros.html)\n- [Aviso legal]({site['base']}aviso-legal.html)\n\n## Otras webs de la misma red\n\n" + "".join(f"- [{n}]({u})\n" for n, u in NETWORK if n != site['name'])
+    open(f"{d}/llms.txt", "w").write(llms)
     # Anuncios automáticos de AdSense: con ADSENSE_CLIENT relleno se carga el script en <head> y Google coloca los anuncios solo.
     if ADSENSE_CLIENT:
         open(f"{d}/ads.txt", "w").write("google.com, " + ADSENSE_CLIENT.replace("ca-", "") + ", DIRECT, f08c47fec0942fa0\n")
