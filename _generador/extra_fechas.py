@@ -346,13 +346,14 @@ P.append(("calcular-finiquito", "Calcular finiquito 2026: vacaciones y pagas ext
 <div><label for="pg">Pagas extra</label><select id="pg"><option value="a">2 pagas · devengo anual</option><option value="s">2 pagas · devengo semestral</option><option value="p">Prorrateadas en la nómina</option></select></div>
 <div><label for="pe">Importe de cada paga extra completa (€)</label><input id="pe" inputmode="decimal" value="1800"></div>
 <div><label for="dm">Días del último mes sin cobrar</label><input id="dm" inputmode="numeric" value="15"></div>
-<div><label for="va">Vacaciones al año (días naturales)</label><input id="va" inputmode="numeric" value="30"></div>
-<div><label for="vd">Vacaciones ya disfrutadas este año (días naturales)</label><input id="vd" inputmode="numeric" value="22"></div>
+<div><label for="vu">Tus vacaciones se cuentan en</label><select id="vu"><option value="n">Días naturales</option><option value="l">Días laborables</option></select></div>
+<div><label for="va">Vacaciones al año</label><input id="va" inputmode="numeric" value="30"></div>
+<div><label for="vd">Vacaciones ya disfrutadas este año</label><input id="vd" inputmode="numeric" value="22"></div>
 <div><label for="pa">Días de preaviso que no has dado (solo baja voluntaria)</label><input id="pa" inputmode="numeric" value="0"></div>
 <div><label for="ir">Retención de IRPF de tu nómina (%)</label><input id="ir" inputmode="decimal" value="15"></div></div>
 <label style="font-weight:400"><input type="checkbox" id="yc" onchange="calc()" style="width:auto;margin-right:8px">Ya he cobrado la paga de Navidad de este año</label>
 <button onclick="calc()">Calcular finiquito</button><div class="res" id="r" aria-live="polite"></div></div>
-<p class="note">Si tu convenio cuenta las vacaciones en días laborables (por ejemplo 22), pásalas a naturales multiplicando por 30 y dividiendo entre 22. Si tienes una tercera paga (de beneficios), súmala aparte con la misma regla.</p>
+<p class="note">Si tu convenio cuenta las vacaciones en días laborables (normalmente 22 al año), elige «días laborables»: cada día laborable vale más que uno natural porque los fines de semana no cuentan. Si tienes una tercera paga (de beneficios), súmala aparte con la misma regla que las otras.</p>
 <h2>Qué incluye el finiquito</h2><ul><li><b>Salario de los días trabajados</b> en el último mes que aún no has cobrado: salario mensual ÷ 30 × días.</li>
 <li><b>Vacaciones generadas y no disfrutadas</b>: se generan en proporción a lo trabajado en el año (días trabajados ÷ 365 × días de vacaciones). Las que no hayas disfrutado se pagan, ya que el <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2015-11430#a38" rel="noopener" target="_blank">artículo 38 del Estatuto</a> solo prohíbe cambiarlas por dinero mientras sigues en la empresa. Si disfrutaste más de las generadas, la empresa puede descontarlas.</li>
 <li><b>Parte proporcional de las pagas extra</b> generadas desde la última que cobraste (art. 31 ET). Con devengo anual, la de Navidad se genera de enero a diciembre y la de verano de julio a junio; con devengo semestral, la de verano de enero a junio y la de Navidad de julio a diciembre. Si están prorrateadas, ya las has cobrado cada mes.</li>
@@ -363,20 +364,21 @@ P.append(("calcular-finiquito", "Calcular finiquito 2026: vacaciones y pagas ext
 [("¿Cuánto me corresponde de finiquito si me voy de la empresa?", "El salario de los días trabajados del último mes, las vacaciones generadas y no disfrutadas y la parte proporcional de las pagas extra que no hayas cobrado. Si no avisas con el preaviso del convenio, te pueden descontar los días que falten."),
  ("¿Se cobra finiquito en una baja voluntaria?", "Sí. El finiquito se paga siempre que termina el contrato, sea por despido, por fin de contrato o porque te vas tú. Lo que no hay en una baja voluntaria es indemnización ni, por lo general, derecho a paro."),
  ("¿Cómo se calculan las vacaciones no disfrutadas en el finiquito?", "Se multiplican los días trabajados en el año por los días de vacaciones anuales y se divide entre 365. A esa cifra se le restan los días ya disfrutados y cada día pendiente se paga a tu salario diario (salario mensual ÷ 30)."),
+ ("¿Cuánto tarda la empresa en pagar el finiquito?", "El Estatuto no fija un plazo concreto: lo habitual es pagarlo el último día de trabajo o con la nómina de ese mes, y muchos convenios lo concretan. Si se retrasa, puedes reclamarlo con un 10 % de interés por mora (artículo 29.3 del Estatuto). Tienes un año para reclamar las cantidades que te deban."),
  ("¿Cuántos días de preaviso hay que dar al dejar un trabajo?", "Los que diga tu convenio o tu contrato; lo más habitual son 15 días naturales. Si no das el preaviso, la empresa puede descontarte del finiquito un día de salario por cada día que falte.")],
 "Calculadora de finiquito",
 DATEJS + """function per(t,b){const y=b.getFullYear(),m=b.getMonth();
 if(t=='a')return [['Paga de Navidad',new Date(y,0,1),new Date(y,11,31)],['Paga de verano',m<6?new Date(y-1,6,1):new Date(y,6,1),m<6?new Date(y,5,30):new Date(y+1,5,30)]];
 return m<6?[['Paga de verano',new Date(y,0,1),new Date(y,5,30)]]:[['Paga de Navidad',new Date(y,6,1),new Date(y,11,31)]];}
-function dia(){const b=pd('fb');if(b){document.getElementById('dm').value=Math.min(30,b.getDate());document.getElementById('yc').checked=b.getMonth()==11&&b.getDate()>=22;}calc();}
+function dia(){const b=pd('fb');if(b){const ul=new Date(b.getFullYear(),b.getMonth()+1,0).getDate();document.getElementById('dm').value=b.getDate()==ul?30:Math.min(30,b.getDate());document.getElementById('yc').checked=b.getMonth()==11&&b.getDate()>=22;}calc();}
 function calc(){const al=pd('al'),b=pd('fb'),sm=v('sm'),t=document.getElementById('pg').value,pe=v('pe'),irp=v('ir');
 if(!al||!b||b<al||sm<=0){show('r','Revisa las fechas y el salario.');return;}
 const sd=sm/30,dm=Math.min(30,Math.max(0,v('dm'))),sdm=t=='p'?(sm+pe*2/12)/30:sd,sal=sdm*dm;
 const y0=new Date(b.getFullYear(),0,1),ini=al>y0?al:y0,dy=diff(ini,b)+1,dya=diff(y0,new Date(b.getFullYear(),11,31))+1;
-const gen=dy/dya*v('va'),pend=gen-v('vd'),vac=pend*sd,fe=x=>x.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+const lab=document.getElementById('vu').value=='l',va=v('va'),gen=dy/dya*va,pend=gen-v('vd'),vac=va>0?pend*(lab?30/va:1)*sd:0,ud=lab?' laborables':'',fe=x=>x.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
 const fila=(c,d,x)=>'<tr><td>'+c+'<br><span class="note">'+d+'</span></td><td style="text-align:right;white-space:nowrap"><b>'+eur(x)+'</b></td></tr>';
 let rows=fila('Salario del último mes',nf(dm,0)+' días × '+eur(sdm)+(t=='p'?' (con la parte de pagas)':''),sal);
-rows+=fila(pend>=0?'Vacaciones no disfrutadas':'Vacaciones disfrutadas de más',nf(Math.abs(pend),1)+' días (generadas '+nf(gen,1)+' de '+nf(v('va'),0)+')',vac);
+rows+=fila(pend>=0?'Vacaciones no disfrutadas':'Vacaciones disfrutadas de más',nf(Math.abs(pend),1)+' días'+ud+' (generadas '+nf(gen,1)+' de '+nf(va,0)+')'+(lab?' · cada uno vale '+eur(sd*30/va):''),vac);
 let pag=0;if(t!='p'){per(t,b).filter(p=>!(document.getElementById('yc').checked&&p[0]=='Paga de Navidad')).forEach(p=>{const i=al>p[1]?al:p[1],d=Math.max(0,diff(i,b)+1),tot=diff(p[1],p[2])+1,x=pe*d/tot;pag+=x;rows+=fila(p[0],d+' de '+tot+' días, desde el '+fe(i),x);});}
 const pre=sd*Math.max(0,v('pa'));if(pre>0)rows+=fila('Descuento por falta de preaviso',nf(v('pa'),0)+' días × '+eur(sd),-pre);
 const br=sal+vac+pag-pre,ss=Math.max(0,sal+vac-pre)*0.065,ne=Math.max(0,br*(1-irp/100)-ss);
@@ -384,6 +386,8 @@ let h='Finiquito (bruto):<b class="big">'+eur(br)+'</b>Neto aproximado: <b>'+eur
 h+='<table style="margin-top:10px">'+rows+'<tr><th>Total bruto</th><th style="text-align:right">'+eur(br)+'</th></tr></table>';
 if(document.getElementById('yc').checked&&t!='p')h+='<span class="note">No contamos la paga de Navidad porque ya la has cobrado.</span><br>';
 if(t=='p')h+='<span class="note">Pagas prorrateadas: ya las has cobrado cada mes, solo queda la parte del último mes incluida en el salario.</span><br>';
+h+='<button type="button" onclick="window.print()" style="width:auto;padding:9px 14px;margin:8px 0;font-size:.95rem">Imprimir o guardar en PDF</button><br>';
 h+='<span class="note">La parte de las pagas extra no vuelve a cotizar: ya se cotizó repartida en cada nómina. Si te despiden, la indemnización va aparte.</span>';
 show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'||e.type=='date'?'change':'input',()=>calc()));
 calc();"""))

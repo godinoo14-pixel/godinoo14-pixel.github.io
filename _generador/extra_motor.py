@@ -422,6 +422,7 @@ P.append(("distancia-frenado", "Distancia de frenado: calculadora con lluvia, ni
 <tr><td>120 km/h</td><td>33 m</td><td>104 m</td><td>147 m</td><td>316 m</td><td>600 m</td></tr></table></div>
 <p class="note">Distancia total de detención (reacción + frenado) con 1 segundo de reacción.</p>
 <p><b>Ejemplo:</b> un peatón cruza a 35 metros en una calle seca. A 60 km/h paras justo a tiempo (34 m). A 70 km/h necesitas 40 m: llegas a él todavía a unos <b>42 km/h</b>. Diez kilómetros por hora de más convierten un susto en un atropello.</p>
+<h2>La regla de la autoescuela: (velocidad ÷ 10)²</h2><p>En muchas autoescuelas se enseña un cálculo mental para la distancia total de detención: quita el cero a la velocidad y elévalo al cuadrado. A 50 km/h, 5² = 25 m; a 100 km/h, 10² = 100 m. Para la distancia de reacción se usa (velocidad ÷ 10) × 3: unos 30 m a 100 km/h. Es una buena aproximación en seco con un conductor atento (a 100 km/h nuestra calculadora da 77 m, y 106 m en mojado), pero se queda corta a velocidades altas y con lluvia, nieve o hielo, donde la frenada crece mucho más.</p>
 <h2>Qué distancia dejar con el coche de delante</h2><p>La regla práctica que recomienda la DGT es la de los <b>dos segundos</b>: cuando el coche de delante pase por un punto fijo (una señal, un puente), cuenta «mil uno, mil dos»; si llegas a ese punto antes de terminar, vas demasiado cerca. Con lluvia, niebla o de noche, déjalo al menos en el doble, y con nieve o hielo mucho más. En estas fechas, antes de un viaje largo, revisa la profundidad del dibujo de los neumáticos (mínimo legal 1,6 mm) y lleva cadenas si vas a zonas de montaña.</p>
 <p>Calcula también lo que te costaría una <a href="multa-exceso-velocidad.html">multa por exceso de velocidad</a>, el <a href="coste-viaje-coche.html">coste de tu viaje en coche</a> con el precio de hoy del combustible o si una <a href="equivalencia-neumaticos.html">medida de neumático distinta</a> es compatible con tu coche.</p>""",
 [("¿Cuántos metros necesita un coche para frenar a 120 km/h?", "En seco y con un conductor atento, unos 104 metros en total: 33 m mientras reacciona y 71 m frenando. Con la carretera mojada pasa a unos 147 metros, y con nieve a más de 300."),
@@ -447,4 +448,5 @@ let tb='<table style="margin-top:10px;font-size:.9rem"><tr><th>Velocidad</th><th
 tb+='<tr'+(x==kmh?' style="font-weight:700"':'')+'><td>'+nf(x,0)+' km/h</td><td>'+nf(tt,0)+' m</td>'+(ob>0?'<td>'+c+'</td>':'')+'</tr>';});
 h+=tb+'</table>';
 show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'||e.type=='date'?'change':'input',()=>calc()));
 calc();"""))
