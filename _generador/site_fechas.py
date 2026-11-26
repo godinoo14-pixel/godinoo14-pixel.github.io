@@ -26,17 +26,31 @@ FEST = """<label class="chk"><input type="checkbox" id="nac" checked><span>Exclu
 
 P = []
 P.append(("dias-entre-fechas", "Días entre dos fechas: calculadora de días, semanas y meses | CalculadoraDías",
-"Calcula al instante cuántos días hay entre dos fechas, y su equivalencia en semanas, meses y años. Con opción de incluir el último día. Gratis, sin registro y fiable en años bisiestos.",
-"""<p class="lead">Elige dos fechas y te decimos cuántos días naturales hay entre ellas, en semanas y meses.</p>
+"Calcula cuántos días hay entre dos fechas: días naturales, semanas, meses y años exactos, y cuántos son laborables y fines de semana. Con opción de incluir el último día y fiable en años bisiestos.",
+"""<p class="lead">Elige dos fechas y te decimos cuántos días naturales hay entre ellas, cuánto es en años, meses y días, y cuántos caen entre semana y en fin de semana.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha inicial</label><input id="a" type="date" data-today></div>
 <div><label for="b">Fecha final</label><input id="b" type="date" value="2026-12-31"></div></div>
 <label class="chk"><input type="checkbox" id="inc"><span>Incluir el día final en la cuenta</span></label>
-<button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
-<h2>Cómo se cuentan los días</h2><p>Por defecto se cuenta la diferencia entre las dos fechas: del 1 al 3 de enero hay 2 días. Si marcas «incluir el día final», el resultado será 3. En contratos y reservas de hotel se suele contar como noches (sin incluir), mientras que en vacaciones y bajas laborales se suelen incluir ambos días.</p>""",
-[("¿Cuántos días tiene un año?", "365 días, o 366 en los años bisiestos (2028 es el próximo)."),
- ("¿Cuenta el primer día?", "Esta calculadora cuenta la diferencia entre fechas. Marca «incluir el día final» si necesitas contar ambos extremos.")],
-None, DATEJS + """function calc(){const a=pd('a'),b=pd('b');if(!a||!b)return;let n=Math.abs(diff(a,b))+(document.getElementById('inc').checked?1:0);
-show('r','Entre las dos fechas hay:<b class="big">'+nf(n,0)+' días</b>'+nf(n/7,1)+' semanas · '+nf(n/30.4375,1)+' meses · '+nf(n*24,0)+' horas');}"""))
+<button onclick="calc()">Calcular</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se cuentan los días</h2><p>Por defecto se cuenta la diferencia entre las dos fechas: del 1 al 3 de enero hay 2 días. Si marcas «incluir el día final», el resultado será 3. En reservas de hotel y alquileres se cuenta en noches (sin incluir el último día), mientras que en vacaciones, bajas y permisos laborales se cuentan los dos extremos. Los años bisiestos se tienen en cuenta solos: entre el 1 de febrero y el 1 de marzo de 2028 hay 29 días.</p>
+<p>Los <b>años, meses y días</b> se calculan como en un calendario: se avanza mes a mes desde la fecha inicial y lo que sobra son días. Por eso del 31 de enero al 28 de febrero hay 28 días, pero todavía no un mes completo. Las semanas son días ÷ 7.</p>
+<table><tr><th>Entre…</th><th>Días</th><th>Con el día final</th></tr>
+<tr><td>Hoy y Nochebuena, Navidad o Reyes</td><td colspan="2">Mira la <a href="cuantos-dias-faltan.html">cuenta atrás en directo</a></td></tr>
+<tr><td>1 de enero y 31 de diciembre de 2027</td><td>364</td><td>365</td></tr>
+<tr><td>1 de enero y 31 de diciembre de 2028 (bisiesto)</td><td>365</td><td>366</td></tr>
+<tr><td>1 de julio y 31 de agosto</td><td>61</td><td>62</td></tr>
+<tr><td>15 de diciembre y 7 de enero</td><td>23</td><td>24</td></tr></table>
+<h2>¿Necesitas contar solo días laborables?</h2><p>El resultado te dice cuántos días caen de lunes a viernes, pero no descuenta festivos. Para plazos administrativos o laborales usa la <a href="dias-habiles.html">calculadora de días hábiles</a>, que quita los festivos nacionales y los que añadas de tu comunidad. Para saber qué fecha será dentro de 30, 60 o 90 días, usa <a href="sumar-dias.html">sumar días a una fecha</a>, y para tu edad exacta, la <a href="calcular-edad.html">calculadora de edad</a>.</p>""",
+[("¿Cuántos días tiene un año?", "365 días, o 366 en los años bisiestos (2028 es el próximo). 2027 tiene 365 días: 261 de lunes a viernes y 104 de fin de semana."),
+ ("¿Cuenta el primer día?", "Esta calculadora cuenta la diferencia entre fechas, como las noches de un hotel. Marca «incluir el día final» si necesitas contar los dos extremos, como en vacaciones o permisos."),
+ ("¿Cuántas semanas hay entre dos fechas?", "Divide los días entre 7. Por ejemplo, 100 días son 14 semanas y 2 días. La calculadora te da las semanas completas y los días que sobran."),
+ ("¿Cómo calculo los días entre dos fechas en Excel?", "Resta las dos celdas (=B1-A1) y da formato de número al resultado. Para contar solo días laborables usa =DIAS.LAB(A1;B1) o, con festivos, =DIAS.LAB(A1;B1;rango_festivos).")],
+None, DATEJS + """function ymd(a,b){let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}return [y,m,d];}
+function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(b<a){const t=a;a=b;b=t;}const inc=document.getElementById('inc').checked;const e=new Date(b);if(inc)e.setDate(e.getDate()+1);
+const n=diff(a,e);let wd=0;for(let i=0;i<n;i++){const x=new Date(a.getFullYear(),a.getMonth(),a.getDate()+i).getDay();if(x>0&&x<6)wd++;}
+const [y,m,d]=ymd(a,e),pl=(k,s,p)=>k+' '+(k==1?s:p),parts=[];if(y)parts.push(pl(y,'año','años'));if(m)parts.push(pl(m,'mes','meses'));if(d||!parts.length)parts.push(pl(d,'día','días'));
+show('r','Entre las dos fechas hay:<b class="big">'+nf(n,0)+' días</b>'+parts.join(', ').replace(/, ([^,]*)$/,' y $1')+' · '+Math.floor(n/7)+' semanas y '+(n%7)+' días<br>De lunes a viernes: <b>'+wd+'</b> · Sábados y domingos: <b>'+(n-wd)+'</b> · '+nf(n*24,0)+' horas');}
+document.querySelectorAll('.card input').forEach(e=>e.addEventListener(e.type=='checkbox'?'change':'input',()=>calc()));"""))
 
 P.append(("dias-habiles", "Calculadora de días hábiles y laborables entre dos fechas | CalculadoraDías",
 "Cuenta los días hábiles entre dos fechas sin sábados, domingos ni festivos: para plazos administrativos (Ley 39/2015), días laborables de un mes o entregas. Añade tus festivos de 2026 o 2027.",

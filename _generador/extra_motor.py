@@ -266,6 +266,7 @@ P.append(("multa-exceso-velocidad", "Multa por exceso de velocidad: calculadora 
 <h2>El margen de error de los radares</h2><p>Los cinemómetros tienen un margen de error legal (Orden ICT/155/2020) que se resta a la velocidad medida antes de aplicar la tabla. Para los radares en servicio con verificación periódica es de <b>5 km/h en los fijos y de tramo, y 7 km/h en los móviles, hasta 100 km/h</b>; por encima de 100 km/h se aplica un <b>5 % y un 7 %</b> respectivamente. La velocidad corregida se redondea a la baja.</p>
 <p><b>Ejemplo:</b> un radar móvil capta 78 km/h en una calle de 50. Margen: 7 km/h, velocidad corregida 71 km/h, es decir, 21 km/h de exceso. Eso son <b>300 € y 2 puntos</b>, o 150 € si pagas en los 20 días naturales siguientes a la notificación. Si el radar fuera fijo, la velocidad corregida sería 73 km/h y la multa la misma; a 76 km/h medidos con radar móvil (69 corregidos) solo serían 100 € y ningún punto.</p>
 <h2>Pronto pago y recursos</h2><p>Pagando en los <b>20 días naturales</b> desde la notificación la multa se reduce a la mitad, pero renuncias a presentar alegaciones y los puntos se pierden igual. Si crees que hay un error (matrícula, señalización o velocidad), puedes alegar en ese mismo plazo en la <a href="https://sede.dgt.gob.es/es/multas/" rel="noopener" target="_blank">sede electrónica de la DGT</a>.</p>
+<p>¿La multa viene de un radar de tramo? Ahí cuenta tu velocidad media entre los dos arcos: calcúlala con la <a href="radar-de-tramo.html">calculadora de radar de tramo</a>.</p>
 <p>¿Te preocupa lo que gastas en carretera? Mira cuánto ahorras bajando de 120 a 110 con la calculadora de <a href="coste-por-km.html">coste por kilómetro</a> o calcula el <a href="coste-viaje-coche.html">coste de tu viaje</a>.</p>""",
 [("¿Cuánto es la multa por ir a 140 en una autovía de 120?", "Con radar fijo se descuenta un 5 % (7 km/h) y queda en 133 km/h; con radar móvil un 7 % (9,8 km/h) y queda en 130. Son 13 o 10 km/h de exceso: 100 € (50 € con pronto pago) y sin pérdida de puntos."),
  ("¿A partir de cuántos km/h te quitan puntos?", "En vías de 60 km/h o más, a partir de 31 km/h por encima del límite (ya descontado el margen del radar). En vías de 50 km/h o menos, a partir de 21 km/h por encima."),
@@ -617,3 +618,43 @@ calc();"""))
 
 # --- Portada: accesos a lo más buscado en temporada (Navidad e invierno) ---
 S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="gasolineras-baratas.html">Gasolineras baratas</a><a href="coste-viaje-coche.html">Gasolina del viaje</a><a href="calculadora-alcoholemia.html">Alcoholemia</a><a href="distancia-frenado.html">Frenado con hielo</a><a href="transferencia-coche.html">Transferir un coche</a><a href="etiqueta-dgt.html">Etiqueta DGT</a></nav>'
+
+# --- Radar de tramo: velocidad media, multa y tiempo mínimo para no ser multado ---
+S['tools'].insert(7, ("radar-de-tramo", "Calculadora de radar de tramo", "Tu velocidad media entre dos arcos, si te multan y el tiempo mínimo para pasar el tramo sin sanción.", "Radar de tramo"))
+S['aff']["radar-de-tramo"] = amz("navegador gps coche avisador radares", "Navegadores GPS con aviso de radares") + amz("soporte movil coche", "Soportes de móvil para el coche")
+P.append(("radar-de-tramo", "Radar de tramo: calculadora de velocidad media y multa | CocheCuentas",
+"Calcula tu velocidad media en un radar de tramo con los km y el tiempo entre arcos, con el margen del radar descontado: multa, puntos y tiempo mínimo sin sanción.",
+"""<p class="lead">Un radar de tramo no mide la velocidad en un punto: mide cuánto tardas entre dos arcos y calcula tu <b>velocidad media</b>. Pon la longitud del tramo y el tiempo que tardaste y te decimos si te multarían, cuánto y en cuántos minutos tienes que recorrerlo para ir tranquilo.</p>
+<div class="card"><div class="row"><div><label for="km">Longitud del tramo (km)</label><input id="km" inputmode="decimal" value="10"></div>
+<div><label for="l">Límite del tramo (km/h)</label><select id="l"><option>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>110</option><option selected>120</option></select></div>
+<div><label for="mi">Tiempo: minutos</label><input id="mi" inputmode="numeric" value="4"></div>
+<div><label for="se">Tiempo: segundos</label><input id="se" inputmode="numeric" value="30"></div></div>
+<button onclick="calc()">Calcular velocidad media</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">La longitud de cada tramo suele aparecer en la señal que lo anuncia y en el listado de radares de la DGT. Si no sabes el tiempo exacto, la calculadora te dice el mínimo para no pasar del límite.</p>
+<h2>Cómo calcula la multa un radar de tramo</h2><p>Velocidad media = distancia ÷ tiempo. Si recorres 10 km en 4 minutos y 30 segundos (0,075 horas), tu media es de 133,3 km/h. Al ser un cinemómetro fijo, se descuenta el <b>margen de error legal de 5 km/h hasta 100 km/h y del 5 % por encima</b> (Orden ICT/155/2020): 133,3 − 6,7 = 126,6, que se redondea a la baja, <b>126 km/h</b>. En una vía de 120 son 6 km/h de exceso: <b>100 € sin pérdida de puntos</b> (50 € con pronto pago).</p>
+<table><tr><th>Tramo de 10 km a 120 km/h</th><th>Velocidad media</th><th>Resultado</th></tr>
+<tr><td>5 min 0 s</td><td>120 km/h</td><td>Sin multa</td></tr>
+<tr><td>4 min 45 s</td><td>126,3 km/h</td><td>Sin multa (120 km/h corregidos)</td></tr>
+<tr><td>4 min 40 s</td><td>128,6 km/h</td><td>122 km/h corregidos: 100 €</td></tr>
+<tr><td>4 min 0 s</td><td>150 km/h</td><td>142 km/h corregidos: 100 €</td></tr>
+<tr><td>3 min 30 s</td><td>171,4 km/h</td><td>162 km/h corregidos: 300 € y 2 puntos</td></tr></table>
+<h2>Lo que conviene saber</h2><ul><li><b>Frenar justo antes del arco no sirve:</b> cuenta la media de todo el tramo, y en muchos tramos el arco también lleva un radar de punto que mide la velocidad instantánea.</li><li><b>Parar dentro del tramo baja la media</b>, pero lo que importa es no superar el límite en ningún punto.</li><li>La multa sigue la misma tabla que cualquier radar: grave a partir de 1 km/h de exceso corregido y pérdida de puntos desde 31 km/h por encima en vías de 60 o más.</li></ul>
+<p>Si ya tienes la notificación con la velocidad de un radar de punto, usa la <a href="multa-exceso-velocidad.html">calculadora de multas por exceso de velocidad</a>. ¿Te vas de viaje estas fiestas? Calcula la <a href="coste-viaje-coche.html">gasolina del viaje</a>, busca las <a href="gasolineras-baratas.html">gasolineras más baratas</a> y revisa la <a href="distancia-frenado.html">distancia de frenado con lluvia o hielo</a>.</p>""",
+[("¿Cómo se calcula la velocidad en un radar de tramo?", "Se divide la distancia entre los dos arcos por el tiempo que tardas en recorrerla. Por ejemplo, 10 km en 5 minutos son 120 km/h de media. Después se descuenta el margen del radar (5 km/h hasta 100 km/h y 5 % por encima) y se redondea a la baja."),
+ ("¿Cuál es el margen de un radar de tramo?", "El mismo que un radar fijo: 5 km/h si la velocidad medida es de hasta 100 km/h y un 5 % si es mayor. En un tramo de 120, la multa empieza a partir de unos 127,4 km/h de media."),
+ ("¿Cuánto tiempo hay que tardar en un tramo de 10 km a 120?", "Al menos 5 minutos para ir exactamente a 120 km/h de media. Con el margen del radar no habría multa hasta bajar de unos 4 min 43 s, pero lo seguro es no superar el límite en ningún momento."),
+ ("¿Me pueden multar dos veces en el mismo tramo?", "Por la misma infracción de velocidad media, no: el tramo genera una sola denuncia. Pero si el arco tiene además un radar de punto y lo superas allí, es una medición distinta.")],
+"Calculadora de radar de tramo",
+"""function calc(){const km=v('km'),L=+document.getElementById('l').value,t=(v('mi')*60+v('se'))/3600;
+if(km<=0){show('r','Escribe la longitud del tramo en km.');return;}
+const tm=km/L*3600,tmin=Math.floor(tm/60)+' min '+Math.round(tm%60)+' s';
+if(t<=0){show('r','Para ir a '+L+' km/h de media necesitas al menos <b>'+tmin+'</b> en este tramo.');return;}
+const vm=km/t,mg=vm>100?vm*0.05:5,vc=Math.floor(vm-mg+1e-9),ex=vc-L;
+const lim=L<=50?[20,30,40,50]:[30,50,60,70],del=L<=50?60:80;
+let mu=0,pt=0,g='';if(ex>0){if(ex<=lim[0]){mu=100;}else if(ex<=lim[1]){mu=300;pt=2;}else if(ex<=lim[2]){mu=400;pt=4;}else if(ex<=lim[3]){mu=500;pt=6;}else{mu=600;pt=6;g='muy grave';}}
+let h='Tu velocidad media:<b class="big">'+nf(vm,1)+' km/h</b>Con el margen del radar ('+(vm>100?'5 %':'5 km/h')+'): <b>'+vc+' km/h</b> corregidos en una vía de '+L+'.';
+if(ex<=0)h+='<br><b>Sin multa.</b>';
+else{h+='<br>Exceso de '+ex+' km/h: multa <b>'+mu+' €</b> ('+(mu/2)+' € con pronto pago)'+(pt?' y <b>'+pt+' puntos</b>':', sin perder puntos')+(g?' · infracción muy grave':'')+'.';if(ex>del)h+='<br><b>Atención:</b> superar el límite en más de '+del+' km/h es delito.';}
+h+='<br>Tiempo mínimo para ir a '+L+' km/h de media: <b>'+tmin+'</b>.';show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
