@@ -223,7 +223,7 @@ P.append(("premio-loteria-navidad", "Calculadora Lotería de Navidad 2026: premi
 <button onclick="calc()">Calcular premio neto</button><div class="res" id="r" aria-live="polite"></div></div>
 <h2>Cómo tributa el premio</h2><p>Los premios de Loterías y Apuestas del Estado pagan un <b>gravamen especial del 20 %</b>, pero solo sobre la parte del premio que supera los <b>40.000 € por décimo</b>. Si juegas una fracción, la parte exenta se reduce en la misma proporción: con una participación de 5 € (un cuarto de décimo) tienes exentos 10.000 €. La retención se aplica al cobrar y es definitiva: no tienes que volver a pagar por el premio en la declaración de la renta.</p>
 <p><b>Fórmula:</b> premio bruto = premio por décimo × (lo jugado ÷ 20). Impuesto = 20 % × (premio bruto − 40.000 × lo jugado ÷ 20), si sale positivo.</p>
-<table><tr><th>Lotería de Navidad (por décimo)</th><th>Bruto</th><th>Hacienda</th><th>Te queda</th></tr>
+<table><tr><th>Premio (por décimo)</th><th>Bruto</th><th>Hacienda</th><th>Te queda</th></tr>
 <tr><td>Primer premio («el Gordo»)</td><td>400.000 €</td><td>72.000 €</td><td><b>328.000 €</b></td></tr>
 <tr><td>Segundo premio</td><td>125.000 €</td><td>17.000 €</td><td><b>108.000 €</b></td></tr>
 <tr><td>Tercer premio</td><td>50.000 €</td><td>2.000 €</td><td><b>48.000 €</b></td></tr>

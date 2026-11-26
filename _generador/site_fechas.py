@@ -17,10 +17,12 @@ DATEJS = """const pd=id=>{const s=document.getElementById(id).value;if(!s)return
 const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const diff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
-function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();t.split(/[\\s,;]+/).forEach(x=>{const m=x.match(/^(\\d{1,2})[\\/\\-](\\d{1,2})[\\/\\-](\\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
+const NAT=['2026-01-01','2026-01-06','2026-04-03','2026-05-01','2026-08-15','2026-10-12','2026-12-08','2026-12-25','2027-01-01','2027-01-06','2027-03-26','2027-05-01','2027-10-12','2027-11-01','2027-12-06','2027-12-08','2027-12-25'];
+function hol(){const t=(document.getElementById('f')||{value:''}).value;const s=new Set();const nc=document.getElementById('nac');if(nc&&nc.checked)NAT.forEach(x=>s.add(x));t.split(/[\\s,;]+/).forEach(x=>{const m=x.match(/^(\\d{1,2})[\\/\\-](\\d{1,2})[\\/\\-](\\d{4})$/);if(m)s.add(m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'));});return s;}
 const today=new Date();document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(today));
+setTimeout(()=>document.querySelectorAll('.card input,.card select,.card textarea').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'?'change':'input',()=>{if(typeof calc==='function')try{calc();}catch(x){}})),0);
 """
-FEST = """<label for="f">Festivos a excluir (opcional, uno por línea, dd/mm/aaaa)</label><textarea id="f" rows="3" placeholder="06/12/2026&#10;08/12/2026&#10;25/12/2026"></textarea>"""
+FEST = """<label class="chk"><input type="checkbox" id="nac" checked><span>Excluir los festivos nacionales de 2026 y 2027 (BOE)</span></label><label for="f">Otros festivos a excluir: autonómicos o locales (opcional, uno por línea, dd/mm/aaaa)</label><textarea id="f" rows="3" placeholder="07/12/2026&#10;15/05/2027"></textarea>"""
 
 P = []
 P.append(("dias-entre-fechas", "Días entre dos fechas: calculadora de días, semanas y meses | CalculadoraDías",
@@ -43,7 +45,7 @@ P.append(("dias-habiles", "Calculadora de días hábiles y laborables entre dos 
 <div><label for="b">Hasta</label><input id="b" type="date" value="2026-12-31"></div></div>
 <label for="m">Días no laborables</label><select id="m"><option value="2">Sábados y domingos</option><option value="1">Solo domingos</option></select>""" + FEST + """
 <button onclick="calc()">Calcular días hábiles</button><div class="res" id="r"></div></div>
-<p class="note">Añade los festivos nacionales, autonómicos y locales de tu zona: los publica cada año el BOE y el boletín de tu comunidad.</p>
+<p class="note">Los festivos nacionales de 2026 y 2027 ya se descuentan solos. Añade los autonómicos y locales de tu zona: los publica cada año el BOE y el boletín de tu comunidad.</p>
 <h2>Días hábiles en plazos administrativos</h2><p>Según la Ley 39/2015, cuando un plazo se fija en días se entienden hábiles, excluyendo sábados, domingos y festivos. Si el último día del plazo es inhábil, se pasa al siguiente hábil. Para plazos judiciales, además, agosto es inhábil salvo excepciones.</p>
 <p><b>Ejemplo:</b> del 1 al 31 de diciembre de 2026 hay 23 días de lunes a viernes. Si quitas los festivos nacionales del 8 (Inmaculada) y el 25 (Navidad), quedan <b>21 días hábiles</b>; en tu comunidad pueden ser menos si hay algún festivo autonómico o local.</p>
 <p>¿Necesitas saber en qué fecha vence un plazo? Usa <a href="sumar-dias.html">sumar días hábiles a una fecha</a>. Para todo 2027, abre el <a href="calendario-laboral-2027.html">calendario laboral 2027 de tu comunidad</a>: desde ahí puedes traer aquí sus festivos con un clic.</p>""",
@@ -54,7 +56,7 @@ P.append(("dias-habiles", "Calculadora de días hábiles y laborables entre dos 
 None, DATEJS + """try{const q=new URLSearchParams(location.search).get('f');if(q){document.getElementById('f').value=q.split(',').join('\\n');document.getElementById('a').value='2027-01-01';document.getElementById('b').value='2027-12-31';}}catch(e){}
 function calc(){let a=pd('a'),b=pd('b');if(!a||!b)return;if(a>b)[a,b]=[b,a];const h=hol(),m=v('m');let n=0,w=0,f=0,t=0;
 for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1)){t++;const g=d.getDay();if(g==0||(m==2&&g==6)){w++;continue;}if(h.has(iso(d))){f++;continue;}n++;}
-show('r','Días hábiles:<b class="big">'+n+'</b>Total días: '+t+' · Fines de semana: '+w+' · Festivos excluidos: '+f);}"""))
+show('r','Días hábiles:<b class="big">'+n+'</b>Total días: '+t+' · '+(m==2?'Sábados y domingos':'Domingos')+': '+w+' · Festivos entre semana excluidos: '+f+(document.getElementById('nac').checked?'<br><span class="note">Incluye los festivos nacionales. Si en tu comunidad o municipio hay otros, añádelos abajo o tráelos del calendario laboral 2027.</span>':''));}"""))
 
 P.append(("sumar-dias", "Sumar días a una fecha: naturales o hábiles, para plazos | CalculadoraDías",
 "Calcula qué fecha será dentro de X días naturales o hábiles, o qué fecha fue hace X días. Ideal para plazos de contratos, devoluciones, recursos y entregas.",
