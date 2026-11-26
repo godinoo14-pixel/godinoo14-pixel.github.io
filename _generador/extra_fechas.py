@@ -546,3 +546,6 @@ h+='<br>Cobrando desde el '+fd(fi)+', el último día de paro es el <b>'+fmt(f)+
 if(k<10)h+='<br>Con <b>'+(TR[k+1][0]-d)+' días</b> más cotizados pasarías a '+TR[k+1][1]+' días de paro (2 meses más).';
 if(br>0){const m=br*0.7,c=Math.min(180,p);h+='<br>Primeros '+c+' días: unos <b>'+eur(m)+' al mes</b> brutos (70 % de tu base reguladora), antes de aplicar los topes del SEPE.';}
 show('r',h);}"""))
+
+# --- Portada: accesos a lo más buscado en temporada (Navidad e invierno) ---
+S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="premio-loteria-navidad.html">Lotería de Navidad</a><a href="puentes-2027.html">Puentes 2027</a><a href="calendario-laboral-2027.html">Calendario laboral 2027</a><a href="paga-extra-navidad.html">Paga extra</a><a href="cuantos-dias-faltan.html">Días para Navidad</a><a href="calcular-paro.html">Cuánto paro me toca</a></nav>'

@@ -614,3 +614,6 @@ else h+='<br>El precio de compra es mayor que el valor fiscal: el ITP se calcula
 show('r',h);}
 document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))
+
+# --- Portada: accesos a lo más buscado en temporada (Navidad e invierno) ---
+S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="gasolineras-baratas.html">Gasolineras baratas</a><a href="coste-viaje-coche.html">Gasolina del viaje</a><a href="calculadora-alcoholemia.html">Alcoholemia</a><a href="distancia-frenado.html">Frenado con hielo</a><a href="transferencia-coche.html">Transferir un coche</a><a href="etiqueta-dgt.html">Etiqueta DGT</a></nav>'

@@ -508,3 +508,6 @@ const P={};H.forEach(x=>{P[x[0]]=x[1]*1.0511*1.21;});const pc=(P[13]+P[14])/2,pz
 document.getElementById('pnt').innerHTML='Tarifa regulada (PVPC) de Red Eléctrica hoy, con impuestos: a la hora de comer (13-15 h) <b>'+nf(pc,3)+' €/kWh</b> y a la hora de cenar (20-22 h) <b>'+nf(pz,3)+' €/kWh</b>. <a href="#" onclick="HM=window.PM;calc();return false">Calcular con el PVPC de hoy</a> · <a href="#" onclick="HM=null;calc();return false">usar mi precio</a>';calc();}).catch(()=>{document.getElementById('pnt').textContent='Usamos el precio que escribas: pon el de tu factura con impuestos.';calc();});
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))
+
+# --- Portada: accesos a lo más buscado en temporada (Navidad e invierno) ---
+S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="precio-luz-hoy.html">Precio de la luz hoy</a><a href="consumo-luces-navidad.html">Luces de Navidad</a><a href="coste-calefaccion-electrica.html">Radiador eléctrico</a><a href="estufa-butano-vs-electrica.html">Butano o eléctrica</a><a href="consumo-manta-electrica.html">Manta eléctrica</a><a href="consumo-induccion-vitroceramica.html">Inducción o vitro</a></nav>'
