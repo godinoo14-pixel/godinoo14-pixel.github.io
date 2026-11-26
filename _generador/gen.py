@@ -48,6 +48,10 @@ def ga_js(site):
     gid = GA_IDS.get(site.get('domain', ''), GA_ID)
     if not gid:
         return ""
+    if gid.startswith("GTM-"):
+        # Contenedor de Google Tag Manager: se carga con gtm.js (gtag.js no sirve para identificadores GTM-)
+        return ("window.loadGA=function(){if(window._ga)return;window._ga=1;window.dataLayer=window.dataLayer||[];window.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});"
+                "var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtm.js?id=" + gid + "';document.head.appendChild(s);};\n")
     return ("window.loadGA=function(){if(window._ga)return;window._ga=1;var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=" + gid + "';document.head.appendChild(s);"
             "window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments);};gtag('js',new Date());" + ("gtag('config','" + gid + "');" if gid.startswith("G-") else "") + "};\n")
 
