@@ -94,7 +94,7 @@ def page(site, slug, title, desc, body, faqs=(), h1=None, extra_js=""):
         "var h=function(x){try{fetch('https://abacus.jasoncameron.dev/hit/" + site['domain'] + "/'+x).catch(function(){});}catch(e){}};"
         "h('total');h('d-'+k);h('p-" + slug + "');"
         "try{if(localStorage.getItem('ck')==='1'&&localStorage.getItem('uv')!==k){localStorage.setItem('uv',k);h('u-'+k);}}catch(e){}})();\n")
-    navl = "".join(f'<a href="{t[0]}.html">{t[3]}</a>' for t in site['tools'][:3])
+    navl = "".join(f'<a href="{t[0]}.html">{t[3]}</a>' for t in [x for x in site['tools'] if x[3]][:3]) + site.get('nav_extra', '')
     e = html.escape
     return f"""<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">

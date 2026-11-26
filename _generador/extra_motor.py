@@ -595,7 +595,7 @@ P.append(("transferencia-coche", "Cuánto cuesta transferir un coche: calculador
 <p><b>Ejemplo:</b> compras por 8.000 € un compacto matriculado en marzo de 2020 cuyo modelo nuevo vale 22.000 € en las tablas. Con algo más de 6 años, Hacienda lo valora al 34 %: 7.480 €. Como pagaste más, el ITP se calcula sobre los 8.000 €: al 4 % son 320 €. Sumando la tasa de la DGT (55,70 €), el cambio de nombre te cuesta <b>375,70 €</b>, más la gestoría si no lo haces tú.</p>
 <h2>¿Qué tipo de ITP aplica mi comunidad?</h2><p>El tipo general de la ley estatal para vehículos es el 4 %, y es el que ponemos por defecto, pero el ITP está cedido a las comunidades autónomas: varias aplican tipos distintos, y algunas tienen cuotas fijas o rebajas para coches antiguos o de poca cilindrada. Comprueba el tipo en la web de la agencia tributaria de la comunidad donde vives (es la del comprador, no la del vendedor) y escríbelo en la casilla.</p>
 <h2>Pasos para hacer la transferencia</h2><ul><li><b>Contrato de compraventa</b> firmado por los dos, con fecha, precio, matrícula y bastidor.</li><li><b>Pago del ITP</b> con el modelo 620 o 621 de tu comunidad en el plazo de un mes desde la compra.</li><li><b>Tasa de la DGT</b> (55,70 € para turismos y motos; 27,85 € para ciclomotores) y solicitud de cambio de titularidad en la sede de la DGT, en una jefatura o con un gestor.</li><li>El vendedor debe <b>notificar la venta</b> a la DGT para que las multas y el impuesto de circulación dejen de llegarle.</li></ul>
-<p>Antes de pagar, revisa el <a href="historial-coche-matricula.html">historial del coche por matrícula</a> y cuándo le toca la <a href="cuando-pasar-itv.html">próxima ITV</a>. Si vas a financiarlo, calcula la <a href="cuota-financiacion-coche.html">cuota del préstamo</a>, y mira cuánto <a href="depreciacion-coche.html">valdrá dentro de unos años</a>.</p>""",
+<p>¿Necesitas el contrato? Rellena gratis el <a href="contrato-compraventa-coche.html">contrato de compraventa de coche</a> paso a paso, o el de <a href="contrato-senal-coche.html">señal o reserva</a> si aún no pagas todo. Antes de pagar, revisa el <a href="historial-coche-matricula.html">historial del coche por matrícula</a> y cuándo le toca la <a href="cuando-pasar-itv.html">próxima ITV</a>. Si vas a financiarlo, calcula la <a href="cuota-financiacion-coche.html">cuota del préstamo</a>, y mira cuánto <a href="depreciacion-coche.html">valdrá dentro de unos años</a>.</p>""",
 [("¿Cuánto cuesta cambiar de nombre un coche de segunda mano?", "La tasa de la DGT (55,70 € en coches y motos) más el ITP, que en la mayoría de los casos es un porcentaje (el 4 % por defecto en la ley estatal) del precio de compra o del valor fiscal de Hacienda, el que sea mayor. En un coche de unos 8.000 € suele salir entre 350 y 400 € en total, más la gestoría si la usas."),
  ("¿Quién paga la transferencia del coche, el comprador o el vendedor?", "Salvo pacto en contrario, el ITP lo paga el comprador, que es quien adquiere el coche. La tasa de la DGT también la suele pagar el comprador, aunque se puede acordar otra cosa en el contrato."),
  ("¿Si compro en un concesionario pago ITP?", "No. Si el vendedor es un profesional que te da factura, la venta lleva IVA (ya incluido en el precio) y no pagas ITP. Solo pagas la tasa de la DGT, que muchas veces el concesionario incluye en el precio."),
@@ -617,7 +617,7 @@ document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListe
 calc();"""))
 
 # --- Portada: accesos a lo más buscado en temporada (Navidad e invierno) ---
-S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="gasolineras-baratas.html">Gasolineras baratas</a><a href="coste-viaje-coche.html">Gasolina del viaje</a><a href="calculadora-alcoholemia.html">Alcoholemia</a><a href="distancia-frenado.html">Frenado con hielo</a><a href="transferencia-coche.html">Transferir un coche</a><a href="etiqueta-dgt.html">Etiqueta DGT</a></nav>'
+S['home_intro'] += '<nav class="share" aria-label="Lo más buscado estos días"><span>Lo más buscado estos días:</span><a href="gasolineras-baratas.html">Gasolineras baratas</a><a href="coste-viaje-coche.html">Gasolina del viaje</a><a href="calculadora-alcoholemia.html">Alcoholemia</a><a href="distancia-frenado.html">Frenado con hielo</a><a href="etiqueta-dgt.html">Etiqueta DGT</a></nav>'
 
 # --- Radar de tramo: velocidad media, multa y tiempo mínimo para no ser multado ---
 S['tools'].insert(7, ("radar-de-tramo", "Calculadora de radar de tramo", "Tu velocidad media entre dos arcos, si te multan y el tiempo mínimo para pasar el tramo sin sanción.", "Radar de tramo"))
@@ -658,3 +658,188 @@ else{h+='<br>Exceso de '+ex+' km/h: multa <b>'+mu+' €</b> ('+(mu/2)+' € con 
 h+='<br>Tiempo mínimo para ir a '+L+' km/h de media: <b>'+tmin+'</b>.';show('r',h);}
 document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))
+
+# =====================================================================
+# --- Sección CONTRATOS: compraventa de coche (3 tipos) y señal/reserva, rellenables paso a paso ---
+# =====================================================================
+CSS_DOC = """<style>.st{border:0;padding:0;margin:0;min-width:0;display:none}.st.on{display:block}.st legend{font-weight:800;font-size:1.1rem;padding:0;margin-bottom:4px}
+.pasos{display:flex;gap:4px;margin:0 0 14px}.pasos span{flex:1;height:6px;border-radius:3px;background:#e5e7ef}.pasos span.ok{background:#d9480f}
+.navb{display:flex;gap:10px}.navb button{flex:1}.navb .sec{background:#fff;color:#d9480f;border:1px solid #d9480f}
+.doc{background:#fff;border:1px solid #e5e7ef;border-radius:8px;padding:22px 18px;font-family:Georgia,'Times New Roman',serif;font-size:.93rem;line-height:1.6;color:#111;text-align:justify;overflow-wrap:anywhere}
+.doc h3{text-align:center;font-size:1.05rem;margin:0 0 4px}.doc .sub{text-align:center;margin:0 0 14px;font-style:italic}.doc h4{text-align:center;font-size:.95rem;margin:16px 0 6px;letter-spacing:1px}
+.doc .bl{color:#c92a2a;font-family:system-ui,sans-serif;font-size:.85em}.doc .fir{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px;text-align:center}.doc .fir div{border-top:1px solid #111;padding-top:6px}
+.avisoc{margin:0 0 12px;padding:10px 12px;border-radius:8px;background:#fff4e6;font-size:.9rem}
+@media print{body *{visibility:hidden!important}#doc,#doc *{visibility:visible!important}#doc{position:absolute;left:0;top:0;width:100%;border:0;padding:0;font-size:11pt}.doc .bl{color:#111}}@page{margin:2cm}</style>"""
+
+CJS = r"""const $=id=>document.getElementById(id),val=id=>{const e=$(id);return e?String(e.value).trim():'';};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const B=(s,w)=>s?esc(s):'<span class="bl">'+'_'.repeat(w||18)+'</span>';
+const F=s=>{if(!s)return '';const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});};
+const num=id=>parseFloat(val(id).replace(/\./g,'').replace(',','.'))||0;
+const E=n=>n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+function letras(x){const U=['','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'],
+D=['','','','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'],C=['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+const ap=s=>s.replace(/veintiuno$/,'veintiún').replace(/ uno$/,' un').replace(/^uno$/,'un');
+const c=n=>{if(n==100)return 'cien';let s='';if(n>=100){s=C[Math.floor(n/100)];n%=100;if(n)s+=' ';}if(n<30)s+=U[n];else{s+=D[Math.floor(n/10)];if(n%10)s+=' y '+U[n%10];}return s;};
+const ent=n=>{if(n===0)return 'cero';let s='';const mi=Math.floor(n/1e6),ml=Math.floor(n%1e6/1000),r=n%1000;
+if(mi)s+=(mi==1?'un millón':ap(c(mi))+' millones')+' ';if(ml)s+=(ml==1?'mil':ap(c(ml))+' mil')+' ';if(r)s+=c(r);return s.trim();};
+const e=Math.floor(x+1e-9),ct=Math.round((x-e)*100);const w=ap(ent(e));return (w+(e==1?' euro':(e>=1e6&&e%1e6==0?' de euros':' euros'))+(ct?' con '+ap(c(ct))+' céntimos':'')).toUpperCase();}
+const IMP=n=>n>0?'<b>'+E(n)+'</b> ('+letras(n)+')':B('',12)+' euros';
+let PASO=0;const ST=[...document.querySelectorAll('.st')];
+function paso(n){PASO=Math.max(0,Math.min(ST.length-1,n));ST.forEach((s,i)=>s.classList.toggle('on',i==PASO));
+$('pasos').innerHTML=ST.map((s,i)=>'<span class="'+(i<=PASO?'ok':'')+'"></span>').join('');
+$('pt').textContent='Paso '+(PASO+1)+' de '+ST.length+': '+ST[PASO].querySelector('legend').textContent;
+$('bant').style.visibility=PASO?'visible':'hidden';$('bsig').textContent=PASO==ST.length-1?'Imprimir o guardar en PDF':'Siguiente';}
+function sig(){if(PASO==ST.length-1){imprimir();return;}paso(PASO+1);const c=$('pt');if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'});}
+function imprimir(){calc();window.print();}
+function word(nom){calc();const h='<html><head><meta charset="utf-8"><title>'+nom+'</title></head><body style="font-family:Georgia,serif;font-size:11pt;line-height:1.5;text-align:justify">'+$('doc').innerHTML.replace(/<span class="bl">(_+)<\/span>/g,'$1')+'</body></html>';
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿',h],{type:'application/msword'}));a.download=nom+'.doc';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+document.querySelectorAll('input[type=date][data-today]').forEach(x=>x.value=iso(new Date()));
+"""
+
+def _parte(p, quien):
+    return f"""<fieldset class="st"><legend>{quien}</legend>
+<div class="row"><div><label for="{p}n" id="{p}nl">Nombre y apellidos</label><input id="{p}n" autocomplete="off"></div>
+<div><label for="{p}d" id="{p}dl">DNI o NIE</label><input id="{p}d" autocomplete="off" autocapitalize="characters"></div></div>
+<label for="{p}o">Domicilio (calle, número, localidad y provincia)</label><input id="{p}o" autocomplete="off">
+<div class="pro" id="{p}rw" style="display:none"><label for="{p}r">Representante de la empresa (nombre, DNI y cargo)</label><input id="{p}r" autocomplete="off"></div></fieldset>"""
+
+VEH = """<fieldset class="st"><legend>Vehículo</legend><div class="row">
+<div><label for="ma">Marca</label><input id="ma" autocomplete="off"></div><div><label for="mo">Modelo y versión</label><input id="mo" autocomplete="off"></div>
+<div><label for="mt">Matrícula</label><input id="mt" autocomplete="off" autocapitalize="characters" placeholder="1234 KLM"></div><div><label for="bs">Número de bastidor (VIN, 17 caracteres)</label><input id="bs" autocomplete="off" autocapitalize="characters" maxlength="17"></div>
+<div><label for="fm">Fecha de primera matriculación</label><input id="fm" type="date"></div><div><label for="km">Kilómetros actuales</label><input id="km" inputmode="numeric"></div></div>
+<p class="note">El bastidor y la fecha de primera matriculación vienen en el permiso de circulación y en la ficha técnica. ¿Quieres comprobar el coche antes? Consulta su <a href="historial-coche-matricula.html">historial por matrícula</a>.</p></fieldset>"""
+
+NAVB = """<p class="note" id="pt" style="margin:0 0 6px;font-weight:600"></p><div class="pasos" id="pasos"></div>{steps}
+<div class="navb"><button type="button" class="sec" id="bant" onclick="paso(PASO-1)">Anterior</button><button type="button" id="bsig" onclick="sig()">Siguiente</button></div>
+<div class="navb"><button type="button" class="sec" onclick="imprimir()">Imprimir o PDF</button><button type="button" class="sec" onclick="word({wn})">Descargar en Word</button></div>"""
+
+# ---------- 1) Contrato de compraventa de coche ----------
+S['tools'].append(("contrato-compraventa-coche", "Contrato de compraventa de coche", "Modelo rellenable paso a paso: entre particulares, venta a una compraventa o de profesional a particular. Listo para imprimir o en PDF.", "Contrato"))
+S['aff']["contrato-compraventa-coche"] = ext(INFORME_URL, "Informe del historial antes de comprar") + SEG + amz("portadocumentos coche", "Portadocumentos para el coche")
+_st_cv = ("""<fieldset class="st"><legend>Tipo de contrato</legend>
+<label for="t">¿Quién vende y quién compra?</label><select id="t"><option value="pp">Entre particulares</option><option value="pv">Un particular vende a una compraventa o concesionario</option><option value="vp">Una compraventa o concesionario vende a un particular</option></select>
+<div class="row"><div><label for="ci">Lugar de la firma (localidad)</label><input id="ci" autocomplete="off"></div><div><label for="fe">Fecha</label><input id="fe" type="date" data-today></div></div>
+<label for="ho">Hora de la entrega (desde ella el comprador responde de multas y accidentes)</label><input id="ho" type="time" value="12:00"></fieldset>"""
++ _parte("v", "Vendedor") + _parte("c", "Comprador") + VEH +
+"""<fieldset class="st"><legend>Precio y pago</legend><div class="row">
+<div><label for="pr">Precio total (€)</label><input id="pr" inputmode="decimal"></div>
+<div><label for="fp">Forma de pago</label><select id="fp"><option value="tr">Transferencia bancaria</option><option value="ch">Cheque bancario o conformado</option><option value="ef">Efectivo</option><option value="fi">Financiación (préstamo de una entidad)</option></select></div>
+<div><label for="sn">Señal ya entregada (€, opcional)</label><input id="sn" inputmode="decimal" value="0"></div>
+<div><label for="gt">Impuestos y tasa de la transferencia a cargo de</label><select id="gt"><option value="c">El comprador (lo habitual)</option><option value="v">El vendedor</option><option value="m">Ambos, a partes iguales</option></select></div></div>
+<p class="note">Si compras a un particular pagarás el ITP de tu comunidad y la tasa de la DGT: <a href="transferencia-coche.html">calcula cuánto cuesta la transferencia</a>.</p></fieldset>
+<fieldset class="st"><legend>Estado y entrega</legend>
+<label for="de">Defectos o daños conocidos (déjalo vacío si no hay)</label><textarea id="de" rows="3" placeholder="Por ejemplo: arañazo en la puerta trasera derecha; aire acondicionado sin carga"></textarea>
+<div class="row"><div><label for="iv">ITV en vigor hasta</label><input id="iv" type="date"></div><div><label for="ll">Número de llaves que se entregan</label><input id="ll" inputmode="numeric" value="2"></div></div>
+<label class="chk"><input type="checkbox" id="lm" checked><span>Se entrega el libro de mantenimiento o las facturas de revisiones</span></label>
+<div class="pro" id="gaw" style="display:none"><label for="ga">Garantía (meses, mínimo 12 por ley)</label><input id="ga" inputmode="numeric" value="12"></div></fieldset>
+<fieldset class="st"><legend>Revisar y descargar</legend><p>Revisa el contrato de abajo. Lo que sale <span style="color:#c92a2a">en rojo</span> está sin rellenar. Imprime dos copias (o guárdalo en PDF) y firmad las dos, una para cada parte.</p></fieldset>""")
+P.append(("contrato-compraventa-coche", "Contrato de compraventa de coche entre particulares: modelo para rellenar | CocheCuentas",
+"Modelo de contrato de compraventa de vehículo para rellenar paso a paso: entre particulares, venta a una compraventa o de concesionario a particular. Con señal, cargas, multas y vicios ocultos. Gratis, en PDF o Word.",
+CSS_DOC + """<p class="lead">Rellena los datos paso a paso y el contrato se escribe solo, abajo, mientras escribes. Al final lo imprimes, lo guardas en PDF o lo descargas en Word para editarlo. Elige el tipo: <b>entre particulares</b>, <b>un particular que vende a una compraventa</b> o <b>una compraventa que vende a un particular</b>.</p>
+<div class="card">""" + NAVB.format(steps=_st_cv, wn="'contrato-compraventa-'+(val('mt').replace(/\\s/g,'')||'coche')") + """
+<div class="res" id="r" style="background:none;padding:0;margin-top:18px"></div></div>
+<p class="note">Todo se hace en tu navegador: los nombres, DNI y datos que escribes no se envían ni se guardan en ningún servidor. Es un modelo orientativo basado en la normativa general; para casos especiales (herencias, vehículos con reserva de dominio, empresas) consulta con una gestoría o un abogado.</p>
+<h2>Qué tiene que llevar un contrato de compraventa de coche</h2><ul><li><b>Datos completos de las dos partes</b>: nombre, DNI o NIE y domicilio. Si una es empresa, su NIF y quién firma en su nombre.</li><li><b>Identificación del coche</b>: marca, modelo, matrícula, número de bastidor y kilómetros.</li><li><b>Precio y forma de pago</b>, y si ya se ha dado una señal.</li><li><b>Fecha y hora de la entrega</b>: desde ese momento las multas, los accidentes y el seguro son cosa del comprador. Por eso conviene escribir la hora.</li><li><b>Estado del coche y defectos conocidos</b>, que protegen a las dos partes si luego hay una reclamación.</li><li><b>Cargas</b>: el vendedor declara que el coche no tiene embargos ni reservas de dominio. Compruébalo antes con un informe de la DGT.</li></ul>
+<h2>Particular, compraventa o concesionario: qué cambia</h2><p><b>Entre particulares</b> no hay garantía de la ley de consumo: el vendedor solo responde de los <b>vicios ocultos</b> (defectos graves que no se podían ver y que ya existían), y la acción para reclamar caduca a los <b>6 meses</b> de la entrega (artículos 1484 y 1490 del Código Civil). El comprador paga el ITP de su comunidad.</p>
+<p><b>Si vende una compraventa o un concesionario</b> a un particular, se aplica la ley de consumidores: tiene que dar una garantía de al menos <b>1 año</b> en coches de segunda mano, emitir factura y no puede cobrar más de <b>1.000 € en efectivo</b> (Ley 11/2021). El comprador no paga ITP porque la venta ya lleva sus impuestos. <b>Si un particular vende a una compraventa</b>, el profesional es quien compra: el contrato sirve como justificante y para que conste la hora a partir de la cual el coche deja de ser tuyo.</p>
+<h2>Después de firmar</h2><p>El comprador tiene que pedir el <b>cambio de titularidad</b> en la DGT (tasa de 55,70 €) con el contrato, el permiso de circulación y el justificante del ITP. Si eres el vendedor, haz una <b>notificación de venta</b> a la DGT para que conste la fecha y no te lleguen multas del nuevo dueño. Antes de comprar, revisa la <a href="cuando-pasar-itv.html">fecha de la próxima ITV</a>, la <a href="etiqueta-dgt.html">etiqueta DGT</a> y, si pides un préstamo, la <a href="cuota-financiacion-coche.html">cuota de la financiación</a>. ¿Vas a reservar el coche con una señal antes de pagarlo entero? Usa el <a href="contrato-senal-coche.html">contrato de señal o reserva</a>.</p>""",
+[("¿Es obligatorio hacer un contrato para vender un coche?", "Para hacer la transferencia en la DGT hace falta un documento que acredite la venta: entre particulares es el contrato de compraventa firmado por los dos; si vende una empresa, vale la factura. Además, el contrato con fecha y hora te protege de multas o accidentes posteriores a la venta."),
+ ("¿Quién paga el impuesto al comprar un coche de segunda mano?", "Entre particulares, salvo pacto en contrario, el comprador paga el impuesto de transmisiones (ITP) a su comunidad y la tasa de la DGT. Si compras a un profesional con factura no hay ITP, solo la tasa."),
+ ("¿Puedo pagar un coche en efectivo?", "Entre particulares no hay un límite general, aunque es recomendable la transferencia para que quede constancia. Si una de las partes es una empresa o profesional, el pago en efectivo está limitado a 1.000 € (Ley 11/2021)."),
+ ("¿Qué pasa si el coche tiene una avería después de comprarlo a un particular?", "Solo puedes reclamar si es un vicio oculto: un defecto grave que ya existía, que no se podía ver al revisarlo y que el contrato no recogía. Tienes 6 meses desde la entrega. Por eso conviene escribir en el contrato los defectos que sí se conocen.")],
+"Contrato de compraventa de coche",
+CJS + r"""const TT={pp:'ENTRE PARTICULARES',pv:'DE PARTICULAR A PROFESIONAL DE LA COMPRAVENTA DE VEHÍCULOS',vp:'DE PROFESIONAL A CONSUMIDOR'};
+function parte(p,rol,pro){const n=val(p+'n'),d=val(p+'d'),o=val(p+'o'),r=val(p+'r');
+return pro?'<b>'+B(n,26)+'</b>, con NIF '+B(d,12)+' y domicilio social en '+B(o,30)+', representada en este acto por '+B(r,26)+', como <b>'+rol+'</b>.'
+:'D./D.ª <b>'+B(n,26)+'</b>, mayor de edad, con DNI/NIE '+B(d,12)+' y domicilio en '+B(o,30)+', como <b>'+rol+'</b>.';}
+function calc(){const t=val('t'),pv=t=='pv',vp=t=='vp';
+$('vrw').style.display=vp?'block':'none';$('crw').style.display=pv?'block':'none';$('gaw').style.display=vp?'block':'none';
+$('vnl').textContent=vp?'Razón social de la empresa':'Nombre y apellidos';$('vdl').textContent=vp?'NIF de la empresa':'DNI o NIE';
+$('cnl').textContent=pv?'Razón social de la empresa':'Nombre y apellidos';$('cdl').textContent=pv?'NIF de la empresa':'DNI o NIE';
+const pr=num('pr'),sn=Math.min(num('sn'),pr),fp=val('fp'),bs=val('bs').toUpperCase(),ga=Math.max(12,parseInt(val('ga'))||12),de=val('de'),gt=val('gt');
+const FP={tr:'transferencia bancaria a la cuenta del VENDEDOR',ch:'cheque bancario o conformado a nombre del VENDEDOR',ef:'dinero en efectivo',fi:'financiación concedida al COMPRADOR por una entidad financiera, que abonará el importe directamente al VENDEDOR'}[fp];
+let av=[];if(bs&&bs.length!=17)av.push('El número de bastidor (VIN) tiene '+bs.length+' caracteres; debería tener 17. Cópialo del permiso de circulación.');
+if(fp=='ef'&&t!='pp'&&pr-sn>1000)av.push('Si una de las partes es una empresa, no se pueden pagar más de 1.000 € en efectivo (Ley 11/2021). Elige transferencia o cheque.');
+if(vp&&(parseInt(val('ga'))||0)<12)av.push('Un profesional debe dar al menos 12 meses de garantía en un coche usado; el contrato pone 12.');
+let h=(av.length?'<div class="avisoc">'+av.join('<br>')+'</div>':'')+'<div class="doc" id="doc"><h3>CONTRATO DE COMPRAVENTA DE VEHÍCULO</h3><p class="sub">'+TT[t]+'</p>';
+h+='<p>En '+B(val('ci'),16)+', a '+(F(val('fe'))||B('',16))+', a las '+B(val('ho'),5)+' horas.</p><h4>REUNIDOS</h4>';
+h+='<p>De una parte, '+parte('v','VENDEDOR',vp)+'</p><p>De otra parte, '+parte('c','COMPRADOR',pv)+'</p>';
+h+='<p>Ambas partes se reconocen mutuamente la capacidad legal necesaria para obligarse en este contrato y</p><h4>ACUERDAN</h4>';
+h+='<p><b>PRIMERA. Objeto.</b> El VENDEDOR vende al COMPRADOR, que lo compra, el vehículo marca '+B(val('ma'),12)+', modelo '+B(val('mo'),18)+', matrícula <b>'+B(val('mt').toUpperCase(),10)+'</b>, número de bastidor '+B(bs,20)+', con fecha de primera matriculación '+(F(val('fm'))||B('',14))+' y '+B(val('km'),8)+' kilómetros en el cuentakilómetros, que el VENDEDOR declara reales según su leal saber.</p>';
+h+='<p><b>SEGUNDA. Precio y forma de pago.</b> El precio de la compraventa es de '+IMP(pr)+(vp?', impuestos indirectos incluidos, por el que el VENDEDOR emitirá la correspondiente factura':'')+'. ';
+if(sn>0)h+='El COMPRADOR entregó con anterioridad '+IMP(sn)+' en concepto de señal, que se descuenta del precio, y abona el resto, '+IMP(pr-sn)+', mediante '+FP+'. ';else h+='El COMPRADOR lo abona mediante '+FP+'. ';
+h+=fp=='fi'?'El VENDEDOR no estará obligado a entregar el vehículo hasta haber recibido el precio íntegro.</p>':'El VENDEDOR declara haber recibido el importe a su satisfacción, y este documento sirve como carta de pago.</p>';
+h+='<p><b>TERCERA. Estado del vehículo.</b> El COMPRADOR declara haber examinado y probado el vehículo y lo acepta en el estado en que se encuentra. El VENDEDOR declara que no conoce defectos ocultos'+(de?' distintos de los siguientes, que el COMPRADOR conoce y acepta: '+esc(de)+'.':'.')+' La inspección técnica (ITV) está en vigor hasta el '+(F(val('iv'))||B('',14))+'.</p>';
+h+='<p><b>CUARTA. Cargas.</b> El VENDEDOR declara que el vehículo es de su propiedad, que está libre de cargas, embargos, reservas de dominio y de cualquier otra limitación que impida su venta, y que está al corriente del pago del Impuesto sobre Vehículos de Tracción Mecánica. Responderá frente al COMPRADOR de cualquier carga, deuda o sanción anterior a la fecha y hora de este contrato.</p>';
+h+='<p><b>QUINTA. Entrega y documentación.</b> En este acto el VENDEDOR entrega el vehículo junto con el permiso de circulación, la tarjeta de inspección técnica, '+B(val('ll'),2)+' llave(s)'+($('lm').checked?' y el libro de mantenimiento o las facturas de las revisiones':'')+'.</p>';
+h+='<p><b>SEXTA. Responsabilidad desde la entrega.</b> Desde la fecha y hora indicadas en este contrato, el COMPRADOR asume la responsabilidad civil, administrativa y de cualquier otro tipo derivada de la propiedad y la circulación del vehículo, incluidas las sanciones de tráfico, y se obliga a tenerlo asegurado. Las anteriores a ese momento corresponden al VENDEDOR.</p>';
+const GT={c:'del COMPRADOR',v:'del VENDEDOR',m:'de ambas partes por mitades'}[gt];
+h+='<p><b>SÉPTIMA. Transferencia y gastos.</b> '+(pv?'El COMPRADOR, como profesional de la compraventa de vehículos, realizará los trámites de comunicación de la adquisición ante la Dirección General de Tráfico conforme a la normativa aplicable.':'El COMPRADOR solicitará el cambio de titularidad ante la Dirección General de Tráfico en el plazo de treinta días desde la firma de este contrato.')+' Los impuestos que graven esta compraventa y las tasas de la transferencia serán a cargo '+GT+'. El VENDEDOR podrá notificar la venta a la Dirección General de Tráfico.</p>';
+h+='<p><b>OCTAVA. Garantía.</b> '+(vp?'El VENDEDOR, como empresario, responde de las faltas de conformidad del vehículo que se manifiesten en un plazo de <b>'+ga+' meses</b> desde la entrega, conforme al texto refundido de la Ley General para la Defensa de los Consumidores y Usuarios y otras leyes complementarias.':'Al no actuar el VENDEDOR como empresario, no se aplica la garantía de la normativa de consumo. El VENDEDOR responde únicamente de los vicios o defectos ocultos conforme a los artículos 1484 y siguientes del Código Civil, con el plazo de seis meses desde la entrega previsto en su artículo 1490.')+'</p>';
+h+='<p><b>NOVENA. Ley aplicable.</b> Este contrato se rige por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales que resulten competentes conforme a la ley.</p>';
+h+='<p>Y en prueba de conformidad, firman este contrato por duplicado y a un solo efecto en el lugar y la fecha indicados.</p>';
+h+='<div class="fir"><div>EL VENDEDOR<br><br>Fdo.: '+B(val('vn'),18)+'</div><div>EL COMPRADOR<br><br>Fdo.: '+B(val('cn'),18)+'</div></div></div>';show('r',h);}
+document.querySelectorAll('.card input,.card select,.card textarea').forEach(x=>x.addEventListener(x.tagName=='SELECT'||x.type=='checkbox'||x.type=='date'?'change':'input',()=>calc()));
+(function(){const q=new URLSearchParams(location.search).get('t');if(q&&['pp','pv','vp'].includes(q))$('t').value=q;})();
+paso(0);calc();"""))
+
+# ---------- 2) Contrato de señal o reserva ----------
+S['tools'].append(("contrato-senal-coche", "Contrato de señal o reserva de coche", "Reserva un coche con una señal (arras) por escrito: importe, plazo para completar la compra y qué pasa si alguien se echa atrás.", ""))
+S['aff']["contrato-senal-coche"] = ext(INFORME_URL, "Informe del historial antes de reservar") + SEG
+_st_sn = ("""<fieldset class="st"><legend>Lugar y fecha</legend>
+<div class="row"><div><label for="ci">Lugar de la firma (localidad)</label><input id="ci" autocomplete="off"></div><div><label for="fe">Fecha</label><input id="fe" type="date" data-today></div></div>
+<label for="t">¿Quién vende?</label><select id="t"><option value="p">Un particular</option><option value="e">Una compraventa o concesionario</option></select></fieldset>"""
++ _parte("v", "Vendedor") + _parte("c", "Comprador") + VEH +
+"""<fieldset class="st"><legend>Señal y plazo</legend><div class="row">
+<div><label for="pr">Precio total acordado (€)</label><input id="pr" inputmode="decimal"></div>
+<div><label for="sn">Importe de la señal (€)</label><input id="sn" inputmode="decimal"></div>
+<div><label for="fl">Fecha límite para completar la compra</label><input id="fl" type="date"></div>
+<div><label for="fs">Cómo se paga la señal</label><select id="fs"><option value="transferencia bancaria">Transferencia bancaria</option><option value="dinero en efectivo">Efectivo</option><option value="Bizum">Bizum</option></select></div></div>
+<label for="ar">Si alguien se echa atrás</label><select id="ar"><option value="pen">Arras penitenciales: el comprador pierde la señal o el vendedor la devuelve doble</option><option value="con">Arras confirmatorias: la señal es un pago a cuenta y se puede exigir la compra</option></select></fieldset>
+<fieldset class="st"><legend>Revisar y descargar</legend><p>Revisa el documento. Lo que sale <span style="color:#c92a2a">en rojo</span> está sin rellenar. Firmad dos copias, una para cada parte. Cuando paguéis el resto, haced el <a href="contrato-compraventa-coche.html">contrato de compraventa</a> indicando la señal ya entregada.</p></fieldset>""")
+P.append(("contrato-senal-coche", "Contrato de señal o reserva de coche: modelo de arras para rellenar | CocheCuentas",
+"Modelo de contrato de señal o reserva para comprar un coche: importe de las arras, fecha límite y qué pasa si el comprador o el vendedor se echan atrás. Rellénalo paso a paso e imprímelo gratis.",
+CSS_DOC + """<p class="lead">¿Has encontrado el coche pero aún no puedes pagarlo entero? Deja una señal por escrito. Rellena los datos paso a paso y el documento se escribe solo; al final lo imprimes, lo guardas en PDF o lo descargas en Word.</p>
+<div class="card">""" + NAVB.format(steps=_st_sn, wn="'contrato-senal-'+(val('mt').replace(/\\s/g,'')||'coche')") + """
+<div class="res" id="r" style="background:none;padding:0;margin-top:18px"></div></div>
+<p class="note">Los datos que escribes no salen de tu navegador. Modelo orientativo basado en el Código Civil; si hay mucho dinero en juego o un caso especial, consulta con una gestoría o un abogado.</p>
+<h2>Arras penitenciales o confirmatorias: cuál elegir</h2><p>La señal se llama legalmente <b>arras</b>. Con las <b>arras penitenciales</b> (artículo 1454 del Código Civil), cualquiera de los dos puede echarse atrás pagando un precio conocido: si es el comprador, <b>pierde la señal</b>; si es el vendedor, <b>devuelve el doble</b>. Es lo más habitual para reservar un coche, porque todo queda claro desde el principio. Con las <b>arras confirmatorias</b>, la señal es solo un adelanto del precio: si una parte no cumple, la otra puede exigir que se haga la venta o pedir que se anule con indemnización de los daños (artículo 1124). Si el documento no dice qué tipo son, los tribunales suelen considerarlas confirmatorias, por eso conviene escribirlo.</p>
+<p><b>Ejemplo:</b> reservas un coche de 9.000 € con 500 € de señal penitencial y diez días para pagar el resto. Si el banco no te concede el préstamo y no compras, pierdes los 500 €. Si en esos diez días el vendedor se lo vende a otro, tiene que devolverte 1.000 €.</p>
+<h2>Consejos antes de dar una señal</h2><ul><li>Paga la señal por transferencia o Bizum, para que quede constancia.</li><li>Antes de pagar, comprueba el <a href="historial-coche-matricula.html">historial del coche por matrícula</a> y que el vendedor es el titular que aparece en el permiso de circulación.</li><li>Pon una fecha límite realista: si necesitas financiación, calcula antes la <a href="cuota-financiacion-coche.html">cuota del préstamo</a>.</li><li>Calcula también lo que te costará la <a href="transferencia-coche.html">transferencia del coche</a>, para no llevarte sorpresas.</li></ul>""",
+[("¿Cuánto se suele dejar de señal para reservar un coche?", "No hay un importe legal. Entre particulares suele ser una cantidad pequeña, de unos cientos de euros o en torno al 5-10 % del precio. Lo importante es que quede por escrito cuánto es, el plazo para pagar el resto y qué pasa si alguien se echa atrás."),
+ ("¿Me devuelven la señal si al final no compro el coche?", "Depende de lo firmado. Con arras penitenciales, si eres tú quien se echa atrás, pierdes la señal. Si es el vendedor quien no cumple, tiene que devolverte el doble. Si el contrato no dice nada, la señal se considera un pago a cuenta y la devolución depende de quién incumplió."),
+ ("¿El contrato de señal sirve para hacer la transferencia?", "No. Cuando pagues el resto tienes que firmar el contrato de compraventa (o recibir la factura, si vende una empresa), que es el documento que pide la DGT para el cambio de titularidad.")],
+"Contrato de señal o reserva de coche",
+CJS + r"""function parte(p,rol,pro){const n=val(p+'n'),d=val(p+'d'),o=val(p+'o'),r=val(p+'r');
+return pro?'<b>'+B(n,26)+'</b>, con NIF '+B(d,12)+' y domicilio social en '+B(o,30)+', representada en este acto por '+B(r,26)+', como <b>'+rol+'</b>.'
+:'D./D.ª <b>'+B(n,26)+'</b>, mayor de edad, con DNI/NIE '+B(d,12)+' y domicilio en '+B(o,30)+', como <b>'+rol+'</b>.';}
+function calc(){const e=val('t')=='e';$('vrw').style.display=e?'block':'none';$('vnl').textContent=e?'Razón social de la empresa':'Nombre y apellidos';$('vdl').textContent=e?'NIF de la empresa':'DNI o NIE';
+const pr=num('pr'),sn=num('sn'),pen=val('ar')=='pen',bs=val('bs').toUpperCase();let av=[];
+if(sn>pr&&pr>0)av.push('La señal no puede ser mayor que el precio.');if(bs&&bs.length!=17)av.push('El bastidor (VIN) debería tener 17 caracteres.');
+if(e&&val('fs')=='dinero en efectivo'&&sn>1000)av.push('Con una empresa, el pago en efectivo está limitado a 1.000 € (Ley 11/2021).');
+let h=(av.length?'<div class="avisoc">'+av.join('<br>')+'</div>':'')+'<div class="doc" id="doc"><h3>CONTRATO DE SEÑAL Y RESERVA DE VEHÍCULO</h3><p class="sub">'+(pen?'Arras penitenciales (artículo 1454 del Código Civil)':'Arras confirmatorias')+'</p>';
+h+='<p>En '+B(val('ci'),16)+', a '+(F(val('fe'))||B('',16))+'.</p><h4>REUNIDOS</h4><p>De una parte, '+parte('v','VENDEDOR',e)+'</p><p>De otra parte, '+parte('c','COMPRADOR',false)+'</p>';
+h+='<p>Ambas partes se reconocen la capacidad legal necesaria para obligarse en este contrato y</p><h4>ACUERDAN</h4>';
+h+='<p><b>PRIMERA. Objeto.</b> El VENDEDOR reserva al COMPRADOR, para su futura compraventa, el vehículo marca '+B(val('ma'),12)+', modelo '+B(val('mo'),18)+', matrícula <b>'+B(val('mt').toUpperCase(),10)+'</b>, número de bastidor '+B(bs,20)+', con fecha de primera matriculación '+(F(val('fm'))||B('',14))+' y '+B(val('km'),8)+' kilómetros, por un precio total de '+IMP(pr)+'.</p>';
+h+='<p><b>SEGUNDA. Señal.</b> En este acto el COMPRADOR entrega al VENDEDOR, mediante '+esc(val('fs'))+', la cantidad de '+IMP(sn)+' en concepto de señal, de la que este documento sirve como recibo. Esta cantidad se descontará del precio en el momento de la compraventa, de modo que quedarán pendientes '+IMP(Math.max(0,pr-sn))+'.</p>';
+h+='<p><b>TERCERA. Plazo.</b> Las partes firmarán el contrato de compraventa y el COMPRADOR pagará el resto del precio, con la entrega del vehículo y su documentación, no más tarde del '+(F(val('fl'))||B('',16))+'.</p>';
+h+=pen?'<p><b>CUARTA. Naturaleza de la señal.</b> La señal se entrega como arras penitenciales conforme al artículo 1454 del Código Civil. Si el COMPRADOR desiste de la compra o no la completa en el plazo acordado por causa imputable a él, perderá la cantidad entregada. Si es el VENDEDOR quien desiste o no la completa, deberá devolver al COMPRADOR el doble de la señal recibida.</p>'
+:'<p><b>CUARTA. Naturaleza de la señal.</b> La señal se entrega como arras confirmatorias y constituye un pago a cuenta del precio. Si una de las partes incumple, la otra podrá exigir el cumplimiento de la compraventa o su resolución, con la indemnización de daños y perjuicios que corresponda conforme al artículo 1124 del Código Civil.</p>';
+h+='<p><b>QUINTA. Conservación del vehículo.</b> Hasta la fecha de la compraventa, el VENDEDOR se compromete a no vender ni reservar el vehículo a terceros, a conservarlo en el mismo estado en que el COMPRADOR lo ha visto y a no hacer con él un uso que aumente de forma apreciable su kilometraje. Si el vehículo sufre un daño en ese tiempo, el COMPRADOR podrá desistir y recuperar íntegramente la señal.</p>';
+h+='<p><b>SEXTA. Ley aplicable.</b> Este contrato se rige por la legislación española y, para cualquier controversia, las partes se someten a los juzgados y tribunales competentes conforme a la ley.</p><p>Y en prueba de conformidad, firman este documento por duplicado en el lugar y la fecha indicados.</p>';
+h+='<div class="fir"><div>EL VENDEDOR<br><br>Fdo.: '+B(val('vn'),18)+'</div><div>EL COMPRADOR<br><br>Fdo.: '+B(val('cn'),18)+'</div></div></div>';show('r',h);}
+document.querySelectorAll('.card input,.card select,.card textarea').forEach(x=>x.addEventListener(x.tagName=='SELECT'||x.type=='checkbox'||x.type=='date'?'change':'input',()=>calc()));
+paso(0);calc();"""))
+
+# ---------- Sección "Contratos" en la portada ----------
+S['home_extra'] = ('<h2 id="contratos">Contratos para comprar y vender coches</h2><p>Modelos gratuitos que se rellenan paso a paso y se imprimen, se guardan en PDF o se descargan en Word. Los datos no salen de tu navegador.</p><div class="grid">'
+ '<a class="tool" href="contrato-compraventa-coche.html?t=pp"><h3>Compraventa entre particulares</h3><p>El contrato para vender o comprar un coche usado a otra persona, con vicios ocultos, cargas y hora de entrega.</p></a>'
+ '<a class="tool" href="contrato-compraventa-coche.html?t=pv"><h3>Vender tu coche a una compraventa</h3><p>Particular que vende a una compraventa o concesionario: deja por escrito el precio y la hora desde la que el coche ya no es tuyo.</p></a>'
+ '<a class="tool" href="contrato-compraventa-coche.html?t=vp"><h3>Compraventa o concesionario a particular</h3><p>Venta profesional con factura, garantía mínima de 1 año y límite de 1.000 € en efectivo.</p></a>'
+ '<a class="tool" href="contrato-senal-coche.html"><h3>Señal o reserva de un coche</h3><p>Reserva el coche con arras por escrito: importe, plazo y qué pasa si alguien se echa atrás.</p></a>'
+ '</div>') + S['home_extra']
+S['home_intro'] = S['home_intro'].replace('<a href="etiqueta-dgt.html">Etiqueta DGT</a></nav>', '<a href="etiqueta-dgt.html">Etiqueta DGT</a><a href="#contratos">Contratos</a></nav>')
+
+S['nav_extra'] = '<a href="index.html#contratos">Contratos</a>'
