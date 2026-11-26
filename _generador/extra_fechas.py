@@ -39,21 +39,36 @@ if(sm>0&&p>0){const nat=s=='30'?p:p*30/an;h+='<br>Si dejas la empresa, en el fin
 const fin=new Date(b.getFullYear(),11,31),rest=diff(today,fin);if(p>0&&rest>=0&&rest<62&&b.getFullYear()==today.getFullYear())h+='<br>Quedan <b>'+rest+' días</b> para el 31 de diciembre: revisa si tu convenio permite pasarlas al año que viene.';
 show('r',h);}"""))
 
-P.append(("calculadora-horas", "Calculadora de horas trabajadas: entrada, salida y descansos | CalculadoraDías",
-"Calcula las horas trabajadas entre la hora de entrada y la de salida, restando descansos, y el total semanal y mensual.",
-"""<p class="lead">Pon tu hora de entrada, de salida y el descanso, y te sumamos las horas del día, la semana y el mes.</p>
+P.append(("calculadora-horas", "Calculadora de horas trabajadas: jornada, descansos y horas extra | CalculadoraDías",
+"Calcula las horas trabajadas entre la entrada y la salida, restando descansos, con turno partido o de noche: total del día, la semana y el mes, horas extra sobre 40 h y paso a horas decimales.",
+"""<p class="lead">Pon tu hora de entrada, de salida y el descanso, y te sumamos las horas del día, la semana y el mes. Si haces jornada partida, añade el segundo tramo.</p>
 <div class="card"><div class="row"><div><label for="e">Entrada</label><input id="e" type="time" value="09:00"></div><div><label for="s">Salida</label><input id="s" type="time" value="18:00"></div>
-<div><label for="p">Descanso (minutos)</label><input id="p" inputmode="numeric" value="60"></div><div><label for="dd">Días trabajados a la semana</label><input id="dd" inputmode="numeric" value="5"></div>
+<div><label for="e2">Entrada de tarde (jornada partida, opcional)</label><input id="e2" type="time" value=""></div><div><label for="s2">Salida de tarde (opcional)</label><input id="s2" type="time" value=""></div>
+<div><label for="p">Descanso no retribuido (minutos)</label><input id="p" inputmode="numeric" value="60"></div><div><label for="dd">Días trabajados a la semana</label><input id="dd" inputmode="decimal" value="5"></div>
+<div><label for="jc">Jornada de tu contrato (horas a la semana)</label><input id="jc" inputmode="decimal" value="40"></div>
 <div><label for="ph">Precio por hora (€, opcional)</label><input id="ph" inputmode="decimal" value="0"></div></div>
-<button onclick="calc()">Calcular horas</button><div class="res" id="r"></div></div>
-<p class="note">Si sales después de medianoche (turno de noche) también funciona: se suma el día siguiente.</p>
-<h2>Jornada máxima en España</h2><p>La jornada ordinaria máxima es de 40 horas semanales de trabajo efectivo en cómputo anual, con al menos 12 horas de descanso entre jornadas. Desde 2019 las empresas están obligadas a registrar la jornada de cada trabajador.</p>""",
-[("¿Cómo paso minutos a horas decimales?", "Divide los minutos entre 60: 7 horas y 45 minutos son 7,75 horas."),
- ("¿El descanso del bocadillo cuenta como tiempo trabajado?", "Solo si así lo establece tu convenio o contrato. Por ley, en jornadas de más de 6 horas hay derecho a una pausa mínima de 15 minutos.")],
-None, """function mn(id){const [h,m]=document.getElementById(id).value.split(':').map(Number);return h*60+m;}
+<button onclick="calc()">Calcular horas</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Si sales después de medianoche (turno de noche) también funciona: se suma el día siguiente. El mes se calcula con 52 semanas ÷ 12 = 4,33 semanas.</p>
+<h2>Cómo se calculan las horas trabajadas</h2><p><b>Horas del día = salida − entrada − descanso</b>. Si la salida es anterior a la entrada, el turno termina al día siguiente y se suman 24 horas. Para la semana se multiplica por los días trabajados, y para el mes por 4,33 semanas. Ejemplo: de 9:00 a 18:00 con una hora para comer son 8 horas al día, 40 a la semana y unas 173 al mes.</p>
+<h2>Pasar minutos a horas decimales</h2><p>Las nóminas y muchas apps de fichaje usan horas decimales. Divide los minutos entre 60:</p>
+<table><tr><th>Minutos</th><th>Horas decimales</th></tr><tr><td>15 min</td><td>0,25 h</td></tr><tr><td>20 min</td><td>0,33 h</td></tr><tr><td>30 min</td><td>0,5 h</td></tr><tr><td>45 min</td><td>0,75 h</td></tr><tr><td>7 h 50 min</td><td>7,83 h</td></tr></table>
+<h2>Jornada máxima y horas extra en España</h2><p>Según el Estatuto de los Trabajadores, la jornada ordinaria máxima es de <b>40 horas semanales</b> de trabajo efectivo de promedio en cómputo anual, con un máximo de 9 horas ordinarias al día salvo que el convenio las distribuya de otra forma, y al menos <b>12 horas de descanso</b> entre el final de una jornada y el inicio de la siguiente. Las horas que superan tu jornada son <b>horas extraordinarias</b>: se pagan (en la cuantía que fije el convenio, nunca por debajo de la hora ordinaria) o se compensan con descanso en los cuatro meses siguientes, y no pueden pasar de 80 al año. Si trabajas a tiempo parcial, las horas por encima de tu contrato son horas complementarias, que deben estar pactadas por escrito.</p>
+<p>Desde 2019 todas las empresas deben llevar un <b>registro diario de jornada</b> con la hora de inicio y fin de cada trabajador y guardarlo cuatro años: si te salen más horas de las de tu contrato, ese registro es tu prueba.</p>
+<p>¿Necesitas contar días en vez de horas? Usa la <a href="dias-entre-fechas.html">calculadora de días entre fechas</a> o la de <a href="dias-habiles.html">días hábiles</a>. Si vas a dejar el trabajo, calcula tu <a href="calcular-finiquito.html">finiquito</a>.</p>""",
+[("¿Cómo paso minutos a horas decimales?", "Divide los minutos entre 60: 7 horas y 45 minutos son 7,75 horas; 30 minutos son 0,5 horas."),
+ ("¿El descanso del bocadillo cuenta como tiempo trabajado?", "Solo si así lo establece tu convenio o contrato. Por ley, en jornadas continuadas de más de 6 horas hay derecho a una pausa mínima de 15 minutos (30 minutos para menores de 18 años con más de 4 horas y media)."),
+ ("¿Cuántas horas al mes son 40 horas semanales?", "Unas 173 horas: 40 × 52 semanas ÷ 12 meses = 173,3 horas al mes. Con 37,5 horas semanales salen unas 162,5 al mes."),
+ ("¿Cuántas horas extra puedo hacer al año?", "Como máximo 80 horas extraordinarias al año. No cuentan en ese límite las que se compensan con descanso en los cuatro meses siguientes ni las hechas para prevenir o reparar daños urgentes.")],
+None, """function mn(id){const x=document.getElementById(id).value;if(!x)return null;const [h,m]=x.split(':').map(Number);return h*60+m;}
 function hm(x){x=Math.round(x);return Math.floor(x/60)+' h '+String(x%60).padStart(2,'0')+' min';}
-function calc(){let d=mn('s')-mn('e');if(d<0)d+=1440;d-=v('p');d=Math.max(0,d);const w=d*v('dd'),m=w*52/12,ph=v('ph');
-show('r','Horas al día:<b class="big">'+hm(d)+'</b>('+nf(d/60,2)+' h) · Semana: <b>'+hm(w)+'</b> · Mes: <b>'+nf(m/60,1)+' h</b>'+(ph>0?'<br>Ingresos: '+eur(d/60*ph)+'/día · '+eur(m/60*ph)+'/mes':''));}"""))
+function tr(a,b){const e=mn(a),s=mn(b);if(e===null||s===null)return 0;let d=s-e;if(d<0)d+=1440;return d;}
+function calc(){let d=tr('e','s')+tr('e2','s2')-v('p');d=Math.max(0,d);const w=d*v('dd'),m=w*52/12,ph=v('ph'),jc=v('jc');
+let h='Horas al día:<b class="big">'+hm(d)+'</b>('+nf(d/60,2)+' h decimales) · Semana: <b>'+hm(w)+'</b> · Mes: <b>'+nf(m/60,1)+' h</b>';
+if(jc>0){const x=w/60-jc;if(x>0.01)h+='<br>Superas tu jornada en <b>'+nf(x,2)+' h a la semana</b> (unas '+nf(x*52/12,1)+' h al mes): son horas extra o complementarias.';else if(x<-0.01)h+='<br>Te quedan '+nf(-x,2)+' h a la semana por debajo de tu jornada de '+nf(jc,1)+' h.';else h+='<br>Coincide con tu jornada de '+nf(jc,1)+' h semanales.';}
+if(d>540)h+='<br>Más de 9 horas al día: solo es posible si tu convenio distribuye así la jornada.';
+if(ph>0)h+='<br>Ingresos: '+eur(d/60*ph)+'/día · '+eur(w/60*ph)+'/semana · '+eur(m/60*ph)+'/mes';
+show('r',h);}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));"""))
 
 P.append(("que-dia-de-la-semana", "¿Qué día de la semana cae? Cualquier fecha, Navidad y Reyes 2027 | CalculadoraDías",
 "Descubre qué día de la semana cae cualquier fecha: Nochebuena 2026 es jueves, Reyes 2027 miércoles. Tu cumpleaños, una boda o el día en que naciste, y cómo cae los próximos años.",
@@ -490,3 +505,44 @@ else R.push(fila('Fin de la garantía (2 años)',addY(a,2),'O lo que dure el sum
 show('r',h+'<table style="margin-top:12px;font-size:.92rem"><tr><th>Qué vence</th><th>Fecha</th><th>Cuándo</th></tr>'+R.join('')+'</table>');}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))
+
+# --- Cuánto paro me corresponde: duración según los días cotizados (art. 269 LGSS) y fecha de fin ---
+S['tools'].insert(5, ("calcular-paro", "¿Cuánto paro me corresponde?", "Días de prestación por desempleo según lo cotizado en los últimos 6 años y fecha en que se acaba.", "Paro"))
+S['aff']["calcular-paro"] = amz("libro entrevista de trabajo", "Libros para preparar entrevistas") + amz("agenda 2027", "Agendas 2027")
+P.append(("calcular-paro", "¿Cuánto paro me corresponde? Calculadora de días y fecha de fin | CalculadoraDías",
+"Calcula cuánto paro te corresponde según los días cotizados en los últimos 6 años (de 120 a 720 días), hasta qué fecha lo cobrarás y cuánto te falta para el siguiente tramo.",
+"""<p class="lead">Pon lo que has trabajado en los últimos 6 años y el día en que empiezas a cobrar. Te decimos cuántos días de paro te corresponden, hasta qué fecha y cuánto te falta para el siguiente tramo.</p>
+<div class="card"><div class="row"><div><label for="an">Años trabajados en los últimos 6 años</label><input id="an" inputmode="numeric" value="3"></div>
+<div><label for="me">Meses (además de los años)</label><input id="me" inputmode="numeric" value="4"></div>
+<div><label for="dc">O días cotizados exactos (opcional)</label><input id="dc" inputmode="numeric" value="" placeholder="Del informe de vida laboral"></div>
+<div><label for="fi">Primer día de paro</label><input id="fi" type="date" data-today></div>
+<div><label for="br">Base reguladora mensual (€, opcional)</label><input id="br" inputmode="decimal" value="" placeholder="Media de tus bases de cotización"></div></div>
+<button onclick="calc()">Calcular mi paro</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Cuenta solo lo cotizado por desempleo en los 6 años anteriores (contratos por cuenta ajena) que no hayas usado ya para cobrar otro paro. Los días exactos los tienes en tu informe de vida laboral de la Seguridad Social. Resultado orientativo: el SEPE es quien reconoce la prestación.</p>
+<h2>Tabla de duración del paro</h2><p>La duración de la prestación contributiva la fija el artículo 269 de la Ley General de la Seguridad Social según los días cotizados en los últimos seis años:</p>
+<table><tr><th>Días cotizados</th><th>Días de paro</th><th>Meses</th></tr>
+<tr><td>De 360 a 539</td><td>120</td><td>4</td></tr><tr><td>De 540 a 719</td><td>180</td><td>6</td></tr><tr><td>De 720 a 899</td><td>240</td><td>8</td></tr>
+<tr><td>De 900 a 1.079</td><td>300</td><td>10</td></tr><tr><td>De 1.080 a 1.259</td><td>360</td><td>12</td></tr><tr><td>De 1.260 a 1.439</td><td>420</td><td>14</td></tr>
+<tr><td>De 1.440 a 1.619</td><td>480</td><td>16</td></tr><tr><td>De 1.620 a 1.799</td><td>540</td><td>18</td></tr><tr><td>De 1.800 a 1.979</td><td>600</td><td>20</td></tr>
+<tr><td>De 1.980 a 2.159</td><td>660</td><td>22</td></tr><tr><td>Desde 2.160</td><td>720</td><td>24 (máximo)</td></tr></table>
+<p>En la práctica: por cada año cotizado tienes unos 4 meses de paro, hasta un máximo de 2 años de prestación con 6 años cotizados. Los días que superan el mínimo de tu tramo no dan más paro: con 539 días cotizados cobras lo mismo que con 360.</p>
+<p><b>Ejemplo:</b> has trabajado 3 años y 4 meses en los últimos 6 años, unos 1.215 días. Estás en el tramo de 1.080 a 1.259 días: te corresponden <b>360 días de paro</b> (12 meses). Si empiezas a cobrar el 1 de diciembre de 2026, el último día de prestación es el 25 de noviembre de 2027. Con 45 días más cotizados habrías llegado al tramo de 420 días.</p>
+<h2>Cuánto se cobra</h2><p>La cuantía se calcula sobre la <b>base reguladora</b>: la media de tus bases de cotización por desempleo de los últimos 180 días trabajados. Los primeros 180 días de paro cobras el <b>70 %</b> de esa base, y a partir del día 181 el porcentaje baja. Además, el SEPE aplica unos importes mínimos y máximos que dependen del IPREM y de si tienes hijos a cargo, y descuenta la cotización a la Seguridad Social y, si toca, el IRPF. Para el importe exacto usa el simulador del <a href="https://www.sepe.es/" rel="noopener" target="_blank">SEPE</a>.</p>
+<h2>Plazos que no debes pasar</h2><ul><li>Tienes <b>15 días hábiles</b> desde el despido o el fin del contrato para pedir el paro sin perder días de prestación.</li><li>Si en el finiquito te pagan vacaciones no disfrutadas, el paro empieza a contar cuando terminan esos días.</li><li>Antes, inscríbete como demandante de empleo en el servicio de empleo de tu comunidad.</li></ul>
+<p>Calcula también tu <a href="calcular-finiquito.html">finiquito</a> y la <a href="indemnizacion-despido.html">indemnización por despido</a>, o cuenta los <a href="dias-habiles.html">días hábiles</a> que te quedan para pedir el paro.</p>""",
+[("¿Cuánto paro me corresponde por año trabajado?", "Unos 4 meses por cada año cotizado: con 1 año (360 días) cobras 120 días, con 2 años 240 días, con 3 años 360 días, y así hasta el máximo de 720 días (2 años) con 6 años o más cotizados."),
+ ("¿Cuántos días tengo que haber trabajado para cobrar el paro?", "Al menos 360 días cotizados por desempleo en los 6 años anteriores, que no se hayan usado para otra prestación. Con menos, puede que tengas derecho al subsidio por desempleo: consúltalo en el SEPE."),
+ ("¿Se pierden los días cotizados que sobran del tramo?", "No te dan más paro: la duración es la del tramo en el que caes. Por eso, si estás cerca del siguiente tramo, unos días más de trabajo pueden darte 2 meses más de prestación."),
+ ("¿Cuándo tengo que pedir el paro?", "En los 15 días hábiles siguientes al despido o al fin del contrato. Si lo pides tarde, no lo pierdes, pero se descuentan de la prestación los días de retraso.")],
+"¿Cuánto paro me corresponde?",
+DATEJS + """const TR=[[360,120],[540,180],[720,240],[900,300],[1080,360],[1260,420],[1440,480],[1620,540],[1800,600],[1980,660],[2160,720]];
+const fd=d=>d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+function calc(){const dc=v('dc');let d=dc>0?Math.round(dc):Math.round(v('an')*365+v('me')*30);const fi=pd('fi')||today,br=v('br');
+if(d>2190)d=2190;let k=-1;TR.forEach((t,i)=>{if(d>=t[0])k=i;});
+if(k<0){show('r','Con <b>'+d+' días</b> cotizados aún no llegas a la prestación contributiva:<b class="big">Te faltan '+(360-d)+' días</b>Necesitas 360 días cotizados en los últimos 6 años. Mientras, pregunta en el SEPE si tienes derecho al subsidio por desempleo.');return;}
+const p=TR[k][1],f=new Date(fi.getFullYear(),fi.getMonth(),fi.getDate()+p-1);
+let h='Te corresponden:<b class="big">'+p+' días de paro ('+(p/30)+' meses)</b>Con '+d.toLocaleString('es-ES')+' días cotizados (tramo de '+TR[k][0].toLocaleString('es-ES')+(k<10?' a '+(TR[k+1][0]-1).toLocaleString('es-ES'):' o más')+')';
+h+='<br>Cobrando desde el '+fd(fi)+', el último día de paro es el <b>'+fmt(f)+'</b>.';
+if(k<10)h+='<br>Con <b>'+(TR[k+1][0]-d)+' días</b> más cotizados pasarías a '+TR[k+1][1]+' días de paro (2 meses más).';
+if(br>0){const m=br*0.7,c=Math.min(180,p);h+='<br>Primeros '+c+' días: unos <b>'+eur(m)+' al mes</b> brutos (70 % de tu base reguladora), antes de aplicar los topes del SEPE.';}
+show('r',h);}"""))

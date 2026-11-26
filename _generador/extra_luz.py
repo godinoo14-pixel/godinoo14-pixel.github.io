@@ -67,19 +67,42 @@ None,
 show('r','Ahorro estimado al año:<b class="big">'+eur(ah)+'</b>Producción: '+nf(pr,0)+' kWh/año · Placas: <b>'+Math.ceil(kp*1000/v('wp'))+'</b> · Inversión: '+eur(inv)+'<br>Amortización: <b>'+(ah>0?nf(inv/ah,1)+' años':'—')+'</b> · Cubre el '+nf(Math.min(100,pr/c*100),0)+' % de tu consumo');}"""))
 
 P.append(("coste-ducha-termo", "¿Cuánto cuesta una ducha con termo eléctrico? Luz y agua | GastoLuz",
-"Calcula cuánto cuesta cada ducha con termo eléctrico en luz y agua y lo que gasta tu familia al mes. En invierno, con el agua más fría, el gasto sube: compruébalo aquí.",
-"""<p class="lead">Calcula lo que pagas en luz y agua por cada ducha y al mes.</p>
-<div class="card"><div class="row"><div><label for="m">Minutos por ducha</label><input id="m" inputmode="decimal" value="8"></div><div><label for="q">Caudal (litros/min)</label><input id="q" inputmode="decimal" value="9"></div>
-<div><label for="tf">Agua fría (°C)</label><input id="tf" inputmode="decimal" value="15"></div><div><label for="tc">Temperatura de la ducha (°C)</label><input id="tc" inputmode="decimal" value="38"></div>
-<div><label for="p">Precio kWh (€)</label><input id="p" inputmode="decimal" value="0,15"></div><div><label for="pa">Precio agua (€/m³)</label><input id="pa" inputmode="decimal" value="2"></div>
-<div><label for="n">Duchas al mes (toda la casa)</label><input id="n" inputmode="numeric" value="90"></div><div><label for="ef">Rendimiento del termo (%)</label><input id="ef" inputmode="decimal" value="85"></div></div>
-<button onclick="calc()">Calcular</button><div class="res" id="r"></div></div>
-<h2>Cómo ahorrar en agua caliente</h2><ul><li>Una alcachofa de bajo caudal (6 L/min) reduce el gasto alrededor de un tercio.</li><li>Programa el termo para que caliente en horas valle.</li><li>Baja el termostato a 55-60 °C: suficiente y con menos pérdidas.</li><li>Cada minuto menos de ducha se nota en la factura.</li></ul>""",
-[("¿Cuánto gasta un termo eléctrico al mes?", "Para una familia de 3-4 personas es habitual entre 15 y 35 € al mes solo en luz, según duchas, temperatura y tarifa."),
- ("¿Es mejor dejar el termo siempre encendido?", "Con un buen aislamiento, lo más eficiente suele ser programarlo para que caliente en las horas más baratas en lugar de mantenerlo siempre a máxima temperatura.")],
-None,
-"""function calc(){const l=v('m')*v('q'),kwh=l*(v('tc')-v('tf'))*1.163/1000/(v('ef')/100||1),cl=kwh*v('p'),ca=l/1000*v('pa'),t=cl+ca,n=v('n');
-show('r','Coste por ducha:<b class="big">'+eur(t)+'</b>Luz: '+eur(cl)+' ('+nf(kwh,2)+' kWh) · Agua: '+eur(ca)+' ('+nf(l,0)+' L)<br>Al mes: <b>'+eur(t*n)+'</b> · Al año: '+eur(t*n*12));}"""))
+"Calcula cuánto cuesta una ducha con termo eléctrico en luz y agua, y lo que gasta tu casa al mes. En invierno el agua llega más fría y el gasto sube: compara invierno y verano con el precio de hoy.",
+"""<p class="lead">Calcula lo que pagas en luz y agua por cada ducha y al mes. Elige la época del año: en invierno el agua de la red llega más fría y el termo tiene que trabajar más.</p>
+<div class="card"><div class="row"><div><label for="ep">Época del año</label><select id="ep"><option value="10">Invierno (agua fría a unos 10 °C)</option><option value="15">Primavera u otoño (unos 15 °C)</option><option value="20">Verano (unos 20 °C)</option><option value="">Escribo yo la temperatura</option></select></div>
+<div><label for="tf">Agua fría (°C)</label><input id="tf" inputmode="decimal" value="10"></div>
+<div><label for="m">Minutos por ducha</label><input id="m" inputmode="decimal" value="8"></div><div><label for="q">Caudal de la ducha (litros/min)</label><input id="q" inputmode="decimal" value="9"></div>
+<div><label for="tc">Temperatura de la ducha (°C)</label><input id="tc" inputmode="decimal" value="38"></div><div><label for="ef">Rendimiento del termo (%)</label><input id="ef" inputmode="decimal" value="85"></div>
+<div><label for="p">Precio de la luz (€/kWh con impuestos)</label><input id="p" inputmode="decimal" value="0,18"></div><div><label for="pa">Precio del agua (€/m³)</label><input id="pa" inputmode="decimal" value="2"></div>
+<div><label for="n">Duchas al mes (toda la casa)</label><input id="n" inputmode="numeric" value="90"></div></div>
+<p class="note" id="pnt">Pon el precio del kWh de tu factura, con impuestos.</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula el coste de una ducha</h2><p>Calentar un litro de agua un grado necesita 1,163 Wh. Por eso: <b>kWh = litros × (temperatura de la ducha − temperatura del agua fría) × 1,163 ÷ 1.000 ÷ rendimiento</b>. Los litros son los minutos por el caudal: una ducha de 8 minutos con una alcachofa de 9 L/min gasta 72 litros. Al coste de la luz se suma el del agua (precio del m³ de tu recibo, con alcantarillado y depuración).</p>
+<table><tr><th>Ducha de 8 min a 38 °C (72 L)</th><th>kWh</th><th>Luz</th><th>Luz + agua</th></tr>
+<tr><td>Invierno (agua a 10 °C)</td><td>2,76</td><td>0,50 €</td><td>0,64 €</td></tr>
+<tr><td>Primavera u otoño (15 °C)</td><td>2,27</td><td>0,41 €</td><td>0,55 €</td></tr>
+<tr><td>Verano (20 °C)</td><td>1,77</td><td>0,32 €</td><td>0,46 €</td></tr></table>
+<p class="note">Con la luz a 0,18 €/kWh, el agua a 2 €/m³ y un termo con un 85 % de rendimiento. La temperatura del agua de la red varía según la ciudad y la época; si quieres afinar, mídela con un termómetro en el grifo de agua fría.</p>
+<p><b>Ejemplo:</b> en una casa de tres personas que se duchan a diario (90 duchas al mes), en invierno las duchas cuestan unos 45 € de luz y 13 € de agua al mes; en verano, la luz baja a unos 29 €. A eso hay que sumarle las pérdidas del termo, que mantiene el agua caliente todo el día: un termo de 80 litros bien aislado pierde del orden de 1 kWh al día, otros 5 € al mes.</p>
+<h2>Cómo ahorrar en agua caliente</h2><ul><li>Una alcachofa de bajo caudal (6 L/min en vez de 9-12) reduce el gasto alrededor de un tercio sin notar mucho la diferencia.</li><li>Con tarifa PVPC o de discriminación horaria, programa el termo con un temporizador para que caliente en horas valle (de 0 a 8 h y fines de semana). Mira las horas más baratas en el <a href="precio-luz-hoy.html">precio de la luz hoy</a>.</li><li>Baja el termostato a unos 55-60 °C: es suficiente para la ducha y reduce pérdidas. No lo bajes mucho más de forma permanente, para evitar la proliferación de legionela.</li><li>Cada minuto menos de ducha ahorra unos 9 litros y, en invierno, unos 6 céntimos.</li></ul>
+<p>Si quieres ver el peso del termo frente al resto de la casa, usa la <a href="consumo-electrodomesticos.html">calculadora de consumo de electrodomésticos</a> o <a href="calcular-factura-luz.html">calcula tu factura de la luz</a>. Para la calefacción, compara el <a href="coste-calefaccion-electrica.html">radiador eléctrico</a> con la <a href="estufa-butano-vs-electrica.html">estufa de butano</a>.</p>""",
+[("¿Cuánto gasta un termo eléctrico al mes?", "Para una familia de 3-4 personas es habitual entre 25 y 55 € al mes solo en luz, contando las duchas y las pérdidas del termo. En invierno puede costar más de la mitad que en verano porque el agua entra más fría."),
+ ("¿Cuánto cuesta una ducha de 10 minutos con termo eléctrico?", "Con una alcachofa de 9 L/min (90 litros) a 38 °C, unos 3,4 kWh en invierno: algo más de 60 céntimos de luz a 0,18 €/kWh, más unos 18 céntimos de agua."),
+ ("¿Es mejor dejar el termo siempre encendido o apagarlo?", "Con un buen aislamiento, lo más eficiente suele ser programarlo para que caliente en las horas más baratas y que mantenga el agua el resto del día. Encenderlo y apagarlo varias veces al día no ahorra mucho porque tiene que recalentar toda el agua."),
+ ("¿Por qué gasto más luz en invierno con el termo?", "Porque el agua de la red llega más fría: si entra a 10 °C en vez de a 20 °C, el termo tiene que subirla 28 grados en lugar de 18 para una ducha a 38 °C, más de un 50 % de energía extra.")],
+"¿Cuánto cuesta una ducha con termo eléctrico?",
+"""let HM=null;
+document.getElementById('ep').addEventListener('change',()=>{const x=document.getElementById('ep').value;if(x)document.getElementById('tf').value=x;calc();});
+function calc(){const l=v('m')*v('q'),dt=v('tc')-v('tf'),pr=HM||v('p');if(l<=0||dt<=0){show('r','Revisa los minutos, el caudal y que la ducha esté más caliente que el agua fría.');return;}
+const kwh=l*dt*1.163/1000/((v('ef')||100)/100),cl=kwh*pr,ca=l/1000*v('pa'),t=cl+ca,n=v('n');
+let h='Coste por ducha:<b class="big">'+eur(t)+'</b>Luz: '+eur(cl)+' ('+nf(kwh,2)+' kWh a '+nf(pr,3)+' €/kWh'+(HM?', PVPC de hoy':'')+') · Agua: '+eur(ca)+' ('+nf(l,0)+' L)<br>Al mes: <b>'+eur(t*n)+'</b> ('+eur(cl*n)+' de luz) · Al año: '+eur(t*n*12);
+if(v('q')>6){const s6=(v('q')-6)*v('m')*(dt*1.163/1000/((v('ef')||100)/100)*pr+v('pa')/1000)*n;h+='<br>Con una alcachofa de 6 L/min ahorrarías unos <b>'+eur(s6)+' al mes</b>.';}
+show('r',h);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;
+const pv=H.filter(x=>x[0]<8).reduce((s,x)=>s+x[1],0)/8*1.0511*1.21,pm=H.reduce((s,x)=>s+x[1],0)/H.length*1.0511*1.21;window.PV=pv;window.PM=pm;
+document.getElementById('pnt').innerHTML='Tarifa regulada (PVPC) de Red Eléctrica hoy, con impuestos: media del día <b>'+nf(pm,3)+' €/kWh</b>; si el termo calienta de 0 a 8 h, <b>'+nf(pv,3)+' €/kWh</b>. <a href="#" onclick="HM=window.PV;calc();return false">Calcular con el termo de noche</a> · <a href="#" onclick="HM=window.PM;calc();return false">con la media de hoy</a> · <a href="#" onclick="HM=null;calc();return false">usar mi precio</a>';calc();}).catch(()=>{document.getElementById('pnt').textContent='Usamos el precio que escribas: pon el de tu factura con impuestos.';calc();});
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
 
 # --- Precio de la luz hoy (PVPC por horas desde Red Eléctrica; pvpc.json lo actualiza un workflow del repo) ---
 S['tools'].insert(0, ("precio-luz-hoy", "Precio de la luz hoy por horas", "PVPC hora a hora, las horas más baratas y las más caras, actualizado a diario.", "Precio luz hoy"))
@@ -438,5 +461,50 @@ show('r',h);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;
 const pm=H.reduce((s,x)=>s+x[1],0)/H.length*1.0511*1.21;window.PM=pm;
 document.getElementById('pnt').innerHTML='Hoy, la media de las 24 horas de la tarifa regulada (PVPC) de Red Eléctrica es <b>'+nf(pm,3)+' €/kWh</b> con impuestos. Cambia mucho de un día a otro y entre invierno y verano, así que para el cálculo anual es mejor el precio medio de tu factura. <a href="#" onclick="HM=window.PM;calc();return false">Calcular con el PVPC de hoy</a> · <a href="#" onclick="HM=null;calc();return false">usar mi precio</a>';calc();}).catch(()=>{document.getElementById('pnt').textContent='Usamos el precio que escribas: pon el de tu factura con impuestos.';calc();});
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Consumo de la placa de inducción y la vitrocerámica: coste con el PVPC de hoy y comparación ---
+S['tools'].insert(6, ("consumo-induccion-vitroceramica", "Inducción o vitrocerámica: cuánto gasta", "Lo que cuesta cocinar al día y al mes con tu placa y cuánto ahorras con inducción.", "Placa"))
+S['aff']["consumo-induccion-vitroceramica"] = amz("placa induccion 3 zonas", "Placas de inducción") + amz("bateria cocina induccion", "Baterías aptas para inducción") + amz("medidor consumo electrico enchufe", "Medidores de consumo")
+P.append(("consumo-induccion-vitroceramica", "¿Cuánto gasta una placa de inducción o una vitrocerámica? | GastoLuz",
+"Calcula cuánto gasta tu placa de inducción o vitrocerámica al día y al mes con el precio de la luz de hoy a la hora de comer y de cenar, y cuánto ahorras con inducción.",
+"""<p class="lead">Dinos qué placa tienes y cuánto cocinas, y te calculamos lo que gasta al día y al mes (más abajo tienes el gasto de una comida de Navidad). También verás cuánto gastarías con el otro tipo de placa.</p>
+<div class="card"><div class="row"><div><label for="ti">Tu placa</label><select id="ti"><option value="i">Inducción</option><option value="v">Vitrocerámica (radiante)</option></select></div>
+<div><label for="kw">Potencia de la zona que más usas (kW)</label><input id="kw" inputmode="decimal" value="2"></div>
+<div><label for="ni">Nivel medio de uso (% de la potencia)</label><input id="ni" inputmode="decimal" value="60"></div>
+<div><label for="mi">Minutos de cocina al día (sumando zonas)</label><input id="mi" inputmode="decimal" value="45"></div>
+<div><label for="dm">Días que cocinas al mes</label><input id="dm" inputmode="numeric" value="30"></div>
+<div><label for="p">Precio de la luz (€/kWh con impuestos)</label><input id="p" inputmode="decimal" value="0,18"></div></div>
+<p class="note" id="pnt">Pon el precio del kWh de tu factura, con impuestos.</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula lo que gasta la placa</h2><p><b>Consumo (kWh) = potencia de la zona (kW) × nivel de uso × horas</b>, y el coste es ese consumo × precio del kWh. La potencia máxima de una zona va de 1,2 kW en las pequeñas a 3 kW o más en las grandes, pero casi nunca se cocina al máximo: al hervir se usa toda la potencia unos minutos y luego se baja. Por eso el nivel medio de uso suele estar entre el 50 y el 70 %.</p>
+<p>La diferencia entre placas está en la <b>eficiencia</b>: la inducción calienta directamente el fondo de la olla y aprovecha aproximadamente el 85 % de la energía, mientras que la vitrocerámica radiante calienta primero el cristal y aprovecha en torno al 70-75 %. Para el mismo guiso, la vitrocerámica gasta alrededor de un 15-20 % más y tarda más en hervir.</p>
+<table><tr><th>Uso diario (2 kW al 60 %)</th><th>Inducción al mes</th><th>Vitrocerámica al mes</th></tr>
+<tr><td>30 min</td><td>18 kWh · 3,24 €</td><td>21,2 kWh · 3,82 €</td></tr>
+<tr><td>45 min</td><td>27 kWh · 4,86 €</td><td>31,9 kWh · 5,74 €</td></tr>
+<tr><td>90 min</td><td>54 kWh · 9,72 €</td><td>63,8 kWh · 11,47 €</td></tr></table>
+<p class="note">Con la luz a 0,18 €/kWh y 30 días al mes; la vitrocerámica, estimada con un 85 % frente a un 72 % de eficiencia.</p>
+<p><b>Ejemplo:</b> una comida de Navidad con un caldo de 2 horas a fuego medio (1,2 kW de media) y 40 minutos más de otras zonas a 1,5 kW gasta unos 3,4 kWh en inducción: algo más de 60 céntimos a 0,18 €/kWh. Cocinar es de lo que menos pesa en la factura; el horno, la calefacción eléctrica y el termo gastan mucho más.</p>
+<h2>¿Compensa cambiar la vitrocerámica por inducción?</h2><p>Por ahorro de luz casi nunca: con un uso normal la diferencia es de 1 a 3 € al mes, así que una placa de inducción de 300-400 € tardaría muchos años en pagarse solo con lo que ahorra. Compensa cuando la vitro se estropea o si valoras cocinar más rápido, una limpieza más fácil y que la placa no quede ardiendo. Ten en cuenta que la inducción necesita menaje con fondo magnético (si un imán se pega al fondo, sirve).</p>
+<h2>Trucos para gastar menos al cocinar</h2><ul><li>Usa una zona del tamaño de la olla y tápala: hierve antes y gasta menos.</li><li>En vitrocerámica, apaga 5 minutos antes de terminar: el calor residual acaba la cocción.</li><li>La olla exprés reduce el tiempo de legumbres y guisos a menos de la mitad.</li><li>Si tienes tarifa PVPC, la cena suele caer en horas caras; mira el <a href="precio-luz-hoy.html">precio de la luz por horas</a> para lo que puedas adelantar.</li></ul>
+<p>Compara con el <a href="consumo-freidora-aire.html">consumo de la freidora de aire y el horno</a>, revisa qué <a href="potencia-contratada.html">potencia necesitas contratar</a> si usas varias zonas a la vez o mira el <a href="consumo-electrodomesticos.html">consumo de todos tus electrodomésticos</a>.</p>""",
+[("¿Cuánto gasta una placa de inducción al mes?", "Con unos 45 minutos de cocina al día, entre 25 y 30 kWh al mes: unos 5 € con la luz a 0,18 €/kWh. Una familia que cocina mucho puede llegar a 10 € al mes."),
+ ("¿Qué gasta más, la inducción o la vitrocerámica?", "La vitrocerámica: aprovecha en torno al 70-75 % de la energía frente a aproximadamente el 85 % de la inducción, así que para cocinar lo mismo gasta alrededor de un 15-20 % más y tarda más."),
+ ("¿Cuántos kW tiene una placa de inducción?", "Cada zona tiene entre 1,2 y 3,7 kW, y la placa completa suele sumar 7 kW o más. Las placas limitan la potencia total, pero si usas varias zonas a la vez junto con el horno puede saltar el automático con 3,45 kW contratados."),
+ ("¿Cuánto cuesta cocinar una hora con inducción?", "Una zona de 2 kW al 60 % consume 1,2 kWh en una hora: unos 22 céntimos con la luz a 0,18 €/kWh. A máxima potencia serían 2 kWh, unos 36 céntimos.")],
+"¿Cuánto gasta una placa de inducción o una vitrocerámica?",
+"""let HM=null;const EF={i:0.85,v:0.72};
+function calc(){const t=document.getElementById('ti').value,o=t=='i'?'v':'i',kw=v('kw'),ni=v('ni')/100,mi=v('mi'),dm=v('dm'),pr=HM||v('p');
+if(kw<=0||mi<=0){show('r','Escribe la potencia de la zona y los minutos de cocina.');return;}
+const kd=kw*ni*mi/60,cd=kd*pr,km=kd*dm,cm=km*pr,ko=km*EF[t]/EF[o],co=ko*pr,N={i:'inducción',v:'vitrocerámica'};
+const ct=x=>x<1?nf(x*100,1)+' céntimos':eur(x);
+let h='Tu placa de '+N[t]+' gasta al mes:<b class="big">'+eur(cm)+'</b>'+nf(km,1)+' kWh al mes · al día: '+nf(kd,2)+' kWh, '+ct(cd)+' · al año: <b>'+eur(cm*12)+'</b>';
+h+='<br>Precio usado: '+nf(pr,3)+' €/kWh'+(HM?' (PVPC de hoy con impuestos)':'')+'.';
+h+='<br>Con '+N[o]+' gastarías unos '+eur(co)+' al mes: '+(t=='v'?'<b>ahorrarías '+eur(cm-co)+' al mes</b> ('+eur((cm-co)*12)+' al año) con inducción.':'la inducción te ahorra <b>'+eur(co-cm)+' al mes</b> frente a la vitrocerámica.');
+show('r',h);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;
+const P={};H.forEach(x=>{P[x[0]]=x[1]*1.0511*1.21;});const pc=(P[13]+P[14])/2,pz=(P[20]+P[21])/2;window.PM=(pc+pz)/2;
+document.getElementById('pnt').innerHTML='Tarifa regulada (PVPC) de Red Eléctrica hoy, con impuestos: a la hora de comer (13-15 h) <b>'+nf(pc,3)+' €/kWh</b> y a la hora de cenar (20-22 h) <b>'+nf(pz,3)+' €/kWh</b>. <a href="#" onclick="HM=window.PM;calc();return false">Calcular con el PVPC de hoy</a> · <a href="#" onclick="HM=null;calc();return false">usar mi precio</a>';calc();}).catch(()=>{document.getElementById('pnt').textContent='Usamos el precio que escribas: pon el de tu factura con impuestos.';calc();});
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

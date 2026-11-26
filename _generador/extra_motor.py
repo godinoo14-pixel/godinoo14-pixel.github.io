@@ -18,19 +18,29 @@ S['tools'] += [("equivalencia-neumaticos", "Equivalencia de neumáticos", "¿Pue
                ("cuota-financiacion-coche", "Cuota de financiación de un coche", "Cuota mensual, intereses y coste total del préstamo.", "")]
 
 P.append(("equivalencia-neumaticos", "Equivalencia de neumáticos: calculadora de medidas y velocímetro | CocheCuentas",
-"¿Puedo montar otra medida de rueda? Compara dos neumáticos (por ejemplo 205/55 R16 y 225/45 R17): diferencia de diámetro, error del velocímetro y si entra en el ±3 % aceptado.",
+"¿Puedo montar otra medida de rueda? Compara dos neumáticos (205/55 R16 y 225/45 R17, o una medida de invierno): diferencia de diámetro, error del velocímetro y el margen del ±3 %.",
 """<p class="lead">Compara la medida original con la que quieres montar. Tienes los datos en el flanco: por ejemplo 205/55 R16.</p>
 <div class="card"><b>Medida original</b><div class="row"><div><label for="a1">Ancho (mm)</label><input id="a1" inputmode="numeric" value="205"></div><div><label for="b1">Perfil (%)</label><input id="b1" inputmode="numeric" value="55"></div></div><label for="c1">Llanta (pulgadas)</label><input id="c1" inputmode="numeric" value="16">
 <b style="display:block;margin-top:16px">Medida nueva</b><div class="row"><div><label for="a2">Ancho (mm)</label><input id="a2" inputmode="numeric" value="225"></div><div><label for="b2">Perfil (%)</label><input id="b2" inputmode="numeric" value="45"></div></div><label for="c2">Llanta (pulgadas)</label><input id="c2" inputmode="numeric" value="17">
-<button onclick="calc()">Comparar</button><div class="res" id="r"></div></div>
+<button onclick="calc()">Comparar</button><div class="res" id="r" aria-live="polite"></div></div>
 <p class="note">Orientativo. Para montar una medida distinta a la de la ficha técnica debe estar homologada para tu coche (ficha técnica o certificado del fabricante); si no, puede ser motivo de rechazo en la ITV.</p>
-<h2>Cómo se calcula el diámetro</h2><p>Diámetro = llanta × 25,4 + 2 × (ancho × perfil / 100). Un 205/55 R16 mide unos 632 mm. La regla habitual es no superar un 3 % de diferencia con la medida original para no alterar el velocímetro, el ABS ni el control de estabilidad.</p>""",
+<h2>Cómo se calcula el diámetro</h2><p>Diámetro = llanta × 25,4 + 2 × (ancho × perfil / 100). Un 205/55 R16 mide unos 632 mm. La regla habitual es no superar un 3 % de diferencia con la medida original para no alterar el velocímetro, el ABS ni el control de estabilidad.</p>
+<table><tr><th>Medida</th><th>Diámetro</th><th>Frente a 205/55 R16</th></tr>
+<tr><td>205/55 R16</td><td>632 mm</td><td>—</td></tr><tr><td>215/55 R16</td><td>643 mm</td><td>+1,7 %</td></tr>
+<tr><td>225/45 R17</td><td>634 mm</td><td>+0,4 %</td></tr><tr><td>205/60 R16</td><td>652 mm</td><td>+3,2 %</td></tr><tr><td>195/65 R15</td><td>634 mm</td><td>+0,4 %</td></tr></table>
+<h2>Neumáticos de invierno, all season y cadenas</h2><p>Si en invierno vas a la montaña o vives en zona de nieve, mira el flanco: los neumáticos marcados con <b>M+S</b> (barro y nieve) o con el símbolo del <b>copo de nieve en la montaña (3PMSF)</b> son neumáticos de invierno o all season. Cuando la DGT activa la señal de <b>«cadenas o neumáticos especiales obligatorios»</b>, estos neumáticos sirven en lugar de las cadenas; con neumáticos de verano tienes que montar cadenas o fundas textiles homologadas.</p>
+<p>Un truco habitual es montar en invierno una llanta una pulgada más pequeña con un perfil más alto (por ejemplo, 205/55 R16 en vez de 225/45 R17): el neumático es más barato, agarra mejor en nieve y el diámetro casi no cambia. Compruébalo en la calculadora y asegúrate de que la medida está homologada para tu coche. Antes de un viaje largo, revisa también la presión en frío y que el dibujo tenga al menos 1,6 mm, el mínimo legal (en invierno conviene bastante más).</p>
+<p>Si sales de viaje estas fiestas, calcula el <a href="coste-viaje-coche.html">coste del viaje en coche</a>, mira la <a href="distancia-frenado.html">distancia de frenado con lluvia, nieve o hielo</a> y busca las <a href="gasolineras-baratas.html">gasolineras más baratas</a> de tu ruta.</p>""",
 [("¿Qué significa 205/55 R16?", "205 es el ancho en milímetros, 55 el perfil (altura del flanco en % del ancho) y R16 el diámetro de la llanta en pulgadas."),
- ("¿Puedo poner neumáticos más anchos?", "Solo si la medida figura en la ficha técnica u homologación del vehículo. Además el diámetro total debe ser similar para que el velocímetro marque bien.")],
+ ("¿Puedo poner neumáticos más anchos?", "Solo si la medida figura en la ficha técnica u homologación del vehículo. Además el diámetro total debe ser similar para que el velocímetro marque bien."),
+ ("¿Los neumáticos de invierno sustituyen a las cadenas?", "Sí. Cuando la señal obliga a llevar cadenas o neumáticos especiales, los neumáticos de invierno o all season marcados con M+S o con el símbolo del copo de nieve en la montaña (3PMSF) son válidos en lugar de las cadenas."),
+ ("¿Cuál es la profundidad mínima del dibujo de un neumático?", "1,6 mm en las ranuras principales. Por debajo es motivo de multa y de rechazo en la ITV, y en mojado o con nieve se recomienda cambiarlos bastante antes, hacia los 3-4 mm.")],
 None,
 """function dm(a,b,c){return c*25.4+2*a*b/100;}
 function calc(){const d1=dm(v('a1'),v('b1'),v('c1')),d2=dm(v('a2'),v('b2'),v('c2')),p=(d2-d1)/d1*100,ok=Math.abs(p)<=3;
-show('r','Diferencia de diámetro:<b class="big" style="color:'+(ok?'#2f9e44':'#e03131')+'">'+(p>0?'+':'')+nf(p,2)+' %</b>Original: '+nf(d1,0)+' mm · Nueva: '+nf(d2,0)+' mm<br>Cuando el velocímetro marca 100 km/h, vas realmente a <b>'+nf(100*d2/d1,1)+' km/h</b><br>'+(ok?'Dentro del margen habitual del ±3 %.':'Fuera del margen del ±3 %: no recomendable.'));}"""))
+if(!(d1>0&&d2>0)){show('r','Escribe ancho, perfil y llanta de las dos medidas.');return;}
+show('r','Diferencia de diámetro:<b class="big" style="color:'+(ok?'#2f9e44':'#e03131')+'">'+(p>0?'+':'')+nf(p,2)+' %</b>Original: '+nf(d1,0)+' mm · Nueva: '+nf(d2,0)+' mm<br>Cuando el velocímetro marca 100 km/h, vas realmente a <b>'+nf(100*d2/d1,1)+' km/h</b><br>'+(ok?'Dentro del margen habitual del ±3 %.':'Fuera del margen del ±3 %: no recomendable.'));}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));"""))
 
 P.append(("renting-vs-compra", "Renting o comprar coche: ¿qué sale más barato? Calculadora 2026 | CocheCuentas",
 "Renting o compra: compara el coste total de cada opción en los mismos años, con valor de reventa, seguro, mantenimiento, impuestos y, si financias, los intereses. Te decimos cuál sale más barato y por cuánto.",
@@ -555,4 +565,52 @@ const nxt=L.filter(x=>dd(h,x[0])>=0).slice(0,6);
 r+='<table style="margin-top:12px;font-size:.92rem"><tr><th>ITV</th><th>Fecha límite</th><th>Desde</th></tr>'+nxt.map(x=>{const s=new Date(x[0]);s.setDate(s.getDate()-30);return '<tr><td>'+(x[1]>0?'A los '+x[1]+' años':'Actual')+'</td><td><b>'+fc(x[0])+'</b></td><td>'+fc(s)+'</td></tr>';}).join('')+'</table>';
 show('r',r);}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Cuánto cuesta transferir un coche: ITP con el valor fiscal de Hacienda + tasa DGT ---
+S['tools'].insert(3, ("transferencia-coche", "¿Cuánto cuesta transferir un coche?", "ITP con el valor fiscal de Hacienda, tasa de la DGT y total del cambio de nombre de un coche usado.", "Transferencia"))
+S['aff']["transferencia-coche"] = SEG + ext(INFORME_URL, "Informe del historial antes de comprar") + amz("portadocumentos coche", "Portadocumentos para el coche")
+P.append(("transferencia-coche", "Cuánto cuesta transferir un coche: calculadora de ITP y tasa DGT | CocheCuentas",
+"Calcula cuánto cuesta el cambio de nombre de un coche de segunda mano: ITP sobre el valor fiscal de Hacienda o el precio de compra, tasa de la DGT de 55,70 € y gestoría. Con ejemplo y tabla por antigüedad.",
+"""<p class="lead">Si compras un coche usado a un particular, el cambio de titularidad tiene dos gastos fijos: el <b>impuesto de transmisiones (ITP)</b> que pagas a tu comunidad y la <b>tasa de la DGT</b>. Mete el precio y la antigüedad del coche y te decimos cuánto pagarás en total.</p>
+<div class="card"><div class="row"><div><label for="ve">¿A quién se lo compras?</label><select id="ve"><option value="p">A un particular</option><option value="e">A un concesionario o compraventa (con factura)</option></select></div>
+<div><label for="tv">Tipo de vehículo</label><select id="tv"><option value="55.70">Coche, furgoneta o moto (tasa 55,70 €)</option><option value="27.85">Ciclomotor (tasa 27,85 €)</option></select></div>
+<div><label for="pc">Precio de compra (€)</label><input id="pc" inputmode="decimal" value="8000"></div>
+<div><label for="pn">Valor de tablas de Hacienda del modelo nuevo (€)</label><input id="pn" inputmode="decimal" value="22000"></div>
+<div><label for="fm">Fecha de primera matriculación</label><input id="fm" type="date" value="2020-03-15"></div>
+<div><label for="it">Tipo de ITP de tu comunidad (%)</label><input id="it" inputmode="decimal" value="4"></div>
+<div><label for="ge">Gestoría (€, opcional)</label><input id="ge" inputmode="decimal" value="0"></div></div>
+<button onclick="calc()">Calcular transferencia</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">El valor de tablas es el «precio medio de venta» del modelo nuevo que publica Hacienda cada año en la Orden de precios medios (BOE). Lo encuentras en el programa de valoración de vehículos de la agencia tributaria de tu comunidad o en el propio modelo 620/621. La fecha de primera matriculación está en el permiso de circulación.</p>
+<h2>Cómo se calcula el ITP de un coche usado</h2><p>Hacienda no se fía solo del precio que pones en el contrato. Calcula un <b>valor fiscal</b>: el precio medio del modelo nuevo × el porcentaje de su antigüedad. El impuesto se paga sobre la cantidad <b>mayor</b> entre ese valor y el precio de compra: <b>ITP = máx.(precio de compra, valor fiscal) × tipo de tu comunidad</b>. Si declaras un precio por debajo del valor de tablas, lo normal es que te llegue después una liquidación complementaria por la diferencia.</p>
+<table><tr><th>Antigüedad</th><th>% del valor nuevo</th><th>Valor fiscal (modelo de 20.000 €)</th><th>ITP al 4 %</th></tr>
+<tr><td>Hasta 1 año</td><td>100 %</td><td>20.000 €</td><td>800 €</td></tr>
+<tr><td>Más de 1 y hasta 2</td><td>84 %</td><td>16.800 €</td><td>672 €</td></tr>
+<tr><td>Más de 4 y hasta 5</td><td>47 %</td><td>9.400 €</td><td>376 €</td></tr>
+<tr><td>Más de 7 y hasta 8</td><td>28 %</td><td>5.600 €</td><td>224 €</td></tr>
+<tr><td>Más de 10 y hasta 11</td><td>17 %</td><td>3.400 €</td><td>136 €</td></tr>
+<tr><td>Más de 12 años</td><td>10 %</td><td>2.000 €</td><td>80 €</td></tr></table>
+<p class="note">Porcentajes de la tabla de antigüedad de la Orden de precios medios de venta de Hacienda: 100, 84, 67, 56, 47, 39, 34, 28, 24, 19, 17, 13 y 10 % a partir de 12 años.</p>
+<p><b>Ejemplo:</b> compras por 8.000 € un compacto matriculado en marzo de 2020 cuyo modelo nuevo vale 22.000 € en las tablas. Con algo más de 6 años, Hacienda lo valora al 34 %: 7.480 €. Como pagaste más, el ITP se calcula sobre los 8.000 €: al 4 % son 320 €. Sumando la tasa de la DGT (55,70 €), el cambio de nombre te cuesta <b>375,70 €</b>, más la gestoría si no lo haces tú.</p>
+<h2>¿Qué tipo de ITP aplica mi comunidad?</h2><p>El tipo general de la ley estatal para vehículos es el 4 %, y es el que ponemos por defecto, pero el ITP está cedido a las comunidades autónomas: varias aplican tipos distintos, y algunas tienen cuotas fijas o rebajas para coches antiguos o de poca cilindrada. Comprueba el tipo en la web de la agencia tributaria de la comunidad donde vives (es la del comprador, no la del vendedor) y escríbelo en la casilla.</p>
+<h2>Pasos para hacer la transferencia</h2><ul><li><b>Contrato de compraventa</b> firmado por los dos, con fecha, precio, matrícula y bastidor.</li><li><b>Pago del ITP</b> con el modelo 620 o 621 de tu comunidad en el plazo de un mes desde la compra.</li><li><b>Tasa de la DGT</b> (55,70 € para turismos y motos; 27,85 € para ciclomotores) y solicitud de cambio de titularidad en la sede de la DGT, en una jefatura o con un gestor.</li><li>El vendedor debe <b>notificar la venta</b> a la DGT para que las multas y el impuesto de circulación dejen de llegarle.</li></ul>
+<p>Antes de pagar, revisa el <a href="historial-coche-matricula.html">historial del coche por matrícula</a> y cuándo le toca la <a href="cuando-pasar-itv.html">próxima ITV</a>. Si vas a financiarlo, calcula la <a href="cuota-financiacion-coche.html">cuota del préstamo</a>, y mira cuánto <a href="depreciacion-coche.html">valdrá dentro de unos años</a>.</p>""",
+[("¿Cuánto cuesta cambiar de nombre un coche de segunda mano?", "La tasa de la DGT (55,70 € en coches y motos) más el ITP, que en la mayoría de los casos es un porcentaje (el 4 % por defecto en la ley estatal) del precio de compra o del valor fiscal de Hacienda, el que sea mayor. En un coche de unos 8.000 € suele salir entre 350 y 400 € en total, más la gestoría si la usas."),
+ ("¿Quién paga la transferencia del coche, el comprador o el vendedor?", "Salvo pacto en contrario, el ITP lo paga el comprador, que es quien adquiere el coche. La tasa de la DGT también la suele pagar el comprador, aunque se puede acordar otra cosa en el contrato."),
+ ("¿Si compro en un concesionario pago ITP?", "No. Si el vendedor es un profesional que te da factura, la venta lleva IVA (ya incluido en el precio) y no pagas ITP. Solo pagas la tasa de la DGT, que muchas veces el concesionario incluye en el precio."),
+ ("¿Qué pasa si pongo en el contrato un precio más bajo?", "El ITP se calcula sobre el mayor entre el precio declarado y el valor de tablas de Hacienda. Si declaras menos que ese valor, la comunidad puede reclamarte la diferencia con intereses.")],
+"¿Cuánto cuesta transferir un coche?",
+"""const DEP=[100,84,67,56,47,39,34,28,24,19,17,13,10];
+function calc(){const e=document.getElementById('ve').value=='e',ta=parseFloat(document.getElementById('tv').value),pc=v('pc'),pn=v('pn'),it=v('it'),ge=v('ge');
+const s=document.getElementById('fm').value;let a=0;if(s){const [y,m,d]=s.split('-').map(Number);a=(Date.now()-new Date(y,m-1,d))/31557600000;}if(a<0)a=0;
+const i=a<=1?0:Math.min(12,Math.ceil(a)-1),p=DEP[i],vf=pn*p/100,base=Math.max(pc,vf),itp=e?0:base*it/100,tot=itp+ta+ge;
+let h='Coste total de la transferencia:<b class="big">'+eur(tot)+'</b>';
+if(e)h+='Compra a un profesional: <b>sin ITP</b> (la venta lleva IVA en la factura) · Tasa DGT: '+eur(ta)+(ge>0?' · Gestoría: '+eur(ge):'');
+else{h+='ITP: <b>'+eur(itp)+'</b> · Tasa DGT: '+eur(ta)+(ge>0?' · Gestoría: '+eur(ge):'');
+h+='<br>Antigüedad: '+nf(a,1)+' años → Hacienda lo valora al <b>'+p+' %</b> del modelo nuevo: valor fiscal '+eur(vf)+'.';
+if(pn<=0)h+='<br>Sin valor de tablas, calculamos sobre el precio de compra.';
+else if(pc<vf)h+='<br>Tu precio ('+eur(pc)+') es menor que el valor fiscal: el ITP se calcula sobre <b>'+eur(vf)+'</b>. Si lo declaras por el precio, podrían reclamarte '+eur((vf-pc)*it/100)+' más.';
+else h+='<br>El precio de compra es mayor que el valor fiscal: el ITP se calcula sobre el precio, <b>'+eur(pc)+'</b>.';}
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))
