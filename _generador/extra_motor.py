@@ -92,6 +92,7 @@ P.append(("historial-coche-matricula", "Historial de un coche por matrícula gra
 <a class="afl" href=\"""" + INFORME_URL + """\" rel="sponsored nofollow noopener" target="_blank" style="background:#d9480f;color:#fff;border-color:#d9480f">Ver informe completo →</a></div>
 <h2>Qué te dice la matrícula de un coche</h2><p>Las matrículas españolas actuales se asignan en orden desde septiembre de 2000, así que sus tres letras indican la fecha aproximada en que el coche se matriculó por primera vez en España. Con esa fecha sabemos su antigüedad y su calendario de ITV. La etiqueta medioambiental sale del registro oficial de la DGT, que actualizamos cada día.</p>
 <h2>Calendario de ITV de un turismo particular</h2><table><tr><th>Antigüedad</th><th>Frecuencia</th></tr><tr><td>Menos de 4 años</td><td>Exento</td></tr><tr><td>De 4 a 10 años</td><td>Cada 2 años</td></tr><tr><td>Más de 10 años</td><td>Cada año</td></tr></table>
+<p>¿Quieres el calendario completo de tus próximas inspecciones, también para motos y ciclomotores, y saber desde qué día puedes adelantarla sin perder validez? Usa la calculadora de <a href="cuando-pasar-itv.html">cuándo pasar la ITV</a>.</p>
 <h2>Qué revisar antes de comprar un coche usado</h2><ul><li>Que la fecha de matriculación cuadre con lo que dice el anuncio.</li><li>Que la ITV esté en vigor y los kilómetros sean coherentes con la antigüedad (unos 15.000 km al año de media).</li><li>Número de propietarios, cargas o embargos: vienen en el informe completo del vehículo.</li><li>La etiqueta medioambiental, si vas a circular por zonas de bajas emisiones.</li></ul>
 <p class="note">La fecha es aproximada (margen de pocas semanas) y corresponde a la matriculación en España: un coche importado puede ser más antiguo. La ITV es orientativa; la fecha exacta está en la tarjeta ITV o en la pegatina del parabrisas. Etiqueta: fichero abierto de distintivos ambientales de la DGT.</p>""",
 [("¿Cómo saber el año de un coche por la matrícula?", "En las matrículas actuales (1234 BCD) las tres letras avanzan en orden desde el año 2000, así que indican el mes y año aproximados de matriculación. Escríbela arriba y te lo calculamos."),
@@ -504,5 +505,54 @@ if(c>lim)h+='<br>Para bajar del límite necesitarías, según cada persona, entr
 let tb='<table style="margin-top:10px;font-size:.9rem"><tr><th>Dentro de</th><th>Sangre</th><th>Aire</th></tr>';[0,1,2,3,4,6].forEach(x=>{const cx=Math.max(0,c0-0.15*(t+x));tb+='<tr><td>'+(x?x+' h':'Ahora')+'</td><td>'+nf(cx,2)+' g/l</td><td>'+(cx/2>lim/2?'<b>'+nf(cx/2,2)+' mg/l</b>':nf(cx/2,2)+' mg/l')+'</td></tr>';});
 h+=tb+'</table><span class="note">Estimación orientativa con eliminación media de 0,15 g/l por hora. Si has bebido, no conduzcas.</span>';
 show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Cuándo pasar la ITV: calendario de inspecciones según RD 920/2017 ---
+S['tools'].insert(2, ("cuando-pasar-itv", "¿Cuándo me toca pasar la ITV?", "Fecha de tu próxima ITV y las siguientes, para coche, moto o ciclomotor, y desde cuándo puedes adelantarla.", "ITV"))
+S['aff']["cuando-pasar-itv"] = amz("kit emergencia coche triangulos v16", "Luz V16 y kit de emergencia") + amz("lampara h7 coche", "Lámparas para faros") + amz("escobillas limpiaparabrisas", "Escobillas limpiaparabrisas")
+P.append(("cuando-pasar-itv", "Cuándo pasar la ITV: calcula la fecha de tu próxima ITV | CocheCuentas",
+"Cuándo toca pasar la ITV de tu coche, moto o ciclomotor según la fecha de matriculación: próxima inspección, desde qué día puedes adelantarla y calendario de las siguientes.",
+"""<p class="lead">Elige el tipo de vehículo y la fecha de primera matriculación (viene en el permiso de circulación). Te decimos cuándo te toca la ITV, desde qué día puedes pasarla sin perder días y las fechas de las siguientes.</p>
+<div class="card"><div class="row"><div><label for="t">Tipo de vehículo</label><select id="t"><option value="c">Turismo (coche particular)</option><option value="m">Moto o cuatriciclo (quad)</option><option value="k">Ciclomotor</option></select></div>
+<div><label for="a">Fecha de primera matriculación</label><input id="a" type="date" value="2018-03-15"></div>
+<div><label for="u">Caducidad de tu ITV actual (opcional)</label><input id="u" type="date"></div>
+<div><label for="h">Calcular a fecha de</label><input id="h" type="date" data-today></div></div>
+<p class="note">Si alguna vez pasaste la ITV con retraso, las fechas se desplazan: pon la caducidad que aparece en tu tarjeta ITV o en la pegatina del parabrisas y calculamos a partir de ella.</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cada cuánto se pasa la ITV</h2><table><tr><th>Vehículo</th><th>Primera ITV</th><th>Después</th></tr>
+<tr><td>Turismo</td><td>A los 4 años</td><td>Cada 2 años hasta los 10; desde entonces, cada año</td></tr>
+<tr><td>Moto y cuatriciclo</td><td>A los 4 años</td><td>Cada 2 años</td></tr>
+<tr><td>Ciclomotor</td><td>A los 3 años</td><td>Cada 2 años</td></tr></table>
+<p>Los años se cuentan desde la fecha de primera matriculación, según el Real Decreto 920/2017 (resumen oficial en <a href="https://administracion.gob.es/pag_Home/Tu-espacio-europeo/derechos-obligaciones/ciudadanos/vehiculos/itv.html" rel="noopener" target="_blank">administracion.gob.es</a>). Furgonetas, autocaravanas, remolques, taxis y vehículos de alquiler tienen otras frecuencias: consulta tu estación ITV.</p>
+<p><b>Ejemplo:</b> un coche matriculado el 15 de marzo de 2018 pasó su primera ITV en 2022 y la siguiente en 2024. Le toca el 15 de marzo de 2026 y el 15 de marzo de 2028, que es su décimo aniversario. A partir de ahí, la pasará cada año: 2029, 2030, 2031…</p>
+<h2>Puedes adelantarla 30 días sin perder nada</h2><p>Si pasas la inspección en los 30 días naturales anteriores a la fecha de caducidad, la siguiente se calcula desde la fecha de caducidad, no desde el día que fuiste. Así no pierdes ni un día de validez. Si la pasas tarde, en cambio, el plazo nuevo empieza a contar desde el día de la inspección.</p>
+<h2>Qué pasa si circulas con la ITV caducada</h2><ul><li><b>Multa de 200 €</b> si te paran con la ITV caducada; puede ser de 500 € si el resultado de la última inspección fue negativo.</li><li>Si la ITV sale <b>desfavorable</b>, tienes dos meses para reparar y volver; con resultado <b>negativo</b>, el coche solo puede ir al taller o a la estación.</li><li>La ITV caducada no anula el seguro obligatorio, pero un accidente puede complicar la reclamación si el fallo influyó.</li></ul>
+<p>Antes de ir, revisa luces, neumáticos (mínimo 1,6 mm de dibujo), limpiaparabrisas, frenos y testigos del cuadro. Lleva el permiso de circulación y la tarjeta ITV. ¿Vas a comprar un coche usado? Mira su <a href="historial-coche-matricula.html">historial por matrícula</a> y su <a href="etiqueta-dgt.html">etiqueta DGT</a>.</p>""",
+[("¿Cuándo hay que pasar la primera ITV?", "Un coche particular, a los 4 años de su primera matriculación; las motos y quads, también a los 4 años; los ciclomotores, a los 3 años."),
+ ("¿Cada cuánto se pasa la ITV un coche de más de 10 años?", "Cada año. Entre los 4 y los 10 años de antigüedad se pasa cada dos años, y a partir del décimo aniversario de la matriculación, anualmente."),
+ ("¿Puedo pasar la ITV antes de que caduque?", "Sí. Si la pasas en los 30 días naturales anteriores a la caducidad, la fecha de la siguiente se mantiene como si la hubieras pasado el último día. Si la adelantas más, la siguiente se cuenta desde el día en que la pases."),
+ ("¿Qué multa hay por llevar la ITV caducada?", "200 € por circular con la ITV caducada. Si la última inspección tuvo resultado negativo, la sanción puede llegar a 500 €. No se pierden puntos.")],
+"¿Cuándo me toca pasar la ITV?",
+"""const pd=id=>{const s=document.getElementById(id).value;if(!s)return null;const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const fmt=d=>d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),fc=d=>d.toLocaleDateString('es-ES',{day:'numeric',month:'short',year:'numeric'});
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');document.querySelectorAll('input[type=date][data-today]').forEach(e=>e.value=iso(new Date()));
+const dd=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+const addY=(d,n)=>{const x=new Date(d.getFullYear()+n,d.getMonth(),d.getDate());if(x.getDate()!=d.getDate())x.setDate(0);return x;};
+function sched(t,m,n){const r=[];if(t=='c'){for(const y of [4,6,8,10])r.push([addY(m,y),y]);for(let y=11;r.length<n+40;y++)r.push([addY(m,y),y]);}else{const f=t=='k'?3:4;for(let y=f;r.length<n+40;y+=2)r.push([addY(m,y),y]);}return r;}
+function step(t,m,d){const y=d.getFullYear()-m.getFullYear();return t=='c'&&y>=10?1:2;}
+function calc(){const t=document.getElementById('t').value,m=pd('a'),h=pd('h')||new Date(),u=pd('u');if(!m){show('r','Escribe la fecha de primera matriculación.');return;}if(m>h){show('r','La fecha de matriculación tiene que ser anterior a hoy.');return;}
+let L;if(u){L=[[u,u.getFullYear()-m.getFullYear()]];for(let i=0;i<8;i++){const p=L[L.length-1][0],s=step(t,m,p);const x=addY(p,s);L.push([x,x.getFullYear()-m.getFullYear()]);}}else L=sched(t,m,8);
+const nx=L.find(x=>dd(h,x[0])>=0)||L[L.length-1],pv=L.filter(x=>dd(h,x[0])<0),last=pv[pv.length-1],f=dd(h,nx[0]),ini=new Date(nx[0]);ini.setDate(ini.getDate()-30);
+const ant=new Date(h.getFullYear()-(h<new Date(h.getFullYear(),m.getMonth(),m.getDate())?1:0),m.getMonth(),m.getDate()),age=ant.getFullYear()-m.getFullYear();
+let r='';if(u&&dd(h,u)<0){show('r','<b>Tu ITV caducó el '+fmt(u)+'.</b><br>Circular así puede costarte una multa de 200 €. Pide cita cuanto antes: como la pasarás tarde, la siguiente se contará desde el día de la inspección.');return;}
+r+='Tu próxima ITV:<b class="big">'+fmt(nx[0])+'</b>';
+r+=(f==0?'<b>Caduca hoy.</b> ':'Faltan <b>'+f+' días</b>. ')+'Puedes pasarla desde el <b>'+fc(ini)+'</b> sin perder días de validez.';
+if(!u&&last&&dd(last[0],h)<=60&&dd(last[0],h)>0)r+='<br><b>Atención:</b> según la matriculación, te tocaba el '+fc(last[0])+'. Si no la has pasado, tu ITV está caducada y te pueden multar con 200 €: pide cita cuanto antes.';
+r+='<br>Antigüedad: '+age+' años. ';const tt=t=='c'?'turismo':t=='m'?'moto o cuatriciclo':'ciclomotor';
+if(t=='c')r+=age<4?'Hasta los 4 años un turismo no pasa la ITV.':age<10?'De los 4 a los 10 años, un turismo la pasa cada 2 años.':'Con más de 10 años, un turismo la pasa cada año.';else r+='Como '+tt+', la pasa cada 2 años'+(t=='k'?' desde los 3 años.':' desde los 4 años.');
+const nxt=L.filter(x=>dd(h,x[0])>=0).slice(0,6);
+r+='<table style="margin-top:12px;font-size:.92rem"><tr><th>ITV</th><th>Fecha límite</th><th>Desde</th></tr>'+nxt.map(x=>{const s=new Date(x[0]);s.setDate(s.getDate()-30);return '<tr><td>'+(x[1]>0?'A los '+x[1]+' años':'Actual')+'</td><td><b>'+fc(x[0])+'</b></td><td>'+fc(s)+'</td></tr>';}).join('')+'</table>';
+show('r',r);}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

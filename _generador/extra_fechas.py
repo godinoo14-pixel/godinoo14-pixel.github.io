@@ -12,8 +12,8 @@ S['tools'] += [("calculadora-vacaciones", "Calculadora de días de vacaciones", 
                ("calculadora-horas", "Calculadora de horas trabajadas", "Horas entre entrada y salida, descansos y total semanal.", ""),
                ("que-dia-de-la-semana", "¿Qué día de la semana fue o será?", "El día de la semana de cualquier fecha.", "")]
 
-P.append(("calculadora-vacaciones", "Calculadora de vacaciones: ¿cuántos días me corresponden en 2026? | CalculadoraDías",
-"Calcula los días de vacaciones que te corresponden según lo trabajado este año (30 naturales, 22 laborables o tu convenio), cuántos te quedan por disfrutar antes del 31 de diciembre y cuánto te pagarían en el finiquito.",
+P.append(("calculadora-vacaciones", "Calculadora de vacaciones 2026 y 2027: días que me corresponden | CalculadoraDías",
+"Calcula los días de vacaciones que te corresponden según lo trabajado (30 naturales o 22 laborables), cuántos te quedan antes del 31 de diciembre y cuánto valen en el finiquito.",
 """<p class="lead">Pon desde cuándo trabajas este año y los días que ya has disfrutado. Te decimos las vacaciones generadas, las que te quedan y lo que valen si dejas la empresa.</p>
 <div class="card"><div class="row"><div><label for="a">Fecha de inicio (alta o 1 de enero)</label><input id="a" type="date" value="2026-01-01"></div>
 <div><label for="b">Fecha de fin (31 de diciembre, baja o hoy)</label><input id="b" type="date" value="2026-12-31"></div>
@@ -298,8 +298,8 @@ calc();"""))
 # --- Indemnización por despido según antigüedad (arts. 49.1.c, 53.1.b y 56.1 ET y DT 11.ª del Estatuto de los Trabajadores) ---
 S['tools'].insert(3, ("indemnizacion-despido", "Indemnización por despido", "Cuánto te corresponde según tu antigüedad, tu salario y el tipo de despido.", "Despido"))
 S['aff']["indemnizacion-despido"] = amz("estatuto de los trabajadores 2026", "Estatuto de los Trabajadores") + amz("agenda 2027", "Agendas 2027")
-P.append(("indemnizacion-despido", "Calcular indemnización por despido 2026: improcedente, objetivo y fin de contrato | CalculadoraDías",
-"Calcula tu indemnización por despido improcedente (33 o 45 días por año), objetivo (20 días) o fin de contrato temporal (12 días) con tus fechas exactas, salario diario y topes legales.",
+P.append(("indemnizacion-despido", "Calcular indemnización por despido 2026: improcedente y objetivo | CalculadoraDías",
+"Calcula tu indemnización por despido improcedente (33 o 45 días por año), objetivo (20 días) o fin de contrato (12 días) con tus fechas exactas y los topes legales.",
 """<p class="lead">Pon tu fecha de alta, la del despido y tu salario bruto anual. Calculamos la antigüedad exacta, el salario diario y la indemnización que marca el Estatuto de los Trabajadores, con sus topes.</p>
 <div class="card"><div class="row"><div><label for="al">Fecha de alta en la empresa</label><input id="al" type="date" value="2018-03-01"></div>
 <div><label for="de">Fecha del despido o fin de contrato</label><input id="de" type="date" value="2026-11-30"></div>
@@ -446,5 +446,47 @@ let h='Con <b>'+p.used+' días</b> de vacaciones consigues:<b class="big">'+p.to
 h+='<table style="margin-top:10px;font-size:.92rem"><tr><th>Descansas</th><th>Días libres</th><th>Pide</th></tr>'+p.sel.map(w=>{const a=DAY(p.B[w[0]][0]),b=DAY(p.B[w[1]][1]);return '<tr><td>'+fc(a)+' – '+fc(b)+'</td><td><b>'+w[3]+'</b></td><td>'+p.pide(w).map(fc).join(', ')+'</td></tr>';}).join('')+'</table>';
 if(p.top.length)h+='<h3 style="margin-bottom:4px">Mejores puentes pidiendo 1 o 2 días</h3><ul style="margin-top:4px">'+p.top.map(w=>'<li>'+fc(DAY(p.B[w[0]][0]))+' – '+fc(DAY(p.B[w[1]][1]))+': <b>'+w[3]+' días</b> pidiendo '+p.pide(w).map(fc).join(' y ')+'</li>').join('')+'</ul>';
 show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Plazo de devolución y garantía: desistimiento de 14 días, garantía de 3 años (RDL 7/2021) ---
+S['tools'].insert(2, ("plazo-devolucion-garantia", "Plazo de devolución y garantía", "Hasta qué día puedes devolver una compra online y cuándo termina la garantía de 3 años.", "Devoluciones"))
+S['aff']["plazo-devolucion-garantia"] = amz("archivador tickets facturas", "Archivadores para tickets y garantías") + amz("cinta embalar dispensador", "Cinta y cajas para devoluciones") + ext("https://www.consumo.gob.es/", "Ministerio de Consumo: tus derechos")
+P.append(("plazo-devolucion-garantia", "Plazo de devolución de compras online y garantía: calculadora | CalculadoraDías",
+"Plazo de devolución y garantía de tu compra: pon la fecha en que la recibiste y te decimos hasta qué día puedes devolverla (14 días online) y cuándo vence la garantía de 3 años.",
+"""<p class="lead">Pon cuándo recibiste el pedido o compraste en la tienda y te decimos hasta qué día puedes devolverlo, cuánto tiempo tiene la tienda para reembolsarte y hasta cuándo te cubre la garantía legal. Ideal para los regalos de Black Friday, Navidad y Reyes.</p>
+<div class="card"><div class="row"><div><label for="t">Dónde compraste</label><select id="t"><option value="o">Online, por teléfono o a distancia</option><option value="f">En tienda física</option><option value="x">Fuera del establecimiento (a domicilio, excursión…)</option></select></div>
+<div><label for="g">Qué compraste</label><select id="g"><option value="n">Producto nuevo</option><option value="s">Producto de segunda mano</option><option value="d">Contenido o servicio digital</option></select></div>
+<div><label for="a">Fecha de entrega o de compra</label><input id="a" type="date" data-today></div>
+<div><label for="b">La tienda acepta devoluciones hasta (opcional)</label><input id="b" type="date"></div></div>
+<p class="note">Si la tienda anuncia un plazo ampliado (muchas lo alargan en Navidad hasta finales de enero), ponlo en el último campo: ese compromiso también obliga al vendedor.</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto tiempo tienes para devolver una compra</h2><p>En las compras <b>online, por teléfono o fuera de la tienda</b>, la ley te da <b>14 días naturales</b> para desistir sin dar explicaciones (artículo 102 y siguientes de la Ley General para la Defensa de los Consumidores). Se cuentan desde el día en que recibes el producto, sin incluir ese día. Si la tienda no te informó de este derecho, el plazo se alarga <b>12 meses</b> más. Tras avisar de que desistes, tienes otros 14 días para enviar el producto, y la tienda debe devolverte el dinero, incluidos los gastos de envío estándar, en un máximo de 14 días desde tu aviso (puede esperar a recibir el producto o la prueba de que lo has enviado).</p>
+<p>En una <b>tienda física</b> no hay obligación legal de aceptar devoluciones si el producto está bien: depende de la política de la tienda. Pero si la anuncia (en el ticket, en carteles o en su web), está obligada a cumplirla, también en rebajas, salvo que avise claramente de lo contrario.</p>
+<p><b>Ejemplo:</b> si recibes un pedido el viernes 27 de noviembre de 2026, puedes desistir hasta el viernes 11 de diciembre. Si avisas ese día, tienes hasta el 25 de diciembre para enviarlo y la tienda debe reembolsarte como tarde también el 25 de diciembre. La garantía de ese producto nuevo dura hasta el 27 de noviembre de 2029.</p>
+<h2>La garantía legal: 3 años</h2><table><tr><th>Producto</th><th>Garantía legal</th></tr><tr><td>Nuevo, comprado desde 2022</td><td>3 años desde la entrega</td></tr><tr><td>Segunda mano</td><td>Se puede pactar menos, pero nunca menos de 1 año</td></tr><tr><td>Contenido o servicio digital</td><td>2 años (o lo que dure el suministro)</td></tr></table>
+<p>Si el producto falla en los <b>2 primeros años</b>, se presume que el defecto ya existía y no tienes que demostrarlo: la tienda debe repararlo o cambiarlo gratis y, si no es posible, rebajar el precio o devolverte el dinero. A partir del tercer año sigues cubierto, pero puede pedirte que acredites que el fallo es de origen. Además, el fabricante debe tener repuestos durante 10 años desde que deja de fabricar el producto. Fuente: Real Decreto-ley 7/2021 y portal del <a href="https://portal-cec.consumo.gob.es/es/informacion-general/temas-de-consumo/garantias" rel="noopener" target="_blank">Centro Europeo del Consumidor (Ministerio de Consumo)</a>.</p>
+<p>¿Te ha tocado devolver un regalo de Reyes? Mira <a href="que-dia-de-la-semana.html">qué día de la semana cae</a> el último día del plazo, o calcula cualquier otro plazo con <a href="sumar-dias.html">sumar días a una fecha</a>.</p>""",
+[("¿Cuántos días tengo para devolver una compra online?", "14 días naturales desde que recibes el producto, sin dar explicaciones. Si la tienda no te informó de ese derecho, el plazo se amplía 12 meses. Algunas tiendas dan más días por su cuenta, sobre todo en Navidad."),
+ ("¿Una tienda física está obligada a devolverme el dinero?", "No, si el producto no tiene ningún defecto. Solo si la tienda lo ofrece en su política de devoluciones; si lo anuncia, debe cumplirlo. Si el producto está defectuoso, sí te cubre la garantía legal."),
+ ("¿Cuánto dura la garantía de un producto en España?", "3 años para productos nuevos comprados desde el 1 de enero de 2022, 2 años para contenidos y servicios digitales y un mínimo de 1 año pactado para productos de segunda mano."),
+ ("¿Desde cuándo se cuenta el plazo de devolución?", "Desde el día siguiente a la entrega del producto. Si el pedido llega en varios envíos, desde que recibes el último.")],
+"Calculadora del plazo de devolución y la garantía",
+DATEJS + """const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;},addY=(d,n)=>{const x=new Date(d.getFullYear()+n,d.getMonth(),d.getDate());if(x.getDate()!=d.getDate())x.setDate(0);return x;};
+const lab=d=>{const x=new Date(d);while(x.getDay()==0||x.getDay()==6)x.setDate(x.getDate()+1);return x;};
+function fila(n,d,x){const f=diff(today,d);return '<tr><td>'+n+'</td><td><b>'+d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'</b>'+(x?'<br><span class="note">'+x+'</span>':'')+'</td><td>'+(f<0?'vencido':f==0?'hoy':'faltan '+nf(f,0)+' días')+'</td></tr>';}
+function calc(){const a=pd('a'),b=pd('b'),t=document.getElementById('t').value,g=document.getElementById('g').value;if(!a){show('r','Escribe la fecha de entrega o de compra.');return;}
+let h='',R=[];if(t!='f'){const e=add(a,14),e2=lab(e),ok=diff(today,e)>=0;
+h='Puedes devolverlo (desistir) hasta el:<b class="big">'+fmt(e)+'</b>'+(ok?'Te quedan <b>'+nf(diff(today,e),0)+' días</b> para avisar a la tienda.':'El plazo legal de 14 días ya ha pasado'+(b&&diff(today,b)>=0?', pero la tienda te deja devolverlo hasta el '+fmt(b)+'.':'.'));
+if(e2-e)h+='<br>El día 14 cae en fin de semana: según las normas europeas de cómputo de plazos pasa al '+fmt(e2)+', pero para ir sobre seguro avisa antes.';
+R.push(fila('Último día para desistir (14 días)',e,'Avisa por escrito: correo, formulario de la web o el modelo de desistimiento.'));
+const base=ok?today:e;R.push(fila('Enviar el producto si desistes '+(ok?'hoy':'el último día'),add(base,14),'14 días desde que avisas.'));R.push(fila('Plazo máximo de reembolso',add(base,14),'14 días desde tu aviso, incluido el envío estándar.'));
+R.push(fila('Si no te informaron del derecho a desistir',addY(e,1),'El plazo se amplía 12 meses.'));}
+else h='En tienda física, la devolución depende de la política de la tienda.<b class="big">'+(b?'Hasta el '+fmt(b):'Mira el ticket')+'</b>'+(b?(diff(today,b)>=0?'Te quedan <b>'+nf(diff(today,b),0)+' días</b>.':'Ese plazo ya ha pasado.'):'Si no anuncia política de devoluciones, solo está obligada a responder por defectos (garantía).');
+if(b&&t!='f')R.push(fila('Plazo que ofrece la tienda',b,'Compromiso comercial: también te obliga a cumplirlo a la tienda.'));if(b&&t=='f')R.push(fila('Plazo que ofrece la tienda',b,''));
+if(g=='n'){R.push(fila('Fin de la presunción de defecto de origen',addY(a,2),'Hasta aquí no tienes que demostrar que el fallo es de fábrica.'));R.push(fila('Fin de la garantía legal (3 años)',addY(a,3),''));}
+else if(g=='s')R.push(fila('Garantía mínima pactable (1 año)',addY(a,1),'Si no pactasteis nada por escrito, se aplican los 3 años.'));
+else R.push(fila('Fin de la garantía (2 años)',addY(a,2),'O lo que dure el suministro, si es más.'));
+show('r',h+'<table style="margin-top:12px;font-size:.92rem"><tr><th>Qué vence</th><th>Fecha</th><th>Cuándo</th></tr>'+R.join('')+'</table>');}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

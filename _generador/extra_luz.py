@@ -18,7 +18,7 @@ S['tools'] += [("coste-cargar-coche-electrico", "Coste de cargar un coche eléct
                ("coste-ducha-termo", "Coste de una ducha con termo eléctrico", "Lo que pagas por cada ducha y al mes.", "")]
 
 P.append(("coste-cargar-coche-electrico", "Cuánto cuesta cargar un coche eléctrico en casa: por carga y cada 100 km | GastoLuz",
-"Calcula cuánto cuesta cargar tu coche eléctrico en casa o en la calle: por carga, cada 100 km y al mes, con el precio de la luz por horas de hoy y la franja más barata para enchufarlo.",
+"Cuánto cuesta cargar tu coche eléctrico en casa o en la calle: por carga, cada 100 km y al mes, con el precio de la luz de hoy y la hora más barata para enchufarlo.",
 """<p class="lead">Pon la batería, cuánto quieres cargar y la potencia de tu enchufe. Calculamos el coste en casa con el precio de la luz de hoy (y la franja horaria más barata), en un cargador público y por cada 100 km.</p>
 <div class="card"><div class="row"><div><label for="b">Batería útil (kWh)</label><input id="b" inputmode="decimal" value="60"></div><div><label for="pe">Pérdidas de carga (%)</label><input id="pe" inputmode="decimal" value="10"></div>
 <div><label for="d">Desde (%)</label><input id="d" inputmode="numeric" value="20"></div><div><label for="h">Hasta (%)</label><input id="h" inputmode="numeric" value="80"></div>
@@ -395,5 +395,48 @@ h+='<br>En todo el invierno (5 meses): <b>'+eur(c*dm*5)+'</b>.';
 show('r',h+tx);}
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora, con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas. Pon el de tu factura (término de energía con impuestos).';calc();});
+document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+
+# --- Consumo del frigorífico: coste con la etiqueta energética y si compensa cambiarlo ---
+S['tools'].insert(5, ("consumo-frigorifico", "Consumo del frigorífico", "Lo que cuesta tu nevera al año según su etiqueta energética y si compensa cambiarla por una nueva.", "Frigorífico"))
+S['aff']["consumo-frigorifico"] = amz("frigorifico combi clase A", "Frigoríficos combi de clase A") + amz("termometro frigorifico", "Termómetros para nevera") + ENCH
+P.append(("consumo-frigorifico", "¿Cuánto gasta un frigorífico? Consumo al año y al mes | GastoLuz",
+"Calcula cuánto gasta tu frigorífico o congelador al día, al mes y al año con el kWh/año de su etiqueta energética y el precio de la luz de hoy, y en cuántos años amortizas uno nuevo.",
+"""<p class="lead">Busca en la etiqueta energética de tu nevera el consumo en kWh al año (o en la ficha del modelo) y te decimos lo que te cuesta. Si estás pensando en cambiarla, compárala con la nueva y verás cuánto ahorras y en cuántos años se paga.</p>
+<div class="card"><div class="row"><div><label for="ap">Tu frigorífico</label><select id="ap"><option value="">Escribo el dato de la etiqueta</option><option value="450">Combi antiguo, de hace 15-20 años (unos 450 kWh/año)</option><option value="300" selected>Combi de hace 10 años, clase A+ antigua (unos 300 kWh/año)</option><option value="230">Combi nuevo de clase E (unos 230 kWh/año)</option><option value="150">Combi nuevo de clase C (unos 150 kWh/año)</option><option value="400">Americano dos puertas (unos 400 kWh/año)</option><option value="200">Congelador vertical (unos 200 kWh/año)</option></select></div>
+<div><label for="k">Consumo de la etiqueta (kWh/año)</label><input id="k" inputmode="decimal" value="300"></div>
+<div><label for="n">Consumo del frigorífico nuevo (kWh/año, opcional)</label><input id="n" inputmode="decimal" value="150"></div>
+<div><label for="pn2">Precio del frigorífico nuevo (€, opcional)</label><input id="pn2" inputmode="decimal" value="600"></div>
+<div><label for="p">Precio de la luz (€/kWh con impuestos)</label><input id="p" inputmode="decimal" value="0,18"></div></div>
+<p class="note" id="pnt">Pon el precio medio del kWh de tu factura, con impuestos.</p>
+<div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula lo que gasta la nevera</h2><p>El frigorífico funciona las 24 horas, aunque el compresor se enciende y se apaga solo. Por eso lo más fiable no es multiplicar la potencia (W) por las horas, sino usar el <b>consumo anual de la etiqueta energética</b>, que ya tiene en cuenta esos ciclos. <b>Fórmula:</b> coste al año = kWh/año × precio del kWh con impuestos. Como funciona igual de día que de noche, el precio que cuenta es la <b>media de las 24 horas</b>: con tarifa PVPC puedes calcular con la media de hoy, aunque para un año entero es más fiable el precio medio de tu factura.</p>
+<table><tr><th>Consumo de la etiqueta</th><th>Al mes</th><th>Al año (0,18 €/kWh)</th></tr>
+<tr><td>150 kWh/año</td><td>2,25 €</td><td>27 €</td></tr>
+<tr><td>230 kWh/año</td><td>3,45 €</td><td>41,40 €</td></tr>
+<tr><td>300 kWh/año</td><td>4,50 €</td><td>54 €</td></tr>
+<tr><td>450 kWh/año</td><td>6,75 €</td><td>81 €</td></tr></table>
+<p><b>Ejemplo:</b> cambiar un combi de 300 kWh/año por uno de 150 kWh/año ahorra 150 kWh, unos 27 € al año a 0,18 €/kWh. Si el nuevo cuesta 600 €, el ahorro tardaría más de 20 años en pagarlo: solo compensa cambiar por ahorro cuando el viejo es muy antiguo o está estropeado. Si tienes que comprar uno de todas formas, la diferencia entre una clase alta y una baja sí se nota a lo largo de los 10-15 años que dura.</p>
+<h2>¿No encuentras la etiqueta?</h2><p>Desde marzo de 2021 la etiqueta europea va de la A a la G (antes llegaba a A+++), así que un «A+» antiguo equivale hoy a una E o una F. Puedes buscar tu modelo en la base de datos europea <a href="https://eprel.ec.europa.eu/" rel="noopener" target="_blank">EPREL</a>, o medirlo tú: enchufa la nevera a un medidor de consumo 48 horas y multiplica los kWh por 182,5 para tener el dato anual.</p>
+<h2>Cómo hacer que gaste menos</h2><ul><li>Pon el frigorífico a unos 4-5 °C y el congelador a -18 °C: cada grado más frío aumenta el consumo.</li><li>Déjale espacio detrás para que ventile y apártalo del horno y del sol.</li><li>Descongela cuando la escarcha pase de unos 3 mm y revisa que la goma de la puerta cierre bien.</li><li>No metas comida caliente y abre la puerta lo justo.</li></ul>
+<p>Compara con otros aparatos en la <a href="consumo-electrodomesticos.html">calculadora de consumo de electrodomésticos</a>, revisa tu <a href="calcular-factura-luz.html">factura de la luz</a> o mira el <a href="precio-luz-hoy.html">precio de la luz hoy</a>.</p>""",
+[("¿Cuánto gasta un frigorífico al mes?", "Un combi actual consume entre 150 y 250 kWh al año: de 2 a 4 € al mes con la luz a 0,18 €/kWh. Uno de hace 15-20 años puede gastar el doble o el triple."),
+ ("¿Cuántos kWh gasta una nevera al día?", "Entre 0,4 y 1,2 kWh al día según su tamaño y antigüedad. Divide entre 365 el consumo anual de la etiqueta: 300 kWh/año son 0,82 kWh al día."),
+ ("¿Compensa cambiar el frigorífico viejo por uno nuevo?", "Por ahorro de luz casi nunca, salvo que el viejo sea muy antiguo: pasar de 300 a 150 kWh/año ahorra unos 27 € al año. Si tienes que cambiarlo de todas formas, elegir una clase energética alta sí compensa a lo largo de su vida útil."),
+ ("¿Qué gasta más, el frigorífico o el congelador?", "Un congelador vertical independiente gasta parecido a un combi, unos 170-250 kWh al año. Los americanos de dos puertas con dispensador de hielo son los que más gastan, a menudo más de 350 kWh al año.")],
+"¿Cuánto gasta un frigorífico?",
+"""let HM=null;
+document.getElementById('ap').addEventListener('change',()=>{const x=document.getElementById('ap').value;if(x){document.getElementById('k').value=x;}calc();});
+function calc(){const k=v('k'),n=v('n'),pn=v('pn2'),pr=HM||v('p');if(k<=0){show('r','Escribe el consumo anual de la etiqueta (kWh/año).');return;}
+const y=k*pr,ct=x=>x<1?nf(x*100,1)+' céntimos':eur(x);
+let h='Tu frigorífico te cuesta al año:<b class="big">'+eur(y)+'</b>Al mes: <b>'+eur(y/12)+'</b> · al día: '+ct(y/365)+' · '+nf(k/365,2)+' kWh al día a '+nf(pr,3)+' €/kWh'+(HM?' (media del PVPC de hoy con impuestos)':'');
+h+='<br>En 10 años: <b>'+eur(y*10)+'</b>.';
+if(n>0&&n<k){const s=(k-n)*pr;h+='<br>Con el nuevo ('+nf(n,0)+' kWh/año) pagarías '+eur(n*pr)+' al año: <b>ahorras '+eur(s)+' al año</b> ('+eur(s*10)+' en 10 años).';if(pn>0){const a=pn/s;h+=' El nuevo se pagaría solo con el ahorro en <b>'+(a>30?'más de 30 años':nf(a,1)+' años')+'</b>'+(a>12?': por ahorro no compensa; cámbialo cuando el viejo falle.':': compensa cambiarlo.');}}
+else if(n>=k&&n>0)h+='<br>El frigorífico nuevo que has puesto gasta igual o más que el actual.';
+show('r',h);}
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;
+const pm=H.reduce((s,x)=>s+x[1],0)/H.length*1.0511*1.21;window.PM=pm;
+document.getElementById('pnt').innerHTML='Hoy, la media de las 24 horas de la tarifa regulada (PVPC) de Red Eléctrica es <b>'+nf(pm,3)+' €/kWh</b> con impuestos. Cambia mucho de un día a otro y entre invierno y verano, así que para el cálculo anual es mejor el precio medio de tu factura. <a href="#" onclick="HM=window.PM;calc();return false">Calcular con el PVPC de hoy</a> · <a href="#" onclick="HM=null;calc();return false">usar mi precio</a>';calc();}).catch(()=>{document.getElementById('pnt').textContent='Usamos el precio que escribas: pon el de tu factura con impuestos.';calc();});
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'?'change':'input',()=>calc()));
 calc();"""))

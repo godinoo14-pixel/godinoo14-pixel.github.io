@@ -84,7 +84,7 @@ show('r','Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Eléctri
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias||!j.medias.g95)return;document.getElementById('pc').value=j.medias.g95.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio del litro: media de la gasolina 95 en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si comparas con un diésel, pon su precio. ¿No sabes cuánto gasta tu coche? Calcúlalo con tu <a href="consumo-real-coche.html">consumo real</a>.';calc();}).catch(()=>{});"""))
 
 P.append(("coste-anual-coche", "Cuánto cuesta mantener un coche al año: calculadora de todos los gastos | CocheCuentas",
-"Calcula cuánto cuesta mantener tu coche al año, al mes y por kilómetro: seguro, impuesto de circulación, ITV, revisiones, neumáticos, combustible, parking, financiación y pérdida de valor, con el peso de cada gasto.",
+"Cuánto cuesta mantener un coche al año, al mes y por km: seguro, impuesto, ITV, revisiones, neumáticos, combustible y pérdida de valor, con el peso de cada gasto.",
 """<p class="lead">Rellena lo que pagas por cada concepto (puedes dejar en 0 lo que no aplique) y verás el coste real anual, mensual y por kilómetro.</p>
 <div class="card"><div class="row">
 <div><label for="a1">Seguro (€/año)</label><input id="a1" inputmode="decimal" value="450"></div>
