@@ -603,3 +603,100 @@ else if(p>hoy)h+='<br>Faltan '+diff(hoy,p)+' días para la fecha prevista.';
 show('r',h);}
 document.querySelectorAll('.card input,.card select').forEach(e=>e.addEventListener(e.tagName=='SELECT'||e.type=='checkbox'?'change':'input',()=>calc()));
 (function(){const d=new Date();d.setDate(d.getDate()+14);document.getElementById('a').value=iso(d);})();calc();"""))
+
+# --- Hora de amanecer y anochecer por ciudad (algoritmo solar de la NOAA, hora oficial de España con cambio de hora) ---
+CIUD = [("A Coruña",43.362,-8.411),("Albacete",38.994,-1.858),("Alicante",38.345,-0.481),("Almería",36.834,-2.464),("Ávila",40.656,-4.681),("Badajoz",38.879,-6.970),
+("Barcelona",41.385,2.173),("Bilbao",43.263,-2.935),("Burgos",42.344,-3.697),("Cáceres",39.475,-6.372),("Cádiz",36.527,-6.288),("Castellón de la Plana",39.986,-0.051),
+("Ceuta",35.889,-5.320),("Ciudad Real",38.985,-3.927),("Córdoba",37.888,-4.779),("Cuenca",40.070,-2.137),("Gijón",43.532,-5.661),("Girona",41.979,2.821),("Granada",37.177,-3.599),
+("Guadalajara",40.633,-3.167),("Huelva",37.261,-6.945),("Huesca",42.136,-0.409),("Ibiza",38.909,1.433),("Jaén",37.779,-3.785),("Las Palmas de Gran Canaria",28.124,-15.430,1),
+("León",42.599,-5.567),("Lleida",41.617,0.620),("Logroño",42.465,-2.445),("Lugo",43.012,-7.556),("Madrid",40.417,-3.704),("Málaga",36.721,-4.421),("Melilla",35.292,-2.938),
+("Murcia",37.992,-1.131),("Ourense",42.336,-7.864),("Oviedo",43.362,-5.849),("Palencia",42.010,-4.533),("Palma",39.570,2.650),("Pamplona",42.812,-1.646),("Pontevedra",42.431,-8.645),
+("Salamanca",40.970,-5.663),("San Sebastián",43.318,-1.981),("Santa Cruz de Tenerife",28.464,-16.251,1),("Santander",43.462,-3.810),("Santiago de Compostela",42.878,-8.544),
+("Segovia",40.942,-4.108),("Sevilla",37.389,-5.984),("Soria",41.764,-2.465),("Tarragona",41.119,1.245),("Teruel",40.345,-1.106),("Toledo",39.863,-4.027),("Valencia",39.470,-0.376),
+("Valladolid",41.652,-4.725),("Vigo",42.240,-8.720),("Vitoria",42.847,-2.672),("Zamora",41.504,-5.745),("Zaragoza",41.649,-0.889)]
+_copt = "".join(f'<option value="{c[1]},{c[2]},{c[3] if len(c)>3 else 0}"{" selected" if c[0]=="Madrid" else ""}>{c[0]}</option>' for c in CIUD)
+S['tools'].insert(4, ("hora-amanecer-anochecer", "¿A qué hora amanece y anochece?", "Salida y puesta del sol en tu ciudad cualquier día, horas de luz y cuándo empiezan a alargarse los días.", "Amanecer"))
+S['aff']["hora-amanecer-anochecer"] = amz("lampara despertador luz amanecer", "Despertadores con luz de amanecer") + amz("lampara luz dia invierno 10000 lux", "Lámparas de luz de día") + amz("linterna frontal led recargable", "Linternas frontales")
+P.append(("hora-amanecer-anochecer", "¿A qué hora anochece hoy? Hora de amanecer y anochecer en tu ciudad | CalculadoraDías",
+"Hora de salida y puesta del sol hoy o cualquier día en 56 ciudades de España (con Canarias y el cambio de hora), horas de luz, el día más corto y cuándo empieza a anochecer más tarde.",
+"""<p class="lead">Elige tu ciudad y una fecha: te decimos a qué hora sale y se pone el sol (hora oficial, con el cambio de hora ya aplicado), cuántas horas de luz hay y cuánto cambian respecto a la víspera.</p>
+<div class="card"><div class="row"><div><label for="c">Ciudad</label><select id="c">""" + _copt + """</select></div>
+<div><label for="a">Fecha</label><input id="a" type="date" data-today></div></div>
+<button onclick="calc()">Ver amanecer y anochecer</button><div class="res" id="r" aria-live="polite"></div></div>
+<div id="tb"></div>
+<p class="note">Cálculo astronómico con el algoritmo de la NOAA (Administración Nacional Oceánica y Atmosférica de EE. UU.) para el centro de cada ciudad, a nivel del mar y con la refracción atmosférica estándar. La diferencia con los datos oficiales del <a href="https://astronomia.ign.es/" rel="noopener" target="_blank">Observatorio Astronómico Nacional (IGN)</a> suele ser de uno o dos minutos; las montañas del horizonte pueden adelantar el ocaso real.</p>
+<h2>Por qué anochece tan pronto en diciembre</h2><p>El día más corto del año es el del <b>solsticio de invierno, el 21 de diciembre</b>: en Madrid hay unas 9 horas y 17 minutos de luz, frente a más de 15 horas en junio. Pero el sol <b>no se pone más pronto el día 21</b>: por la ecuación del tiempo (la órbita de la Tierra es una elipse y su eje está inclinado), las puestas de sol más tempranas llegan hacia el 10 de diciembre y los amaneceres más tardíos, hacia el 4 de enero. Por eso, a mediados de diciembre ya empieza a anochecer unos segundos más tarde cada día, aunque las mañanas sigan oscureciéndose hasta Reyes. La tabla de arriba lo calcula para tu ciudad.</p>
+<h2>Cómo influye el huso horario</h2><p>Toda la península, Baleares, Ceuta y Melilla usan la hora de Europa central (UTC+1 en invierno y UTC+2 en verano), aunque casi todo el territorio está al oeste del meridiano de Greenwich. Por eso en España amanece y anochece más tarde que en países a la misma latitud: en Galicia el sol se pone en diciembre unos 35 minutos después que en Cataluña. Canarias tiene una hora menos (UTC+0 en invierno), y su cercanía al ecuador hace que la duración del día cambie mucho menos a lo largo del año.</p>
+<table><tr><th>21 de diciembre de 2026</th><th>Amanecer</th><th>Anochecer</th><th>Horas de luz</th></tr>
+<tr><td>A Coruña</td><td>9:03</td><td>18:00</td><td>8 h 58 min</td></tr><tr><td>Madrid</td><td>8:34</td><td>17:51</td><td>9 h 17 min</td></tr><tr><td>Barcelona</td><td>8:14</td><td>17:25</td><td>9 h 11 min</td></tr><tr><td>Sevilla</td><td>8:34</td><td>18:09</td><td>9 h 35 min</td></tr><tr><td>Las Palmas (hora canaria)</td><td>7:49</td><td>18:10</td><td>10 h 21 min</td></tr></table>
+<p>¿Planeas un viaje en coche para las fiestas? Con estas horas sabrás cuánta luz te queda; calcula también los <a href="cuantos-dias-faltan.html">días que faltan para Navidad</a>, los <a href="puentes-2027.html">puentes de 2027</a> o la <a href="semana-del-ano.html">semana del año</a> en la que estamos.</p>""",
+[("¿Cuál es el día más corto del año en España?", "El del solsticio de invierno, el 21 de diciembre en 2026. En Madrid tiene unas 9 horas y 17 minutos de luz, casi 6 horas menos que el 21 de junio."),
+ ("¿Cuándo empieza a anochecer más tarde?", "Antes que el solsticio: la puesta de sol más temprana del año llega hacia el 10 de diciembre en la península (entre el 9 y el 11 según la ciudad). Desde entonces anochece un poco más tarde cada día, aunque los amaneceres siguen retrasándose hasta el 3-5 de enero."),
+ ("¿A qué hora anochece en Navidad?", "En Madrid, hacia las 17:53 el 25 de diciembre; en Barcelona, hacia las 17:27; en Sevilla, hacia las 18:11; y en A Coruña, hacia las 18:02. Elige tu ciudad y la fecha en la calculadora para verlo exacto."),
+ ("¿Cuándo es el próximo cambio de hora?", "El último domingo de marzo, el 28 de marzo de 2027: a las 2:00 serán las 3:00 y anochecerá una hora más tarde. La calculadora aplica el cambio de hora automáticamente.")],
+"¿A qué hora amanece y anochece?",
+DATEJS + """function lsun(y,m){const d=new Date(Date.UTC(y,m,0));return d.getUTCDate()-d.getUTCDay();}
+function off(y,m,d,can){const t=Date.UTC(y,m-1,d,12),a=Date.UTC(y,2,lsun(y,3),1),b=Date.UTC(y,9,lsun(y,10),1);return (can?0:60)+((t>=a&&t<b)?60:0);}
+function sun(lat,lon,y,m,d){const n=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1,g=2*Math.PI/365*(n-1),
+eq=229.18*(0.000075+0.001868*Math.cos(g)-0.032077*Math.sin(g)-0.014615*Math.cos(2*g)-0.040849*Math.sin(2*g)),
+de=0.006918-0.399912*Math.cos(g)+0.070257*Math.sin(g)-0.006758*Math.cos(2*g)+0.000907*Math.sin(2*g)-0.002697*Math.cos(3*g)+0.00148*Math.sin(3*g),
+r=Math.PI/180,c=Math.cos(90.833*r)/(Math.cos(lat*r)*Math.cos(de))-Math.tan(lat*r)*Math.tan(de),ha=Math.acos(Math.max(-1,Math.min(1,c)))/r;
+return [720-4*(lon+ha)-eq,720-4*lon-eq,720-4*(lon-ha)-eq];}
+function hm(x){x=Math.round(x);return Math.floor(x/60)+':'+String(x%60).padStart(2,'0');}
+function du(x){x=Math.round(x);return Math.floor(x/60)+' h '+String(x%60).padStart(2,'0')+' min';}
+function loc(c,y,m,d){const o=off(y,m,d,c[2]),s=sun(c[0],c[1],y,m,d);return [s[0]+o,s[1]+o,s[2]+o,s[2]-s[0]];}
+function fe(t){const d=new Date(t);return d.getUTCDate()+' de '+['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][d.getUTCMonth()];}
+function calc(){const a=pd('a');if(!a)return;const c=document.getElementById('c').value.split(',').map(Number),nm=document.getElementById('c').selectedOptions[0].text;
+const y=a.getFullYear(),m=a.getMonth()+1,d=a.getDate(),L=loc(c,y,m,d),p=new Date(y,m-1,d-1),P=loc(c,p.getFullYear(),p.getMonth()+1,p.getDate()),dl=Math.round(L[3]-P[3]);
+let h='En '+nm+' el '+fmt(a)+':<b class="big">Amanece '+hm(L[0])+' · Anochece '+hm(L[2])+'</b>Horas de luz: <b>'+du(L[3])+'</b> ('+(dl>0?dl+' min más':dl<0?(-dl)+' min menos':'casi igual')+' que el día anterior) · Mediodía solar: '+hm(L[1])+(c[2]?' (hora canaria)':'');
+show('r',h);
+const SO={2025:[5,20,11,21],2026:[5,21,11,21],2027:[5,21,11,22],2028:[5,20,11,21]};let mn=[1e9,0],mx=[0,0],ss=[1e9,0],sr=[0,0];for(let i=0;i<366;i++){const t=Date.UTC(y,0,1)+i*864e5,q=new Date(t);if(q.getUTCFullYear()!==y)break;const Q=loc(c,y,q.getUTCMonth()+1,q.getUTCDate());
+if(Q[3]<mn[0])mn=[Q[3],t];if(Q[3]>mx[0])mx=[Q[3],t];const mo=q.getUTCMonth();if(mo>9&&Q[2]-off(y,mo+1,q.getUTCDate(),c[2])<ss[0])ss=[Q[2]-off(y,mo+1,q.getUTCDate(),c[2]),t];if(mo<2&&Q[0]>sr[0])sr=[Q[0],t];}
+if(SO[y]){mx=[0,Date.UTC(y,SO[y][0],SO[y][1])];mn=[0,Date.UTC(y,SO[y][2],SO[y][3])];mx[0]=loc(c,y,SO[y][0]+1,SO[y][1])[3];mn[0]=loc(c,y,SO[y][2]+1,SO[y][3])[3];}
+const S1=loc(c,y,(new Date(ss[1])).getUTCMonth()+1,(new Date(ss[1])).getUTCDate()),R1=loc(c,y,(new Date(sr[1])).getUTCMonth()+1,(new Date(sr[1])).getUTCDate());
+document.getElementById('tb').innerHTML='<h2>'+nm+' en '+y+'</h2><table><tr><th>Dato</th><th>Fecha</th><th>Valor</th></tr>'+
+'<tr><td>Día más corto (solsticio de invierno)</td><td>'+fe(mn[1])+'</td><td>'+du(mn[0])+' de luz</td></tr><tr><td>Día más largo (solsticio de verano)</td><td>'+fe(mx[1])+'</td><td>'+du(mx[0])+' de luz</td></tr>'+
+'<tr><td>Puesta de sol más temprana (final de año)</td><td>'+fe(ss[1])+'</td><td>'+hm(S1[2])+'</td></tr><tr><td>Amanecer más tardío (principio de año)</td><td>'+fe(sr[1])+'</td><td>'+hm(R1[0])+'</td></tr></table>';}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener('change',()=>calc()));"""))
+
+# --- Mejoras de páginas existentes (27/11/2026) ---
+def _set(slug, i, val):
+    for k, t in enumerate(P):
+        if t[0] == slug:
+            t = list(t); t[i] = val(t[i]) if callable(val) else val; P[k] = tuple(t); return
+    raise KeyError(slug)
+def _add(slug, old, new):
+    def f(b):
+        assert old in b, (slug, old); return b.replace(old, new, 1)
+    _set(slug, 3, f)
+
+# Semana del año: calendario de semanas del año elegido, 2026 con 53 semanas, Excel y ejemplos
+_set("semana-del-ano", 1, "Semana del año: ¿en qué semana estamos hoy? Calendario de semanas 2026 y 2027 | CalculadoraDías")
+_set("semana-del-ano", 2, "Mira en qué número de semana estamos hoy (ISO 8601, la de los calendarios en España) y el calendario completo de semanas de 2026 y 2027 con el lunes y el domingo de cada una.")
+_set("semana-del-ano", 5, "¿En qué semana del año estamos?")
+_set("semana-del-ano", 3, """<p class="lead">Número de semana según la norma ISO 8601, la que usan los calendarios, las agendas y las empresas en España y en casi toda Europa. Elige cualquier fecha y verás su semana y el calendario de semanas de todo el año.</p>
+<div class="card"><label for="a">Fecha</label><input id="a" type="date" data-today><button onclick="calc()">Ver semana</button><div class="res" id="r" aria-live="polite"></div></div>
+<div id="tb"></div>
+<h2>Cómo funciona la semana ISO</h2><p>Las semanas empiezan en <b>lunes</b> y la <b>semana 1</b> es la que contiene el primer jueves del año (o, lo que es lo mismo, la que contiene el 4 de enero). Por eso los primeros días de enero pueden pertenecer a la última semana del año anterior, y algunos años tienen <b>53 semanas</b>: los que empiezan en jueves y los bisiestos que empiezan en miércoles.</p>
+<table><tr><th>Año</th><th>Semanas</th><th>Semana 1 empieza</th><th>Última semana termina</th></tr>
+<tr><td>2026</td><td>53</td><td>lunes 29 de diciembre de 2025</td><td>domingo 3 de enero de 2027</td></tr>
+<tr><td>2027</td><td>52</td><td>lunes 4 de enero de 2027</td><td>domingo 2 de enero de 2028</td></tr></table>
+<p><b>Ejemplo:</b> el 1 de enero de 2027 es viernes. La semana que lo contiene tiene su jueves el 31 de diciembre de 2026, así que es la <b>semana 53 de 2026</b>. La semana 1 de 2027 empieza el lunes 4 de enero.</p>
+<h2>Semana del año en Excel, Google Sheets y el móvil</h2><ul><li><b>Excel:</b> usa <code>=ISO.NUM.DE.SEMANA(A1)</code>. La función <code>NUM.DE.SEMANA</code> empieza por defecto en domingo y cuenta como semana 1 la del 1 de enero, así que puede dar un número distinto.</li><li><b>Google Sheets:</b> <code>=ISOWEEKNUM(A1)</code> (o <code>=ISO.NUM.DE.SEMANA(A1)</code> con la hoja en español).</li><li><b>Calendario del móvil:</b> en Google Calendar y en el de iPhone puedes activar «Mostrar número de semana» en los ajustes.</li></ul>
+<p>Para planificar por semanas también te sirven los <a href="dias-habiles.html">días hábiles entre dos fechas</a>, el <a href="calendario-laboral-2027.html">calendario laboral 2027</a> con los festivos de tu comunidad o <a href="sumar-dias.html">sumar días a una fecha</a>. Y si quieres saber cuánta luz te queda por la tarde, mira <a href="hora-amanecer-anochecer.html">a qué hora anochece hoy</a>.</p>""")
+_set("semana-del-ano", 4, [("¿En qué semana estamos hoy?", "La calculadora muestra arriba la semana de hoy en cuanto abres la página, con el lunes y el domingo en que empieza y termina. El 27 de noviembre de 2026, por ejemplo, es la semana 48."),
+ ("¿Cuántas semanas tiene 2026?", "53 semanas ISO, porque 2026 empezó en jueves. La semana 53 va del lunes 28 de diciembre de 2026 al domingo 3 de enero de 2027."),
+ ("¿Cuántas semanas tiene 2027?", "52. La semana 1 de 2027 empieza el lunes 4 de enero y la semana 52 termina el domingo 2 de enero de 2028."),
+ ("¿Por qué Excel me da otro número?", "La función NUM.DE.SEMANA de Excel por defecto empieza en domingo y cuenta como semana 1 la que contiene el 1 de enero. Usa ISO.NUM.DE.SEMANA para obtener el mismo resultado que aquí.")])
+_set("semana-del-ano", 6, lambda js: js.replace("show('r','Semana:<b class=\"big\">'+w+' de '+y+'</b>Del '+fmt(l)+' al '+fmt(s));}calc();",
+ """show('r','Semana:<b class="big">'+w+' de '+y+'</b>Del '+fmt(l)+' al '+fmt(s));tabla(y,w);}
+function tabla(y,cw){const j4=new Date(y,0,4),m=new Date(j4);m.setDate(j4.getDate()-((j4.getDay()||7)-1));const o={day:'numeric',month:'short'};let h='',n=0;
+for(let d=new Date(m);;d.setDate(d.getDate()+7)){const [w,yy]=wk(d);if(yy!==y)break;n++;const e=new Date(d);e.setDate(d.getDate()+6);
+h+='<tr'+(w===cw?' style="font-weight:700"':'')+'><td>'+w+'</td><td>'+d.toLocaleDateString('es-ES',o)+(d.getFullYear()!==y?' '+d.getFullYear():'')+'</td><td>'+e.toLocaleDateString('es-ES',o)+(e.getFullYear()!==y?' '+e.getFullYear():'')+'</td></tr>';}
+document.getElementById('tb').innerHTML='<details><summary><b>Calendario de semanas de '+y+' ('+n+' semanas)</b></summary><table><tr><th>Semana</th><th>Lunes</th><th>Domingo</th></tr>'+h+'</table></details>';}
+document.getElementById('a').addEventListener('change',()=>calc());calc();"""))
+
+# Enlaces internos a la nueva herramienta de amanecer y anochecer
+_add("cuantos-dias-faltan", "</p>", " ¿Y a qué hora se hará de noche ese día? Míralo en la calculadora de <a href=\"hora-amanecer-anochecer.html\">hora de amanecer y anochecer</a>.</p>")
+_add("puentes-2027", "</p>", " Para aprovechar las tardes de tus escapadas, consulta <a href=\"hora-amanecer-anochecer.html\">a qué hora anochece</a> en tu destino.</p>")
+S['home_intro'] = S['home_intro'].replace('<a href="paga-extra-navidad.html">Paga extra</a>', '<a href="hora-amanecer-anochecer.html">Hora de anochecer</a>')

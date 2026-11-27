@@ -560,3 +560,83 @@ document.querySelectorAll('.card input,.card select').forEach(e=>{if(e.id!='re')
 fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const kk=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[kk[kk.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
 document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora'+(j.dias[t]?' de hoy':' del último día disponible')+', con impuesto eléctrico e IVA. Si tienes otra tarifa, escribe tu precio y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas: pon el de tu factura (término de energía con impuestos).';calc();});
 calc();"""))
+
+# --- PVPC o tarifa fija: qué sale más barato con tu reparto de consumo y el PVPC por horas de Red Eléctrica ---
+S['tools'].insert(2, ("pvpc-o-tarifa-fija", "¿PVPC o tarifa fija?", "Compara la tarifa regulada con tu oferta de precio fijo usando tu consumo por tramos y el PVPC de Red Eléctrica.", "PVPC o fija"))
+S['aff']["pvpc-o-tarifa-fija"] = CNMC + ENCH + amz("enchufe inteligente programable", "Enchufes programables")
+P.append(("pvpc-o-tarifa-fija", "¿PVPC o tarifa fija? Calculadora para saber qué te sale más barato | GastoLuz",
+"Calcula si te conviene más la tarifa regulada PVPC o una tarifa de precio fijo del mercado libre con tu consumo por tramos (punta, llano y valle) y los precios del PVPC de Red Eléctrica.",
+"""<p class="lead">Pon lo que consumes al mes y cómo se reparte entre punta, llano y valle (viene en tu factura), y el precio de la tarifa fija que te ofrecen. Comparamos el término de energía con los precios del PVPC publicados por Red Eléctrica y te decimos qué precio fijo tendría que tener la oferta para compensarte.</p>
+<div class="card"><div class="row"><div><label for="e">Consumo al mes (kWh)</label><input id="e" inputmode="decimal" value="250"></div>
+<div><label for="mo">Tu oferta de tarifa fija</label><select id="mo"><option value="1">Un precio único por kWh</option><option value="3">Tres precios (punta, llano y valle)</option></select></div>
+<div><label for="cp">Consumo en punta (%)</label><input id="cp" inputmode="decimal" value="30"></div>
+<div><label for="cl">Consumo en llano (%)</label><input id="cl" inputmode="decimal" value="30"></div>
+<div><label for="f1">Precio fijo (€/kWh) <span id="f1l">único o punta</span></label><input id="f1" inputmode="decimal" value="0,13"></div>
+<div class="tr3"><label for="f2">Precio fijo llano (€/kWh)</label><input id="f2" inputmode="decimal" value="0,13"></div>
+<div class="tr3"><label for="f3">Precio fijo valle (€/kWh)</label><input id="f3" inputmode="decimal" value="0,13"></div></div>
+<details><summary>Precios del PVPC usados (puedes cambiarlos)</summary><div class="row"><div><label for="pp">PVPC punta (€/kWh)</label><input id="pp" inputmode="decimal" value="0,30"></div>
+<div><label for="pl">PVPC llano (€/kWh)</label><input id="pl" inputmode="decimal" value="0,22"></div><div><label for="pv">PVPC valle (€/kWh)</label><input id="pv" inputmode="decimal" value="0,18"></div></div></details>
+<button onclick="calc()">Comparar</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note" id="pn">Precios del PVPC orientativos hasta que carguen los de Red Eléctrica.</p>
+<h2>Cómo hacemos la comparación</h2><p>Coste de la energía = kWh en punta × precio punta + kWh en llano × precio llano + kWh en valle × precio valle. Para el PVPC usamos la media de las horas de cada tramo según el <b>precio por horas publicado por Red Eléctrica</b> (término de energía con peajes y cargos, sin impuestos), el mismo dato del <a href="precio-luz-hoy.html">precio de la luz hoy</a>. Para la oferta fija, el precio de tu contrato o de la oferta, también sin impuestos. La diferencia final la mostramos con el impuesto eléctrico (5,11 %) y el IVA (21 %) aplicados, porque así es como la pagarías.</p>
+<p>Los tramos de la tarifa 2.0TD en días laborables son: <b>punta</b> de 10 a 14 h y de 18 a 22 h, <b>llano</b> de 8 a 10 h, de 14 a 18 h y de 22 a 24 h, y <b>valle</b> de 0 a 8 h. Sábados, domingos y festivos nacionales son valle todo el día, y por eso en la mayoría de los hogares el valle se lleva el 40 % o más del consumo. En tu factura (o en el área de clientes de tu distribuidora) aparece cuántos kWh gastaste en cada tramo.</p>
+<p><b>Ejemplo:</b> 250 kWh al mes repartidos 30 % punta, 30 % llano y 40 % valle con el PVPC a 0,30, 0,22 y 0,18 €/kWh cuestan 57,00 € de energía (precio medio de 0,228 €/kWh). Una oferta fija de 0,13 €/kWh costaría 32,50 €: con impuestos, unos 31 € menos al mes. Pero si al mes siguiente el PVPC baja a una media de 0,12 €/kWh, la fija pasaría a ser más cara. Por eso conviene mirar varios días o el precio medio de tus últimas facturas.</p>
+<h2>¿Qué conviene más?</h2><ul><li><b>El PVPC</b> suele salir mejor en los meses de mucho viento, sol y agua (primavera), y si puedes llevar lavadora, lavavajillas, termo o coche eléctrico a las horas baratas.</li><li><b>Una tarifa fija</b> te da tranquilidad: pagas lo mismo a cualquier hora y en cualquier mes. Compensa si su precio queda por debajo del precio medio que pagarías con el PVPC según tu forma de consumir.</li><li>Compara también el <b>término de potencia</b>: en las ofertas del mercado libre puede ser más caro que el regulado. Calcula su peso con la <a href="calcular-factura-luz.html">calculadora de la factura</a> y la <a href="potencia-contratada.html">potencia que necesitas</a>.</li><li>Para el <b>bono social</b> hay que estar en el PVPC con una comercializadora de referencia.</li></ul>
+<p>Antes de firmar, revisa si hay permanencia o servicios añadidos, y compara ofertas reales en el <a href="https://comparador.cnmc.gob.es/" rel="noopener" target="_blank">comparador oficial de la CNMC</a>.</p>""",
+[("¿Qué es mejor, PVPC o mercado libre?", "Depende de los precios de cada momento y de cómo consumes. El PVPC sigue el mercado mayorista hora a hora y suele ser más barato en primavera y para quien concentra el consumo en horas valle; una tarifa fija compensa cuando su precio por kWh queda por debajo del precio medio del PVPC ponderado con tu consumo."),
+ ("¿Cómo sé cuánto consumo en punta, llano y valle?", "En la factura de la luz aparece el consumo de cada periodo (P1 punta, P2 llano, P3 valle). También puedes verlo hora a hora en la web de tu distribuidora con el número de CUPS."),
+ ("¿Puedo volver al PVPC si me paso a una tarifa fija?", "Sí. Puedes cambiar de comercializadora cuando quieras; si el contrato del mercado libre tiene permanencia, comprueba antes si hay penalización. Para el PVPC tienes que contratar con una comercializadora de referencia."),
+ ("¿Los precios del PVPC incluyen impuestos?", "No. El precio por horas de Red Eléctrica incluye la energía, los peajes y los cargos, pero no el impuesto eléctrico ni el IVA. Los precios de las ofertas fijas suelen anunciarse también sin impuestos, así que se pueden comparar directamente.")],
+"¿PVPC o tarifa fija? Qué te sale más barato",
+"""function per(h,we){if(we||h<8)return 2;if((h>=10&&h<14)||(h>=18&&h<22))return 0;return 1;}
+function modo(){const t=document.getElementById('mo').value==='3';document.querySelectorAll('.tr3').forEach(x=>x.style.display=t?'':'none');document.getElementById('f1l').textContent=t?'punta':'único';}
+function calc(){modo();const e=v('e'),cp=Math.min(100,v('cp')),cl=Math.min(100-cp,v('cl')),cv=100-cp-cl,t3=document.getElementById('mo').value==='3';
+const kw=[e*cp/100,e*cl/100,e*cv/100],P=[v('pp'),v('pl'),v('pv')],F=t3?[v('f1'),v('f2'),v('f3')]:[v('f1'),v('f1'),v('f1')];
+const cP=kw[0]*P[0]+kw[1]*P[1]+kw[2]*P[2],cF=kw[0]*F[0]+kw[1]*F[1]+kw[2]*F[2],tx=1.0511269632*1.21,d=(cP-cF)*tx,pm=e>0?cP/e:0;
+let h=(d>0.005?'Te sale más barata la <b>tarifa fija</b>':d<-0.005?'Te sale más barato el <b>PVPC</b>':'Te cuestan prácticamente lo mismo')+':<b class="big">'+eur(Math.abs(d))+' al mes</b>';
+h+='Diferencia con impuestos · unos '+eur(Math.abs(d)*12)+' al año si los precios se mantuvieran.<br>Energía al mes sin impuestos: PVPC <b>'+eur(cP)+'</b> · tarifa fija <b>'+eur(cF)+'</b>.';
+h+='<br>Tu precio medio con el PVPC: <b>'+pm.toFixed(3).replace('.',',')+' €/kWh</b>. Una tarifa de precio único te compensa si cuesta menos que eso. Reparto: '+nf(cp,0)+' % punta, '+nf(cl,0)+' % llano, '+nf(cv,0)+' % valle.';
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+modo();calc();
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const ks=Object.keys(j.dias).sort();let use=ks.filter(k=>{const g=new Date(k+'T12:00:00').getDay();return g>0&&g<6;});if(!use.length)use=ks;
+const s=[0,0,0],n=[0,0,0];use.forEach(k=>(j.dias[k]||[]).forEach(x=>{const p=per(x[0],false);s[p]+=x[1];n[p]++;}));if(!n[0]||!n[1]||!n[2])return;
+['pp','pl','pv'].forEach((id,i)=>document.getElementById(id).value=(s[i]/n[i]).toFixed(3).replace('.',','));
+const f=k=>new Date(k+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+document.getElementById('pn').innerHTML='PVPC: media de cada tramo en '+(use.length>1?'los días laborables '+use.map(f).join(' y '):'el '+f(use[0]))+' según Red Eléctrica (sin impuestos). El PVPC cambia cada día: si quieres comparar con un mes entero, pon el precio medio que aparece en tu última factura. <a href="precio-luz-hoy.html">Ver precio por horas</a>.';calc();}).catch(()=>{});"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("precio-luz-hoy", "calcular-factura-luz", "potencia-contratada"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Dudas entre la tarifa regulada y una oferta de precio fijo? Compáralas con tu consumo en la calculadora <a href="pvpc-o-tarifa-fija.html">PVPC o tarifa fija</a>.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (27/11/2026): calculadora de vatios a kWh con días de uso, coste al mes, precio del PVPC de hoy, tabla y ejemplos ---
+for _k, _t in enumerate(P):
+    if _t[0] == "calculadora-kwh":
+        _l = list(_t)
+        _l[1] = "Pasar vatios a kWh y euros: calculadora de consumo eléctrico | GastoLuz"
+        _l[2] = "Convierte vatios (W) a kWh y a euros: cuánto consume y cuánto cuesta cualquier aparato por hora, al día y al mes con el precio de la luz de hoy. Fórmula, tabla y ejemplos."
+        _l[3] = """<p class="lead">Pon la potencia del aparato (viene en su etiqueta, en vatios) y cuánto tiempo lo usas: te decimos los kWh que consume y lo que cuesta por hora, al día, al mes y al año.</p>
+<div class="card"><div class="row"><div><label for="w">Potencia (W)</label><input id="w" inputmode="decimal" value="1000"></div>
+<div><label for="h">Horas de uso al día</label><input id="h" inputmode="decimal" value="1"></div>
+<div><label for="mi">Minutos extra al día</label><input id="mi" inputmode="numeric" value="0"></div>
+<div><label for="dm">Días de uso al mes</label><input id="dm" inputmode="numeric" value="30"></div></div>
+<label for="p">Precio kWh (€)</label><input id="p" inputmode="decimal" value="0,15"><button onclick="calc()">Convertir</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note" id="pn">El precio por defecto es orientativo; si tienes tarifa fija, pon el de tu contrato.</p>
+<h2>Fórmula: de vatios a kWh</h2><p><b>kWh = vatios × horas ÷ 1.000</b>. Y para pasarlo a dinero: <b>euros = kWh × precio del kWh</b>. Un secador de 2.000 W usado 15 minutos (0,25 h) consume 2.000 × 0,25 ÷ 1.000 = <b>0,5 kWh</b>; a 0,15 €/kWh son 7,5 céntimos. Si lo usas todos los días, son 15 kWh y 2,25 € al mes.</p>
+<h2>W, kW y kWh: la diferencia</h2><p>El <b>vatio (W)</b> mide potencia: lo que «pide» un aparato en un momento. El <b>kilovatio (kW)</b> son 1.000 vatios. El <b>kilovatio hora (kWh)</b> mide energía: lo que consume un aparato de 1 kW funcionando durante una hora. En la factura pagas la <b>potencia contratada en kW</b> (lo que puedes encender a la vez) y la <b>energía en kWh</b> (lo que has gastado). Una bombilla de 10 W necesita 100 horas para gastar 1 kWh; un horno de 2.000 W lo gasta en media hora.</p>
+<table><tr><th>Aparato</th><th>Potencia típica</th><th>kWh por hora</th><th>€ por hora a 0,15 €/kWh</th></tr>
+<tr><td>Bombilla LED</td><td>9 W</td><td>0,009</td><td>0,001 €</td></tr><tr><td>Televisor</td><td>100 W</td><td>0,1</td><td>0,015 €</td></tr><tr><td>Ordenador de sobremesa</td><td>200 W</td><td>0,2</td><td>0,03 €</td></tr>
+<tr><td>Microondas</td><td>1.000 W</td><td>1</td><td>0,15 €</td></tr><tr><td>Radiador eléctrico</td><td>1.500 W</td><td>1,5</td><td>0,23 €</td></tr><tr><td>Horno</td><td>2.000 W</td><td>2</td><td>0,30 €</td></tr><tr><td>Secadora</td><td>2.500 W</td><td>2,5</td><td>0,38 €</td></tr></table>
+<p class="note">Los aparatos con termostato (horno, radiador, nevera, termo) no están a plena potencia todo el rato: su consumo real es menor que potencia × horas. Para ellos tenemos calculadoras específicas.</p>
+<p>Calcula con más detalle los que más gastan: <a href="coste-calefaccion-electrica.html">radiadores</a>, <a href="consumo-horno-electrico.html">horno</a>, <a href="consumo-secadora.html">secadora</a>, <a href="consumo-frigorifico.html">frigorífico</a> o <a href="consumo-electrodomesticos.html">cualquier electrodoméstico</a>, y mira a qué horas sale más barata la luz en el <a href="precio-luz-hoy.html">precio de la luz hoy</a>.</p>"""
+        _l[4] = [("¿Cuántos kWh son 1.000 W?", "1.000 W durante 1 hora son 1 kWh. Durante media hora, 0,5 kWh, y durante 3 horas, 3 kWh."),
+                 ("¿Cuánto cuesta un kWh?", "Depende de tu tarifa y de la hora. Con la tarifa regulada (PVPC) cambia cada hora: la calculadora carga la media de hoy de Red Eléctrica. Con tarifa fija, mira el término de energía de tu factura."),
+                 ("¿Cuánto cuesta tener encendido un aparato de 2.000 W una hora?", "Consume 2 kWh: a 0,15 €/kWh son 30 céntimos por hora, sin contar impuestos. Si tiene termostato (como un horno o un radiador), el gasto real suele ser menor."),
+                 ("¿Cómo paso de kWh a vatios?", "Divide los kWh entre las horas de uso y multiplica por 1.000. Si un aparato gastó 3 kWh en 2 horas, su potencia media fue de 1.500 W.")]
+        _l[6] = """function calc(){const t=v('h')+v('mi')/60,k=v('w')*t/1000,p=v('p'),dm=Math.min(31,v('dm'));
+show('r','Consumo al día:<b class="big">'+nf(k,3)+' kWh · '+eur(k*p)+'</b>Por hora: '+nf(v('w')/1000,3)+' kWh ('+eur(v('w')/1000*p)+') · Al mes ('+nf(dm,0)+' días): <b>'+nf(k*dm,1)+' kWh, '+eur(k*dm*p)+'</b> · Al año: '+eur(k*dm*12*p));}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));calc();
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||!H.length)return;const av=H.reduce((s,x)=>s+x[1],0)/H.length;document.getElementById('p').value=av.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio: media del PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' según Red Eléctrica ('+av.toFixed(3).replace('.',',')+' €/kWh, sin impuestos). Si tienes tarifa fija, pon el precio del kWh de tu contrato. <a href="precio-luz-hoy.html">Ver horas más baratas</a>.';calc();}).catch(()=>{});"""
+        P[_k] = tuple(_l)
+S['aff']["calculadora-kwh"] = ENCH + amz("enchufe inteligente medidor consumo wifi", "Enchufes inteligentes con medidor")
