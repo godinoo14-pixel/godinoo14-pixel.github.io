@@ -700,3 +700,66 @@ document.getElementById('a').addEventListener('change',()=>calc());calc();"""))
 _add("cuantos-dias-faltan", "</p>", " ¿Y a qué hora se hará de noche ese día? Míralo en la calculadora de <a href=\"hora-amanecer-anochecer.html\">hora de amanecer y anochecer</a>.</p>")
 _add("puentes-2027", "</p>", " Para aprovechar las tardes de tus escapadas, consulta <a href=\"hora-amanecer-anochecer.html\">a qué hora anochece</a> en tu destino.</p>")
 S['home_intro'] = S['home_intro'].replace('<a href="paga-extra-navidad.html">Paga extra</a>', '<a href="hora-amanecer-anochecer.html">Hora de anochecer</a>')
+
+# --- Nueva (27/11/2026, 13:23): cuánto cobro de baja: incapacidad temporal por enfermedad común o accidente, por tramos de días y por meses ---
+S['tools'].insert(5, ("cuanto-cobro-de-baja", "¿Cuánto cobro de baja?", "Lo que cobras de baja médica por enfermedad o accidente: 60 % y 75 % por tramos de días, quién paga y cuánto en cada nómina.", "Baja médica"))
+S['aff']["cuanto-cobro-de-baja"] = amz("estatuto de los trabajadores 2026", "Estatuto de los Trabajadores") + amz("agenda 2027 dia por pagina", "Agendas 2027")
+P.append(("cuanto-cobro-de-baja", "¿Cuánto cobro de baja? Calculadora de la baja médica por días | CalculadoraDías",
+"Calcula cuánto cobras de baja por enfermedad común o accidente: 60 % de la base reguladora del día 4 al 20 y 75 % desde el día 21, quién paga cada tramo y cuánto te llega en cada nómina.",
+"""<p class="lead">Pon tu sueldo, el día en que empezó la baja y cuántos días dura (o la fecha de alta). Te decimos cuánto cobras en total, en cada tramo y en la nómina de cada mes, y quién te lo paga.</p>
+<div class="card"><div class="row"><div><label for="ti">Tipo de baja</label><select id="ti"><option value="c">Enfermedad común o accidente no laboral</option><option value="l">Accidente de trabajo o enfermedad profesional</option></select></div>
+<div><label for="sb">Sueldo bruto mensual (€)</label><input id="sb" inputmode="decimal" value="1800"></div>
+<div><label for="np">Número de pagas</label><select id="np"><option value="14">14 (dos pagas extra)</option><option value="12">12 o pagas prorrateadas</option><option value="15">15</option></select></div>
+<div><label for="bc">O base de cotización del mes anterior (€, opcional)</label><input id="bc" inputmode="decimal" value="" placeholder="Viene en tu nómina"></div>
+<div><label for="fi">Primer día de baja</label><input id="fi" type="date" data-today></div>
+<div><label for="nd">Días de baja</label><input id="nd" inputmode="numeric" value="30"></div>
+<div><label for="fa">O fecha de alta (opcional)</label><input id="fa" type="date"></div>
+<div><label for="cv">Complemento de tu convenio</label><select id="cv"><option value="0">Ninguno</option><option value="100">La empresa completa hasta el 100 % del sueldo</option></select></div></div>
+<button onclick="calc()">Calcular lo que cobro</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Importes brutos: de la prestación se descuentan el IRPF y tus cotizaciones como en una nómina normal. Si pones la fecha de alta, contamos hasta el día anterior (el día del alta ya se trabaja).</p>
+<h2>Cuánto se cobra de baja</h2><p>La prestación por incapacidad temporal no se calcula sobre el sueldo neto, sino sobre la <b>base reguladora</b>: la base de cotización del mes anterior a la baja dividida entre 30 (si cobras por meses). Esa base incluye la parte proporcional de las pagas extra, por eso con 14 pagas es mayor que tu sueldo mensual: 1.800 € × 14 ÷ 12 = 2.100 €.</p>
+<table><tr><th>Días de baja</th><th>Enfermedad común o accidente no laboral</th><th>Accidente de trabajo o enfermedad profesional</th></tr>
+<tr><td>Día 1 a 3</td><td>Nada (salvo mejora del convenio)</td><td>Día 1: sueldo íntegro (lo paga la empresa). Desde el día 2: 75 %</td></tr>
+<tr><td>Día 4 a 15</td><td>60 % · lo paga la empresa</td><td>75 % · mutua o INSS</td></tr>
+<tr><td>Día 16 a 20</td><td>60 % · INSS o mutua</td><td>75 %</td></tr>
+<tr><td>Día 21 en adelante</td><td>75 % · INSS o mutua</td><td>75 %</td></tr></table>
+<p>Aunque una parte la pague la Seguridad Social o la mutua, normalmente te llega todo en la <b>nómina</b>: la empresa lo adelanta (pago delegado) y luego lo descuenta de sus cotizaciones. La baja puede durar hasta <b>365 días</b>, prorrogables otros 180.</p>
+<p><b>Ejemplo:</b> sueldo de 1.800 € en 14 pagas y 30 días de baja por enfermedad común. Base reguladora diaria: 2.100 ÷ 30 = 70 €. Los días 1 a 3 no se cobran; del 4 al 20 (17 días) cobras el 60 %, 42 € al día: 714 €; del 21 al 30 (10 días), el 75 %, 52,50 € al día: 525 €. En total, <b>1.239 € brutos</b> por esos 30 días, frente a los 2.100 € que habrías cotizado: unos 860 € menos. De ellos, la empresa paga los días 4 a 15 (504 €) y el INSS o la mutua el resto (735 €).</p>
+<h2>Requisitos y detalles</h2><ul><li>Para la baja por <b>enfermedad común</b> necesitas haber cotizado al menos 180 días en los últimos 5 años. Para accidente (laboral o no) y enfermedad profesional no se pide cotización previa.</li><li>Muchos <b>convenios colectivos</b> mejoran la prestación: algunos pagan el 100 % desde el primer día y otros solo a partir de cierto día. Mira el tuyo.</li><li>Las <b>vacaciones</b> que coinciden con una baja no se pierden: se disfrutan después del alta. Calcula las que te corresponden con la <a href="calculadora-vacaciones.html">calculadora de vacaciones</a>.</li><li>Si la baja te pilla en el <b>paro</b>, cobras la prestación por desempleo; mira <a href="calcular-paro.html">cuánto paro te corresponde</a>. Y para contar los días exactos entre dos fechas, usa <a href="dias-entre-fechas.html">días entre fechas</a>.</li></ul>""",
+[("¿Cuánto se cobra de baja por enfermedad común?", "Nada los tres primeros días (salvo que tu convenio lo mejore), el 60 % de la base reguladora del día 4 al 20 y el 75 % desde el día 21. La base reguladora diaria es la base de cotización del mes anterior dividida entre 30."),
+ ("¿Quién paga la baja, la empresa o la Seguridad Social?", "En la baja por enfermedad común la empresa paga a su cargo del día 4 al 15, y desde el día 16 la Seguridad Social o la mutua. Aun así, lo normal es que la empresa te lo abone todo en la nómina y luego se lo descuente en sus cotizaciones."),
+ ("¿Cuánto se cobra de baja por accidente laboral?", "El día del accidente se cobra el sueldo completo y, desde el día siguiente, el 75 % de la base reguladora, que en este caso incluye también la media de horas extra del año anterior. No hay días sin cobrar ni se exige cotización previa."),
+ ("¿Se cobran las pagas extra estando de baja?", "La prestación ya incluye la parte proporcional de las pagas extra, porque la base de cotización las lleva prorrateadas. Si tu convenio no dice otra cosa, la empresa puede descontar de la paga extra el tiempo de baja; muchos convenios lo prohíben.")],
+"¿Cuánto cobro de baja?",
+DATEJS + """const fdm=d=>d.toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+function calc(){const lab=document.getElementById('ti').value==='l',np=+document.getElementById('np').value,sb=v('sb'),bc=v('bc')>0?v('bc'):sb*np/12,fi=pd('fi')||today,fa=pd('fa'),cv=+document.getElementById('cv').value;
+let n=Math.round(v('nd'));if(fa){n=diff(fi,fa);if(n<1){show('r','La fecha de alta tiene que ser posterior al primer día de baja.');return;}}
+if(bc<=0||n<1){show('r','Escribe tu sueldo y los días de baja.');return;}if(n>545)n=545;
+const bd=bc/30;let tot=0,emp=0,tr=[0,0,0,0],dt=[0,0,0,0],mes={},orden=[];
+for(let k=1;k<=n;k++){let p,t;if(lab){if(k===1){p=1;t=0;}else{p=0.75;t=3;}}else if(k<=3){p=0;t=0;}else if(k<=20){p=0.6;t=k<=15?1:2;}else{p=0.75;t=3;}
+const a=bd*p;tot+=a;tr[t]+=a;dt[t]++;if(!lab&&k>=4&&k<=15)emp+=a;if(lab&&k===1)emp+=a;
+const d=new Date(fi.getFullYear(),fi.getMonth(),fi.getDate()+k-1),key=d.getFullYear()*12+d.getMonth();if(!(key in mes)){mes[key]=[0,d];orden.push(key);}mes[key][0]+=a;}
+const fin=new Date(fi.getFullYear(),fi.getMonth(),fi.getDate()+n-1),sueldo=bd*n;
+let h='Cobras por '+n+' días de baja:<b class="big">'+eur(tot)+' brutos</b>Base reguladora: '+eur(bc)+' al mes ('+eur(bd)+' al día). Del '+fmt(fi)+' al '+fmt(fin)+'.';
+if(lab)h+='<br>Día 1 (sueldo íntegro): <b>'+eur(tr[0])+'</b> · Desde el día 2 al 75 %: <b>'+eur(tr[3])+'</b> ('+dt[3]+' días a '+eur(bd*0.75)+').';
+else{h+='<br>Días 1 a 3: <b>0 €</b>'+(n>3?' · Días 4 a '+Math.min(n,20)+' al 60 %: <b>'+eur(tr[1]+tr[2])+'</b> ('+(dt[1]+dt[2])+' días a '+eur(bd*0.6)+')':'')+(n>20?' · Desde el día 21 al 75 %: <b>'+eur(tr[3])+'</b> ('+dt[3]+' días a '+eur(bd*0.75)+')':'')+'.';
+h+='<br>Paga la empresa: <b>'+eur(emp)+'</b> · Paga el INSS o la mutua: <b>'+eur(tot-emp)+'</b> (normalmente todo te llega en la nómina).';}
+if(cv===100)h+='<br>Con el complemento de tu convenio hasta el 100 % cobrarías <b>'+eur(sueldo)+'</b>: la empresa añade '+eur(sueldo-tot)+'.';
+else h+='<br>Frente a tu base de cotización de esos días ('+eur(sueldo)+'), dejas de cobrar unos <b>'+eur(sueldo-tot)+'</b>.';
+if(orden.length>1)h+='<br>Por nóminas: '+orden.map(k=>fdm(mes[k][1])+' <b>'+eur(mes[k][0])+'</b>').join(' · ')+'.';
+show('r',h);}
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("calcular-finiquito", "calcular-paro", "calculadora-vacaciones"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Estás de baja médica? Calcula <a href="cuanto-cobro-de-baja.html">cuánto cobras de baja</a> por enfermedad o accidente, día a día y en cada nómina.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (27/11/2026, 13:23): título y descripción del finiquito con lo que más se busca ---
+for _k, _t in enumerate(P):
+    if _t[0] == "calcular-finiquito":
+        _l = list(_t)
+        _l[1] = "Calcular finiquito 2026: vacaciones no disfrutadas, pagas extra y días del mes | CalculadoraDías"
+        _l[2] = "Calcula tu finiquito al irte de la empresa o si te despiden: días trabajados del último mes, vacaciones no disfrutadas, parte proporcional de las pagas extra y descuento por no avisar con 15 días. Con tus fechas exactas."
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="permiso-nacimiento.html">Permiso por nacimiento</a>', '<a href="paga-extra-navidad.html">Paga extra de Navidad</a>', 1)

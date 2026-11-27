@@ -906,3 +906,71 @@ for _k, _t in enumerate(P):
         _l[6] = _l[6].replace("function calc(){", "function calc(){const tp=document.getElementById('tp');if(tp&&tp.value){const q=tp.value.split(',');document.getElementById('r1').value=q[0];document.getElementById('r2').value=q[1];}", 1) + "\ndocument.getElementById('tp').addEventListener('change',()=>calc());['r1','r2'].forEach(i=>document.getElementById(i).addEventListener('input',()=>{document.getElementById('tp').value='';}));document.querySelectorAll('#pv,#n,#r1,#r2').forEach(x=>x.addEventListener('input',()=>calc()));"
         P[_k] = tuple(_l)
 S['home_intro'] = S['home_intro'].replace('<a href="distancia-frenado.html">Frenado con hielo</a>', '<a href="distancia-frenado.html">Frenado con hielo</a><a href="autonomia-coche-electrico-invierno.html">Eléctrico en invierno</a>', 1)
+
+# --- Nueva (27/11/2026, 13:23): calculadora de anticongelante: proporción con agua, temperatura de protección y litros a cambiar ---
+S['tools'].insert(6, ("calculadora-anticongelante", "Calculadora de anticongelante", "Qué proporción de anticongelante y agua necesitas para tu temperatura mínima y cuántos litros cambiar.", "Anticongelante"))
+S['aff']["calculadora-anticongelante"] = amz("anticongelante concentrado", "Anticongelante concentrado") + amz("densimetro anticongelante refractometro", "Refractómetros y densímetros de anticongelante") + amz("embudo llenado radiador coche", "Embudos para llenar el radiador")
+P.append(("calculadora-anticongelante", "Calculadora de anticongelante: proporción con agua y litros para tu coche | CocheCuentas",
+"Calcula cuánto anticongelante y cuánta agua echar al radiador para proteger tu coche hasta -15, -25 o -35 °C, y cuántos litros vaciar si ya tiene mezcla. Tabla de proporciones y punto de congelación.",
+"""<p class="lead">Pon la capacidad del circuito de refrigeración, la concentración que tiene ahora y la temperatura más baja que quieres soportar. Te decimos qué mezcla necesitas, cuántos litros vaciar y cuánto anticongelante comprar.</p>
+<div class="card"><div class="row"><div><label for="cap">Capacidad del circuito (litros)</label><input id="cap" inputmode="decimal" value="6"></div>
+<div><label for="tm">Temperatura mínima a proteger</label><select id="tm"><option value="-10">-10 °C (costa, clima suave)</option><option value="-15">-15 °C</option><option value="-20">-20 °C</option><option value="-25" selected>-25 °C (interior y montaña)</option><option value="-30">-30 °C</option><option value="-35">-35 °C (alta montaña)</option></select></div>
+<div><label for="c0">Concentración actual del circuito (%)</label><input id="c0" inputmode="decimal" value="20"></div>
+<div><label for="cp">Concentración del producto que añades (%)</label><select id="cp"><option value="100">Concentrado puro (100 %)</option><option value="50">Listo para usar al 50 %</option><option value="30">Listo para usar al 30 %</option></select></div></div>
+<button onclick="calc()">Calcular mezcla</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">La capacidad del circuito viene en el manual del coche (en un turismo suele estar entre 5 y 9 litros). La concentración actual se mide con un densímetro o un refractómetro de anticongelante; si solo lleva agua, pon 0. Usa siempre el tipo de refrigerante que indica el fabricante.</p>
+<h2>Tabla de proporción anticongelante-agua</h2><p>El anticongelante para coches es casi siempre a base de <b>etilenglicol</b>. Mezclado con agua baja el punto de congelación de la mezcla; estos son los valores aproximados para mezclas en volumen:</p>
+<table><tr><th>Anticongelante</th><th>Agua</th><th>Protege hasta</th><th>En 6 litros</th></tr>
+<tr><td>20 %</td><td>80 %</td><td>-9 °C</td><td>1,2 l + 4,8 l de agua</td></tr><tr><td>30 %</td><td>70 %</td><td>-15 °C</td><td>1,8 l + 4,2 l</td></tr>
+<tr><td>40 %</td><td>60 %</td><td>-24 °C</td><td>2,4 l + 3,6 l</td></tr><tr><td>50 %</td><td>50 %</td><td>-37 °C</td><td>3 l + 3 l</td></tr><tr><td>60 %</td><td>40 %</td><td>-52 °C</td><td>3,6 l + 2,4 l</td></tr></table>
+<p class="note">Valores orientativos del etilenglicol en agua. Mira la tabla de la etiqueta de tu producto: los refrigerantes con propilenglicol protegen algo menos con la misma proporción.</p>
+<h2>Cómo calculamos los litros a cambiar</h2><p>Si el circuito ya tiene algo de anticongelante, no hace falta vaciarlo entero: basta con sacar una parte y sustituirla por concentrado. Con <b>V</b> litros en el circuito, una concentración actual <b>c₀</b>, la deseada <b>c₁</b> y un producto de concentración <b>c<sub>p</sub></b>, los litros a vaciar y reponer son:</p>
+<p><b>litros = V × (c₁ − c₀) ÷ (c<sub>p</sub> − c₀)</b></p>
+<p><b>Ejemplo:</b> un circuito de 6 litros que protege hasta unos -9 °C (20 %) y quieres llegar a -25 °C (41 %). Vacías 6 × (0,41 − 0,20) ÷ (1 − 0,20) = <b>1,6 litros</b> y añades 1,6 litros de anticongelante concentrado. Con un producto ya mezclado al 50 % tendrías que cambiar 4,2 litros, casi todo el circuito: por eso, para subir mucho la protección, compensa el concentrado.</p>
+<h2>Consejos antes de la ola de frío</h2><ul><li><b>No pases del 60 %</b>: con más anticongelante la mezcla vuelve a congelar antes y refrigera peor el motor. Entre el 33 % y el 50 % es lo recomendable en España.</li><li><b>Usa agua destilada o desmineralizada</b> para mezclar, no del grifo: la cal y las sales dañan el circuito.</li><li><b>No mezcles tipos distintos</b> (por ejemplo, orgánicos e inorgánicos): pueden formar lodos. El color no es una norma fiable; guíate por la especificación del manual.</li><li>Rellena siempre con el <b>motor frío</b> y hasta la marca entre MIN y MAX del vaso de expansión.</li><li>El refrigerante también pierde sus aditivos anticorrosión con los años: la mayoría de fabricantes piden cambiarlo cada 4-5 años o entre 60.000 y 150.000 km.</li></ul>
+<p>Si vas a viajar por carreteras con nieve o hielo, mira también cuánto aumenta la <a href="distancia-frenado.html">distancia de frenado con hielo</a>, qué <a href="equivalencia-neumaticos.html">neumáticos de invierno y cadenas</a> te sirven y cuánto te cuesta el <a href="coste-viaje-coche.html">combustible del viaje</a>. Si tu coche es eléctrico, calcula su <a href="autonomia-coche-electrico-invierno.html">autonomía con frío</a>.</p>""",
+[("¿Qué proporción de anticongelante y agua hay que echar?", "En España lo habitual es entre un 33 % y un 50 % de anticongelante. Al 33 % protege hasta unos -18 °C, suficiente para la mayoría de zonas; al 50 %, hasta unos -37 °C, para montaña y zonas muy frías. Nunca más del 60 %."),
+ ("¿Cuántos litros de anticongelante lleva un coche?", "El circuito de refrigeración de un turismo suele tener entre 5 y 9 litros (mira el manual). Para una mezcla al 50 % en 6 litros necesitas 3 litros de concentrado y 3 de agua destilada."),
+ ("¿Puedo echar solo agua al radiador?", "Solo en una emergencia y por poco tiempo. El agua sola se congela a 0 °C, puede reventar el radiador o el bloque y no protege contra la corrosión. Después hay que restablecer la proporción de anticongelante."),
+ ("¿Cómo sé qué concentración tiene mi refrigerante?", "Con un densímetro de bolas o un refractómetro, que cuestan pocos euros y miden la temperatura de protección en segundos. En el taller lo comprueban gratis en muchas revisiones de invierno.")],
+"Calculadora de anticongelante",
+"""const TB=[[0,0],[10,-4],[20,-9],[30,-15],[40,-24],[50,-37],[60,-52]];
+function pc(c){c=Math.max(0,Math.min(60,c));for(let i=1;i<TB.length;i++)if(c<=TB[i][0]){const a=TB[i-1],b=TB[i];return a[1]+(b[1]-a[1])*(c-a[0])/(b[0]-a[0]);}return -52;}
+function cn(t){for(let i=1;i<TB.length;i++)if(t>=TB[i][1]){const a=TB[i-1],b=TB[i];return a[0]+(b[0]-a[0])*(t-a[1])/(b[1]-a[1]);}return 60;}
+function calc(){const V=v('cap'),t=+document.getElementById('tm').value,c0=Math.max(0,Math.min(100,v('c0'))),cp=+document.getElementById('cp').value,c1=Math.ceil(cn(t));
+if(V<=0){show('r','Escribe la capacidad del circuito.');return;}
+let h='Mezcla necesaria:<b class="big">'+c1+' % de anticongelante</b>Protege hasta unos '+nf(pc(c1),0)+' °C. Ahora tu circuito protege hasta unos '+nf(pc(c0),0)+' °C.';
+if(c0>=c1)h+='<br><b>No necesitas añadir nada</b>: tu mezcla actual ya protege hasta esa temperatura. Si te falta líquido, rellena con mezcla al '+c1+' %.';
+else if(cp<=c1)h+='<br>Con un producto al '+cp+' % no puedes llegar al '+c1+' %: necesitas anticongelante más concentrado.';
+else{const x=V*(c1-c0)/(cp-c0);h+='<br>Vacía <b>'+nf(x,1)+' litros</b> del circuito y añade <b>'+nf(x,1)+' litros</b> de anticongelante '+(cp==100?'concentrado':'al '+cp+' %')+'.';}
+const pure=V*c1/100;h+='<br>Si vacías y rellenas todo el circuito: <b>'+nf(pure,1)+' l de concentrado + '+nf(V-pure,1)+' l de agua destilada</b>.';
+show('r',h);}
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("distancia-frenado", "autonomia-coche-electrico-invierno", "equivalencia-neumaticos"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>Antes de las heladas, comprueba también que el refrigerante aguanta el frío de tu zona con la <a href="calculadora-anticongelante.html">calculadora de anticongelante</a>: proporción con agua y litros a cambiar.</p>'
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="autonomia-coche-electrico-invierno.html">Eléctrico en invierno</a>', '<a href="calculadora-anticongelante.html">Anticongelante</a>', 1)
+
+# --- Mejora (27/11/2026, 13:23): financiación de coche con ejemplo, tabla de cuotas por cada 10.000 €, multiopción y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "cuota-financiacion-coche":
+        _l = list(_t)
+        _l[1] = "Calculadora de financiación de coche: cuota mensual, TAE e intereses | CocheCuentas"
+        _l[2] = "Calcula la cuota mensual al financiar un coche, la TAE real con comisión de apertura y cuánto pagas de intereses. Tabla de cuotas por cada 10.000 € a 3, 4, 5 y 7 años y financiación con cuota final."
+        _l[3] = _l[3].replace('<p class="lead">Calcula la cuota y lo que pagarás en total al financiar tu coche.</p>',
+            '<p class="lead">Pon el precio, la entrada, el interés (TIN) y el plazo que te ofrecen. Te decimos la cuota mensual, la TAE real con la comisión de apertura y cuánto pagas en intereses, también si es una financiación con cuota final.</p>', 1)
+        _l[3] = _l[3] + """<p><b>Ejemplo:</b> un coche de 20.000 € con 4.000 € de entrada, financiado a 60 meses al 8,5 % TIN con un 3 % de comisión de apertura. Financias 16.000 € y pagas <b>328,26 € al mes</b>; en intereses se van 3.696 € y la comisión suma 480 € más. La TAE resultante sube al <b>10,3 %</b>, casi dos puntos más que el 8,5 % anunciado.</p>
+<h2>Cuota por cada 10.000 € financiados</h2><p>Para hacerte una idea rápida, multiplica por el número de decenas de miles que vas a financiar. Cuota mensual y, entre paréntesis, intereses totales (sin comisiones):</p>
+<table><tr><th>TIN</th><th>36 meses</th><th>48 meses</th><th>60 meses</th><th>84 meses</th></tr>
+<tr><td>5 %</td><td>299,71 € (790 €)</td><td>230,29 € (1.054 €)</td><td>188,71 € (1.323 €)</td><td>141,34 € (1.872 €)</td></tr>
+<tr><td>7 %</td><td>308,77 € (1.116 €)</td><td>239,46 € (1.494 €)</td><td>198,01 € (1.881 €)</td><td>150,93 € (2.678 €)</td></tr>
+<tr><td>9 %</td><td>318,00 € (1.448 €)</td><td>248,85 € (1.945 €)</td><td>207,58 € (2.455 €)</td><td>160,89 € (3.515 €)</td></tr>
+<tr><td>11 %</td><td>327,39 € (1.786 €)</td><td>258,46 € (2.406 €)</td><td>217,42 € (3.045 €)</td><td>171,22 € (4.383 €)</td></tr></table>
+<p>Alargar el plazo baja la cuota, pero encarece mucho el total: a 7 años pagas más del doble de intereses que a 3. Y el coche se deprecia mientras tanto; mira <a href="depreciacion-coche.html">cuánto valdrá dentro de unos años</a> para no deber más de lo que vale.</p>
+<h2>Financiación con cuota final (multiopción)</h2><p>En estas ofertas una parte del precio, el <b>valor futuro garantizado</b>, se deja para el final. Las cuotas son más bajas porque solo amortizas la diferencia, pero pagas intereses sobre todo el importe durante todo el plazo. Al terminar puedes pagar la cuota final (o refinanciarla), devolver el coche si cumple los kilómetros y el estado pactados o cambiarlo por otro. Escribe esa cuota final en la calculadora para ver la TAE real y compárala con un <a href="renting-vs-compra.html">renting</a> o con la financiación clásica.</p>
+<p>Al coste de la cuota súmale el seguro, el <a href="impuesto-circulacion.html">impuesto de circulación</a> y el mantenimiento: calcula el total en <a href="coste-anual-coche.html">cuánto cuesta mantener un coche al año</a>.</p>"""
+        _l[4] = list(_l[4]) + [("¿Cuánto pago al mes por financiar 20.000 €?", "Depende del interés y el plazo. A 5 años (60 meses) y un 7 % TIN son unos 396 € al mes; al 9 %, unos 415 €. A 7 años la cuota baja a unos 302 € al 7 %, pero pagas casi 5.400 € de intereses."),
+                               ("¿Puedo amortizar antes la financiación del coche?", "Sí. La ley de crédito al consumo permite devolverlo antes en cualquier momento; la entidad puede cobrar una compensación de hasta el 1 % de lo que amortizas si queda más de un año, o del 0,5 % si queda menos. Revisa también si perder un descuento por financiar te obliga a devolverlo.")]
+        P[_k] = tuple(_l)
