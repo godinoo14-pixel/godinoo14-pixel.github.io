@@ -724,3 +724,78 @@ show('r','Ahorro estimado al año:<b class="big">'+eur(ah)+'</b>Producción: '+n
 document.getElementById('zo').addEventListener('change',()=>{document.getElementById('hs').value=document.getElementById('zo').value;calc();});
 document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));calc();"""
         P[_k] = tuple(_l)
+
+# --- Nueva (27/11/2026, 21:23): consumo de consolas y PC gaming (PS5, Xbox, Switch, PC) con pantalla, reposo y el PVPC por horas de pvpc.json ---
+S['tools'].insert(6, ("consumo-consola-ordenador", "Consumo de la PS5, Xbox o PC gaming", "Cuánto cuesta jugar cada hora y al mes, con la tele y el modo reposo.", "Consolas y PC"))
+S['aff']["consumo-consola-ordenador"] = ENCH + amz("regleta con interruptor individual", "Regletas con interruptor") + amz("enchufe inteligente programable", "Enchufes programables")
+P.append(("consumo-consola-ordenador", "¿Cuánto gasta una PS5, una Xbox o un PC gaming? Consumo y coste al mes | GastoLuz",
+"Calcula cuánto consume tu consola o tu PC gaming y cuánto cuesta jugar: por hora, al mes y al año, con la tele o el monitor, el modo reposo y el precio de la luz por horas de hoy. PS5, PS5 Pro, Xbox Series X y S, Switch y PC.",
+"""<p class="lead">Elige tu consola u ordenador, cuántas horas juegas y a qué hora. Te decimos lo que cuesta cada hora de juego, al mes y al año, sumando la tele o el monitor y lo que gasta en reposo, con el precio de la luz por horas de hoy.</p>
+<div class="card"><div class="row"><div><label for="ap">Aparato</label><select id="ap"><option value="200|2|100" selected>PS5 o PS5 Slim (unos 200 W jugando)</option><option value="230|2|100">PS5 Pro (unos 230 W)</option><option value="170|1|100">Xbox Series X (unos 170 W)</option><option value="80|1|100">Xbox Series S (unos 80 W)</option><option value="15|1|100">Nintendo Switch en la base (unos 15 W)</option><option value="350|3|30">PC gaming de gama media (unos 350 W)</option><option value="550|3|30">PC gaming de gama alta (unos 550 W)</option><option value="150|1|0">Portátil gaming (unos 150 W)</option></select></div>
+<div><label for="w">Consumo jugando (W)</label><input id="w" inputmode="decimal" value="200"></div>
+<div><label for="tv">Tele o monitor (W, 0 si no usas)</label><input id="tv" inputmode="decimal" value="100"></div>
+<div><label for="rp">Consumo en reposo (W)</label><input id="rp" inputmode="decimal" value="2"></div>
+<div><label for="h">Horas de juego al día</label><input id="h" inputmode="decimal" value="3"></div>
+<div><label for="ds">Días de juego a la semana</label><input id="ds" inputmode="decimal" value="7"></div>
+<div><label for="ho">Hora a la que empiezas a jugar</label><select id="ho"></select></div>
+<div><label for="p">Precio de la luz (€/kWh con impuestos, si no usas el PVPC de hoy)</label><input id="p" inputmode="decimal" value="0,18"></div></div>
+<p class="note" id="pn">Cargando el precio de la luz por horas de hoy…</p>
+<button onclick="calc()">Calcular coste</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cuánto consume cada consola y ordenador</h2><p>Una consola no gasta siempre lo mismo: en los menús o viendo una serie gasta mucho menos que en un juego exigente. Los valores de la tabla son consumos típicos <b>jugando</b>, medidos en el enchufe; el de tu equipo puede variar un 10-20 % según el juego. En un PC lo que más pesa es la tarjeta gráfica.</p>
+<table><tr><th>Aparato (jugando)</th><th>Por hora*</th><th>Al mes (3 h al día)*</th></tr>
+<tr><td>Nintendo Switch en la base, 15 W</td><td>0,003 €</td><td>0,25 €</td></tr><tr><td>Xbox Series S, 80 W</td><td>0,014 €</td><td>1,31 €</td></tr>
+<tr><td>Xbox Series X, 170 W</td><td>0,031 €</td><td>2,79 €</td></tr><tr><td>PS5 / PS5 Slim, 200 W</td><td>0,036 €</td><td>3,28 €</td></tr><tr><td>PS5 Pro, 230 W</td><td>0,041 €</td><td>3,78 €</td></tr>
+<tr><td>PC gaming gama media, 350 W</td><td>0,063 €</td><td>5,75 €</td></tr><tr><td>PC gaming gama alta, 550 W</td><td>0,099 €</td><td>9,03 €</td></tr><tr><td>Televisor de 55" LED, 100 W</td><td>0,018 €</td><td>1,64 €</td></tr></table>
+<p class="note">* Solo el aparato, sin la pantalla, a 0,18 €/kWh con impuestos. Suma la tele o el monitor: la calculadora lo hace por ti.</p>
+<p><b>Fórmula:</b> kWh = vatios × horas ÷ 1.000. <b>Ejemplo:</b> una PS5 (200 W) con una tele de 100 W, 3 horas al día, gasta 0,9 kWh diarios: unos 16 céntimos al día a 0,18 €/kWh y unos <b>5 € al mes</b>. Si juegas de 20:00 a 23:00 con el PVPC, puedes pagar bastante más que jugando por la tarde un fin de semana, porque esas horas suelen ser de las más caras.</p>
+<h2>El modo reposo</h2><p>En reposo las consolas actuales gastan poco, unos 1-3 W, pero si las dejas con descargas automáticas o cargando mandos por USB, o con el arranque rápido activado, pueden gastar bastante más. Con 2 W las 21 horas que no juegas son unos 15 kWh al año, menos de 3 €. Si la apagas del todo con una regleta, recuerda que no se actualizará sola por la noche.</p>
+<h2>Trucos para que jugar salga más barato</h2><ul><li>Activa el modo de ahorro de energía de la consola y el apagado automático de la tele.</li><li>Baja el brillo de la pantalla: en la tele es lo que más cambia el consumo.</li><li>En el PC, limita los FPS a la frecuencia de tu monitor: la gráfica trabaja menos y gasta menos.</li><li>Si tienes PVPC, juega en las horas baratas cuando puedas: mira el <a href="precio-luz-hoy.html">precio de la luz hoy por horas</a>.</li></ul>
+<p>Compara con el resto de la casa en el <a href="consumo-electrodomesticos.html">consumo de electrodomésticos</a>, pasa cualquier potencia a euros con la <a href="calculadora-kwh.html">calculadora de vatios a kWh</a> o, si este año decoras, calcula las <a href="consumo-luces-navidad.html">luces de Navidad</a>.</p>""",
+[("¿Cuánto gasta una PS5 al mes?", "Jugando 3 horas al día, una PS5 de unos 200 W gasta unos 18 kWh al mes: unos 3,30 € a 0,18 €/kWh. Con la tele de 100 W, unos 5 € al mes. En reposo añade menos de 0,25 € al mes."),
+ ("¿Qué gasta más, una consola o un PC gaming?", "El PC gaming. Uno de gama media gasta unos 350 W jugando y uno de gama alta, 500-600 W, frente a los 170-230 W de una PS5 o una Xbox Series X. Una Switch gasta muy poco: unos 15 W en la base."),
+ ("¿Cuánto cuesta una hora de jugar a la PS5?", "Unos 3,6 céntimos solo la consola a 0,18 €/kWh, y unos 5,4 céntimos con una tele de 100 W. Con el PVPC depende de la hora: en las horas punta puede costar el doble que en las baratas."),
+ ("¿Gasta mucho dejar la consola en reposo?", "Poco: 1-3 W en las consolas actuales, menos de 3 € al año. Gasta más si se queda descargando juegos, cargando mandos por USB o con el encendido rápido activado.")],
+"¿Cuánto gasta una PS5, una Xbox o un PC gaming?",
+"""let HP=null;const hs=document.getElementById('ho');for(let i=0;i<24;i++)hs.add(new Option(String(i).padStart(2,'0')+':00',i));hs.value=18;
+const TX=1.0511269632*1.21;
+function pre(){const t=document.getElementById('ap').value.split('|');document.getElementById('w').value=t[0];document.getElementById('rp').value=t[1];document.getElementById('tv').value=t[2];calc();}
+document.getElementById('ap').addEventListener('change',pre);
+function pw(h0,du){let s=0,n=0;for(let t=0;t<du;t+=0.25){s+=HP[Math.floor(h0+t)%24];n++;}return (n?s/n:HP[h0%24])*TX;}
+function calc(){const w=v('w')+v('tv'),rp=v('rp'),h=Math.min(24,Math.max(0,v('h'))),ds=Math.min(7,Math.max(0,v('ds'))),h0=+hs.value;
+if(w<=0||h<=0){show('r','Escribe el consumo y las horas de juego.');return;}
+let pj=v('p'),pd=v('p'),tx='';if(HP){pj=pw(h0,h);pd=HP.reduce((a,b)=>a+b,0)/24*TX;let bh=0,bp=1e9;for(let x=0;x<24;x++){const y=pw(x,h);if(y<bp){bp=y;bh=x;}}
+tx='<br>Hoy, empezar a las <b>'+String(bh).padStart(2,'0')+':00</b> sería lo más barato: '+eur(w*h/1000*bp)+' por sesión.';}
+const kj=w*h/1000,kr=rp*(24-h)/1000,dj=ds/7,cd=kj*pj*dj+kr*pd,mes=cd*30.4;
+show('r','Coste al mes:<b class="big">'+eur(mes)+'</b>Por hora de juego: <b>'+eur(w/1000*pj)+'</b> ('+nf(w,0)+' W con la pantalla, a '+nf(pj,3)+' €/kWh'+(HP?', PVPC de hoy desde las '+String(h0).padStart(2,'0')+':00 con impuestos':'')+')<br>Por sesión de '+nf(h,1)+' h: '+eur(kj*pj)+' · Al año: <b>'+eur(cd*365)+'</b> ('+nf((kj*dj+kr)*365,0)+' kWh)<br>Del total, el reposo supone '+eur(kr*pd*30.4)+' al mes'+tx);}
+document.querySelectorAll('.card input,#ho').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<24)throw 0;HP=[];H.forEach(x=>{HP[x[0]]=x[1];});
+document.getElementById('pn').innerHTML='Precio: tarifa regulada (PVPC) de Red Eléctrica hora a hora'+(j.dias[t]?' de hoy':' del último día disponible')+', con impuesto eléctrico e IVA. Si tienes una tarifa de precio fijo, escribe tu precio arriba y pulsa <a href="#" onclick="HP=null;calc();return false">usar mi precio fijo</a>.';calc();}).catch(()=>{document.getElementById('pn').textContent='Usamos el precio que escribas: pon el de tu factura (término de energía con impuestos).';calc();});
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("calculadora-kwh", "consumo-luces-navidad"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Te van a regalar una consola? Mira <a href="consumo-consola-ordenador.html">cuánto gasta una PS5, una Xbox o un PC gaming</a> por hora y al mes, con la tele y el modo reposo.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (27/11/2026, 21:23): consumo de electrodomésticos con resultado al cargar, cálculo al escribir, precio PVPC medio de hoy, tabla ampliada y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "consumo-electrodomesticos":
+        _l = list(_t)
+        _l[1] = "Consumo de electrodomésticos: cuánto gasta cada aparato al mes en euros | GastoLuz"
+        _l[2] = "Calcula cuánto gasta cada electrodoméstico al día, al mes y al año en kWh y euros con el precio de la luz de hoy: frigorífico, horno, lavadora, termo, secadora, televisor, ordenador o consola. Con tabla de consumos típicos."
+        _l[3] = _l[3].replace('<p class="lead">Elige un aparato (o pon su potencia en vatios), las horas de uso y el precio del kWh.</p>',
+            '<p class="lead">Elige un aparato (o pon su potencia en vatios) y las horas que lo usas. Te decimos lo que gasta al día, al mes y al año en kWh y en euros, con el precio medio de la luz de hoy.</p>', 1)
+        _l[3] = _l[3].replace('<input id="p" inputmode="decimal" value="0,15">', '<input id="p" inputmode="decimal" value="0,18">', 1)
+        _l[3] = _l[3].replace('<button onclick="calc()">Calcular consumo</button><div class="res" id="r"></div></div>',
+            '<p class="note" id="pn">Precio del kWh: pon el de tu factura, con impuestos.</p><button onclick="calc()">Calcular consumo</button><div class="res" id="r" aria-live="polite"></div></div>', 1)
+        _l[3] = _l[3].replace('<tr><td>Horno, 30 min al día</td><td>30</td><td>4,50 €</td></tr><tr><td>Termo de 80 l, una familia</td><td>120-180</td><td>18-27 €</td></tr></table>',
+            '<tr><td>Horno, 30 min al día</td><td>30</td><td>4,50 €</td></tr><tr><td>Termo de 80 l, una familia</td><td>120-180</td><td>18-27 €</td></tr><tr><td>Lavavajillas, programa eco, 5 a la semana</td><td>16-20</td><td>2,40-3 €</td></tr><tr><td>Televisor LED de 55", 4 h al día</td><td>12</td><td>1,80 €</td></tr><tr><td>Ordenador de sobremesa, 4 h al día</td><td>24</td><td>3,60 €</td></tr><tr><td>PS5 jugando, 2 h al día</td><td>12</td><td>1,80 €</td></tr><tr><td>Microondas, 10 min al día</td><td>5</td><td>0,75 €</td></tr></table>', 1)
+        _l[3] = _l[3] + '<p>¿Juegas a la consola o al ordenador? Calcula lo que cuesta cada hora de juego con la tele y el modo reposo en <a href="consumo-consola-ordenador.html">cuánto gasta una PS5, una Xbox o un PC gaming</a>, y lo que cuesta cada lavado en la <a href="consumo-lavadora.html">calculadora de la lavadora</a>.</p>'
+        _l[4] = list(_l[4]) + [("¿Cuánto gasta una televisión al mes?", "Un televisor LED de 55 pulgadas gasta unos 100 W: 4 horas al día son unos 12 kWh al mes, alrededor de 2 € a 0,18 €/kWh. Los OLED y los de más pulgadas gastan más, y el brillo alto puede subir el consumo bastante."),
+                               ("¿Cuánto cuesta tener un aparato en stand-by?", "Cada vatio encendido todo el año son 8,8 kWh, unos 1,60 € a 0,18 €/kWh. Los aparatos actuales gastan menos de 1 W en reposo, pero los descodificadores, equipos de sonido o aparatos antiguos pueden gastar 5-15 W cada uno.")]
+        _l[6] = _l[6].replace('}pre();', '}', 1) + """
+function pre2(){pre();calc();}document.getElementById('ap').setAttribute('onchange','pre2()');
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||!H.length)return;const av=H.reduce((s,x)=>s+x[1],0)/H.length*1.0511269632*1.21;document.getElementById('p').value=av.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio: media del PVPC de '+(j.dias[t]?'hoy':'último día disponible')+' según Red Eléctrica, con impuesto eléctrico e IVA ('+av.toFixed(3).replace('.',',')+' €/kWh). Si tienes tarifa fija, escribe tu precio.';calc();}).catch(()=>{});
+pre();calc();"""
+        P[_k] = tuple(_l)

@@ -974,3 +974,107 @@ for _k, _t in enumerate(P):
         _l[4] = list(_l[4]) + [("¿Cuánto pago al mes por financiar 20.000 €?", "Depende del interés y el plazo. A 5 años (60 meses) y un 7 % TIN son unos 396 € al mes; al 9 %, unos 415 €. A 7 años la cuota baja a unos 302 € al 7 %, pero pagas casi 5.400 € de intereses."),
                                ("¿Puedo amortizar antes la financiación del coche?", "Sí. La ley de crédito al consumo permite devolverlo antes en cualquier momento; la entidad puede cobrar una compensación de hasta el 1 % de lo que amortizas si queda más de un año, o del 0,5 % si queda menos. Revisa también si perder un descuento por financiar te obliga a devolverlo.")]
         P[_k] = tuple(_l)
+
+# --- Nueva (27/11/2026, 21:23): tiempo de viaje en coche con paradas cada 2 h o 200 km (recomendación DGT), hora de llegada y combustible con carb/index.json ---
+S['tools'].insert(4, ("tiempo-viaje-coche", "Tiempo de viaje en coche con paradas", "Hora de llegada con descansos cada 2 horas o 200 km, parada para comer y gasolina del viaje.", "Tiempo de viaje"))
+S['aff']["tiempo-viaje-coche"] = amz("soporte movil coche rejilla", "Soportes de móvil para el coche") + amz("cargador usb c coche", "Cargadores de coche USB-C") + amz("kit emergencia coche invierno", "Kit de invierno para el coche")
+P.append(("tiempo-viaje-coche", "Calculadora de tiempo de viaje en coche con paradas: hora de llegada | CocheCuentas",
+"Calcula cuánto se tarda en coche con las paradas para descansar cada 2 horas o 200 km que recomienda la DGT, la parada para comer, la hora de llegada y la gasolina del viaje. Ideal para los viajes de Navidad.",
+"""<p class="lead">Pon los kilómetros, la hora de salida y por dónde vas. Te decimos a qué hora llegas contando las paradas para descansar cada 2 horas o 200 km, dónde te toca parar y cuánto gastas en combustible.</p>
+<div class="card"><div class="row"><div><label for="km">Distancia (km)</label><input id="km" inputmode="numeric" value="500"></div>
+<div><label for="hs">Hora de salida</label><input id="hs" type="time" value="08:00"></div>
+<div><label for="vi">Tipo de recorrido</label><select id="vi"><option value="100" selected>Casi todo autovía o autopista</option><option value="85">Mezcla de autovía y carretera</option><option value="70">Carretera convencional</option><option value="">Escribo yo la velocidad media</option></select></div>
+<div><label for="vm">Velocidad media real (km/h)</label><input id="vm" inputmode="decimal" value="100"></div>
+<div><label for="cd">Parar como mucho cada (horas)</label><input id="cd" inputmode="decimal" value="2"></div>
+<div><label for="pm">Minutos de cada parada</label><input id="pm" inputmode="numeric" value="20"></div>
+<div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6,5"></div>
+<div><label for="cb">Combustible</label><select id="cb" onchange="pz()"><option value="g95">Gasolina 95</option><option value="gA">Diésel (gasóleo A)</option><option value="glp">GLP (autogás)</option></select></div>
+<div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div>
+<div><label for="pj">Peajes (€, opcional)</label><input id="pj" inputmode="decimal" value="0"></div></div>
+<label class="chk"><input type="checkbox" id="co" checked><span>Parar una hora para comer si una parada cae entre las 13:00 y las 15:30</span></label>
+<p class="note" id="pn">Precio del litro: escribe el de tu gasolinera.</p>
+<button onclick="calc()">Calcular hora de llegada</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo calculamos el tiempo de viaje</h2><p><b>Tiempo al volante</b> = distancia ÷ velocidad media real. La velocidad media no es la máxima: por autovía, con adelantamientos, travesías, obras y algún atasco a la salida de las ciudades, lo normal es ir a una media de 90-105 km/h; por carretera convencional, a 65-75 km/h. Después sumamos las paradas: la DGT recomienda <b>descansar cada dos horas o cada 200 km</b>, lo que llegue antes, unos 20-30 minutos, para estirar las piernas, beber agua y tomar algo ligero. Si una parada cae a la hora de comer, la alargamos a una hora.</p>
+<p><b>Ejemplo:</b> 500 km por autovía saliendo a las 8:00 a 100 km/h de media son 5 horas al volante. Paras a las 10:00 (km 200) y a las 12:20 (km 400), 20 minutos cada vez, y llegas a las <b>13:40</b>: 5 h 40 min de viaje. Con 6,5 L/100 km y el litro a 1,55 €, el combustible cuesta unos 50 €.</p>
+<table><tr><th>Trayecto</th><th>Km aprox.</th><th>Al volante</th><th>Con paradas</th><th>Gasolina*</th></tr>
+<tr><td>Barcelona–Valencia</td><td>350</td><td>3 h 30 min</td><td>3 h 50 min</td><td>35 €</td></tr>
+<tr><td>Madrid–Valencia</td><td>355</td><td>3 h 33 min</td><td>3 h 53 min</td><td>36 €</td></tr>
+<tr><td>Madrid–Bilbao</td><td>400</td><td>4 h</td><td>4 h 20 min</td><td>40 €</td></tr>
+<tr><td>Madrid–Sevilla / Madrid–Málaga</td><td>530</td><td>5 h 18 min</td><td>5 h 58 min</td><td>53 €</td></tr>
+<tr><td>Madrid–A Coruña</td><td>590</td><td>5 h 54 min</td><td>6 h 34 min</td><td>59 €</td></tr>
+<tr><td>Madrid–Barcelona</td><td>620</td><td>6 h 12 min</td><td>7 h 12 min</td><td>62 €</td></tr></table>
+<p class="note">* A 100 km/h de media por autovía, paradas de 20 minutos cada 2 horas o 200 km y un coche que gasta 6,5 L/100 km con el litro a 1,55 €. Distancias orientativas por la ruta más habitual.</p>
+<h2>Consejos para un viaje largo en invierno</h2><ul><li><b>Duerme bien la noche anterior</b> y evita salir después de una jornada de trabajo: el cansancio y el sueño están detrás de muchos accidentes en carretera.</li><li>Si viajáis dos conductores, <b>turnaos en cada parada</b>. Aun así, no hagáis más de 8-9 horas de coche en un día si podéis evitarlo.</li><li>En invierno anochece pronto: sal temprano para hacer la mayor parte del viaje con luz y consulta el estado de las carreteras y la previsión de nieve antes de salir.</li><li>Comidas ligeras y <b>nada de alcohol</b>: comprueba con la <a href="calculadora-alcoholemia.html">calculadora de alcoholemia</a> por qué ni una copa en la comida compensa.</li><li>Revisa presiones, líquido limpiaparabrisas y <a href="calculadora-anticongelante.html">anticongelante</a>, y lleva cadenas o calcetines si vas a zonas de montaña.</li></ul>
+<p>Calcula el gasto exacto con peajes y entre varios en el <a href="coste-viaje-coche.html">coste de un viaje en coche</a>, busca dónde repostar en las <a href="gasolineras-baratas.html">gasolineras más baratas cerca de ti</a> y, si vas en eléctrico, mira cuántas paradas para cargar necesitas con la <a href="autonomia-coche-electrico-invierno.html">autonomía del eléctrico en invierno</a>.</p>""",
+[("¿Cada cuánto hay que parar a descansar conduciendo?", "La DGT recomienda parar cada dos horas o cada 200 kilómetros, lo que llegue antes, y descansar unos 20-30 minutos. Si notas sueño, bostezos o te cuesta mantener el carril, para antes: el café solo ayuda un rato."),
+ ("¿Cómo se calcula el tiempo de un viaje en coche?", "Divide los kilómetros entre la velocidad media real (unos 100 km/h por autovía, 70 por carretera convencional) y suma las paradas. 500 km por autovía son unas 5 horas al volante y unas 5 h 40 min con dos paradas de 20 minutos."),
+ ("¿Cuántas horas seguidas se puede conducir en un coche particular?", "Para coches particulares no hay un límite legal de horas como el de camiones y autobuses, pero conducir cansado es peligroso y puede sancionarse si afecta a la conducción. Lo recomendable es parar cada dos horas y no pasar de 8-9 horas al volante en un día."),
+ ("¿A qué velocidad media se va por autovía?", "Aunque el límite sea 120 km/h, la media real de un viaje largo por autovía suele estar entre 90 y 105 km/h por la salida de las ciudades, obras, camiones y tráfico. Por eso los navegadores calculan algo más de una hora por cada 100 km.")],
+"Calculadora de tiempo de viaje en coche con paradas",
+"""let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k])document.getElementById('p').value=MED[k].toFixed(3).replace('.',',');calc();}
+function hm(m){m=Math.round(m);const h=Math.floor(m/60),x=m%60;return h+' h'+(x?' '+x+' min':'');}
+function clk(t){t=Math.round(t);const dd=Math.floor(t/1440),r=((t%1440)+1440)%1440;return String(Math.floor(r/60)).padStart(2,'0')+':'+String(r%60).padStart(2,'0')+(dd>0?' (+'+dd+' día'+(dd>1?'s':'')+')':'');}
+document.getElementById('vi').addEventListener('change',()=>{const x=document.getElementById('vi').value;if(x)document.getElementById('vm').value=x;calc();});
+function calc(){const km=v('km'),vm=v('vm'),cd=Math.max(0.5,v('cd')),pm=Math.max(0,v('pm')),co=document.getElementById('co').checked,s=(document.getElementById('hs').value||'08:00').split(':').map(Number),t0=(s[0]||0)*60+(s[1]||0);
+if(km<=0||vm<=0){show('r','Escribe la distancia y la velocidad media.');return;}
+const dr=km/vm*60,sg=Math.min(cd*60,200/vm*60),n=Math.max(0,Math.ceil(dr/sg-1e-9)-1);let t=t0,st=0,lu=false,rows='';
+for(let i=1;i<=n;i++){t+=sg;const loc=((Math.round(t)%1440)+1440)%1440;let du=pm;if(co&&!lu&&loc>=780&&loc<=930){du=Math.max(pm,60);lu=true;}
+rows+='<tr><td>Parada '+i+(du>pm?' (comida)':'')+'</td><td>km '+nf(vm*sg*i/60,0)+'</td><td>'+clk(t)+'</td><td>'+du+' min</td></tr>';t+=du;st+=du;}
+const ar=t0+dr+st,l=km*v('c')/100,cf=l*v('p'),pj=v('pj'),la=((Math.round(ar)%1440)+1440)%1440;
+let h='Hora de llegada:<b class="big">'+clk(ar)+'</b>Tiempo al volante: <b>'+hm(dr)+'</b> · Paradas: <b>'+n+'</b> ('+hm(st)+') · Viaje total: <b>'+hm(dr+st)+'</b><br>Combustible: '+nf(l,1)+' litros, <b>'+eur(cf)+'</b>'+(pj>0?' · Con peajes: <b>'+eur(cf+pj)+'</b>':'');
+if(n)h+='<table><tr><th>Parada</th><th>Dónde</th><th>Hora</th><th>Descanso</th></tr>'+rows+'</table>';
+if(dr>540)h+='<br><b>Son más de 9 horas al volante:</b> si podéis, turnaos entre conductores o dividid el viaje en dos días.';
+else if(la>=1320||la<360)h+='<br>Llegas de noche: valora salir antes, porque de noche se ve peor y el sueño aprieta más.';
+show('r',h);}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener(x.type=='checkbox'?'change':'input',()=>calc()));
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;document.getElementById('pn').innerHTML='Precio: media de las gasolineras de España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Busca la más barata de tu ruta en <a href="gasolineras-baratas.html">gasolineras baratas</a>.';pz();}).catch(()=>{});
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("coste-viaje-coche", "autonomia-coche-electrico-invierno", "calculadora-alcoholemia"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Te vas de viaje largo? Calcula a qué hora llegas con las paradas cada 2 horas o 200 km que recomienda la DGT en el <a href="tiempo-viaje-coche.html">tiempo de viaje en coche con paradas</a>.</p>'
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="distancia-frenado.html">Frenado con hielo</a>', '<a href="tiempo-viaje-coche.html">Tiempo de viaje</a>', 1)
+
+# --- Mejora (27/11/2026, 21:23): coste por km con precio medio del Ministerio (carb/index.json), coste total por km, tabla y kilometraje de empresa (0,26 €/km) ---
+for _k, _t in enumerate(P):
+    if _t[0] == "coste-por-km":
+        _l = list(_t)
+        _l[1] = "Cuánto cuesta un km en coche: calculadora de coste por kilómetro | CocheCuentas"
+        _l[2] = "Calcula cuánto te cuesta cada kilómetro en coche con gasolina, diésel o GLP al precio medio de hoy: en combustible y en total con seguro, mantenimiento y depreciación. Con tabla por consumo y el kilometraje de empresa a 0,26 €/km."
+        _l[3] = """<p class="lead">Pon el consumo de tu coche y los kilómetros que haces. Con el precio medio del combustible de hoy te decimos lo que cuesta cada kilómetro en combustible y, si quieres, en total sumando el resto de gastos del coche.</p>
+<div class="card"><div class="row"><div><label for="c">Consumo (L/100 km)</label><input id="c" inputmode="decimal" value="6,5"></div>
+<div><label for="cb">Combustible</label><select id="cb" onchange="pz()"><option value="g95">Gasolina 95</option><option value="gA">Diésel (gasóleo A)</option><option value="glp">GLP (autogás)</option></select></div>
+<div><label for="p">Precio del litro (€)</label><input id="p" inputmode="decimal" value="1,55"></div>
+<div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div>
+<div><label for="fx">Otros gastos al año (€): seguro, impuesto, ITV, taller, aparcamiento</label><input id="fx" inputmode="numeric" value="1200"></div>
+<div><label for="dp">Pérdida de valor al año (€, opcional)</label><input id="dp" inputmode="numeric" value="1500"></div></div>
+<p class="note" id="pn">Precio del litro: escribe el de tu gasolinera.</p>
+<button onclick="calc()">Calcular</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula el coste por kilómetro</h2><p><b>Combustible por km</b> = consumo ÷ 100 × precio del litro. Si tu coche gasta 6,5 litros a los 100 km y el litro cuesta 1,55 €, cada kilómetro te sale a unos <b>0,10 €</b> de combustible. El consumo real suele ser entre un 10 % y un 25 % mayor que el homologado, sobre todo en ciudad y en invierno, así que usa el que marca tu ordenador de a bordo o calcúlalo con la <a href="consumo-real-coche.html">calculadora de consumo real</a>.</p>
+<p><b>Coste total por km</b> = (combustible del año + gastos fijos + pérdida de valor) ÷ km al año. Los gastos fijos se pagan aunque no muevas el coche, por eso cuantos menos kilómetros haces, más caro sale cada uno. Con 15.000 km al año, 1.200 € de gastos fijos y 1.500 € de depreciación, el coche del ejemplo cuesta unos <b>0,28 € por km</b>.</p>
+<table><tr><th>Consumo</th><th>A 1,45 €/L</th><th>A 1,55 €/L</th><th>A 1,65 €/L</th><th>Al año (15.000 km a 1,55 €)</th></tr>
+<tr><td>4,5 L/100 km</td><td>0,065 €</td><td>0,070 €</td><td>0,074 €</td><td>1.046 €</td></tr>
+<tr><td>5,5 L/100 km</td><td>0,080 €</td><td>0,085 €</td><td>0,091 €</td><td>1.279 €</td></tr>
+<tr><td>6,5 L/100 km</td><td>0,094 €</td><td>0,101 €</td><td>0,107 €</td><td>1.511 €</td></tr>
+<tr><td>8 L/100 km</td><td>0,116 €</td><td>0,124 €</td><td>0,132 €</td><td>1.860 €</td></tr>
+<tr><td>10 L/100 km</td><td>0,145 €</td><td>0,155 €</td><td>0,165 €</td><td>2.325 €</td></tr></table>
+<h2>Kilometraje de empresa: 0,26 € por km</h2><p>Si usas tu coche para trabajar, la empresa puede pagarte <b>hasta 0,26 € por kilómetro</b> sin que tributen en el IRPF (más peajes y aparcamiento justificados), según la Orden HFP/792/2023. Lo que te paguen por encima tributa como salario. Compara esa cifra con tu coste por km total: con un coche que gasta poco y muchos kilómetros al año, 0,26 € cubre de sobra el combustible, pero no siempre el desgaste completo del coche.</p>
+<h2>Trucos para gastar menos</h2><ul><li>Revisa la presión de los neumáticos cada mes: con poca presión el consumo sube.</li><li>Conduce en marchas largas, anticipa las frenadas y no pases de 110-120 km/h: a partir de ahí el consumo se dispara.</li><li>Quita la baca o el cofre si no lo usas.</li><li>Compara precios: entre gasolineras de la misma zona puede haber más de 15 céntimos por litro de diferencia. Míralo en las <a href="gasolineras-baratas.html">gasolineras más baratas cerca de ti</a>.</li></ul>
+<p>Para un viaje concreto usa el <a href="coste-viaje-coche.html">coste de un viaje en coche</a>; para todos los gastos del año, <a href="coste-anual-coche.html">cuánto cuesta mantener un coche</a>, y si dudas entre motores, el <a href="electrico-vs-gasolina.html">comparador eléctrico vs gasolina</a>.</p>"""
+        _l[4] = [("¿Cuánto cuesta un kilómetro en coche?", "Solo en combustible, un turismo de gasolina que gasta 6,5 L/100 km con el litro a 1,55 € cuesta unos 0,10 € por km. Contando seguro, impuestos, mantenimiento y depreciación, el coste total suele estar entre 0,25 y 0,45 € por km según el coche y los km que hagas."),
+                 ("¿Cuánto paga la empresa por kilómetro en 2026?", "Hasta 0,26 € por km están exentos de IRPF si usas tu coche para la empresa (Orden HFP/792/2023), más peajes y aparcamiento justificados. La empresa o el convenio pueden pagar más, pero el exceso tributa."),
+                 ("¿Qué sale más barato por km, gasolina o diésel?", "El diésel suele gastar 1-1,5 litros menos a los 100 km, así que por km sale algo más barato en combustible, pero el coche cuesta más y su mantenimiento es más caro. Compensa si haces muchos kilómetros al año, sobre todo por carretera."),
+                 ("¿Cómo sé el consumo real de mi coche?", "Llena el depósito, pon el parcial a cero y, en el siguiente repostaje, divide los litros repostados entre los km recorridos y multiplica por 100.")]
+        _l[5] = "Calculadora de coste por kilómetro"
+        _l[6] = """let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k])document.getElementById('p').value=MED[k].toFixed(3).replace('.',',');calc();}
+function calc(){const c=v('c'),p=v('p'),k=v('k'),km=c/100*p,fx=v('fx'),dp=v('dp');
+if(c<=0||p<=0){show('r','Escribe el consumo y el precio del litro.');return;}
+let h='Combustible por km:<b class="big">'+nf(km,3)+' €</b>Al mes: <b>'+eur(km*k/12)+'</b> · Al año: <b>'+eur(km*k)+'</b> · Litros al año: '+nf(c/100*k,0)+' · Cada 100 km: '+eur(km*100);
+if(k>0&&(fx>0||dp>0)){const tot=km*k+fx+dp;h+='<br>Coste total por km (con gastos fijos y depreciación): <b>'+nf(tot/k,3)+' €</b> · '+eur(tot)+' al año, '+eur(tot/12)+' al mes';}
+h+='<br>Kilometraje de empresa exento (0,26 €/km): '+(km<0.26?'cubre tu combustible y te deja '+nf(0.26-km,3)+' € por km para el resto de gastos.':'no llega a cubrir tu combustible.');
+show('r',h);}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;document.getElementById('pn').innerHTML='Precio: media de las gasolineras de España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si repostas en otra, escribe tu precio.';pz();}).catch(()=>{});
+calc();"""
+        P[_k] = tuple(_l)

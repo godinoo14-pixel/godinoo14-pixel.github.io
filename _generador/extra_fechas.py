@@ -763,3 +763,63 @@ for _k, _t in enumerate(P):
         _l[2] = "Calcula tu finiquito al irte de la empresa o si te despiden: días trabajados del último mes, vacaciones no disfrutadas, parte proporcional de las pagas extra y descuento por no avisar con 15 días. Con tus fechas exactas."
         P[_k] = tuple(_l)
 S['home_intro'] = S['home_intro'].replace('<a href="permiso-nacimiento.html">Permiso por nacimiento</a>', '<a href="paga-extra-navidad.html">Paga extra de Navidad</a>', 1)
+
+# --- Nueva (27/11/2026, 21:23): plazos procesales (judiciales) en días hábiles: sábados, domingos, festivos, agosto y 24 dic-6 ene inhábiles (arts. 182-183 LOPJ, 130.2, 133 y 135.5 LEC) ---
+S['tools'].insert(3, ("plazos-procesales", "Calculadora de plazos procesales", "Vencimiento de un plazo judicial sin agosto ni la Navidad (24 dic-6 ene), con el día de gracia.", "Plazos judiciales"))
+S['aff']["plazos-procesales"] = amz("ley de enjuiciamiento civil 2026", "Ley de Enjuiciamiento Civil") + amz("agenda abogados 2027", "Agendas jurídicas 2027")
+P.append(("plazos-procesales", "Calculadora de plazos procesales: días hábiles judiciales con agosto y Navidad | CalculadoraDías",
+"Calcula cuándo vence un plazo judicial en días hábiles: sin sábados, domingos, festivos, agosto ni del 24 de diciembre al 6 de enero. Con el día de gracia hasta las 15:00 y el detalle de cada día descontado.",
+"""<p class="lead">Pon la fecha en que se tiene por hecha la notificación y los días del plazo. Te decimos el último día para presentar el escrito, el día de gracia y qué días se han descontado: fines de semana, festivos, agosto y el periodo de Navidad.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de la notificación</label><input id="a" type="date" data-today></div>
+<div><label for="n">Plazo (días hábiles)</label><input id="n" inputmode="numeric" value="20"></div></div>
+<label for="j">Tipo de procedimiento</label><select id="j"><option value="g">Civil, contencioso-administrativo, penal o social ordinario</option><option value="u">Urgente: en lo social, despido, vacaciones, conflicto colectivo, derechos fundamentales y demás modalidades habilitadas</option></select>""" + FEST + """
+<button onclick="calc()">Calcular vencimiento</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Orientativo. Comprueba siempre el cómputo con la ley procesal aplicable a tu caso y los festivos de tu partido judicial; si dudas, consulta con tu abogado o procurador.</p>
+<h2>Qué días son inhábiles en los juzgados</h2><p>Según la Ley Orgánica del Poder Judicial (arts. 182 y 183) son inhábiles a efectos procesales:</p><ul><li>Los <b>sábados y domingos</b>.</li><li>Los <b>festivos nacionales</b> y los festivos laborales de la <b>comunidad autónoma o localidad</b> del juzgado (añádelos en la casilla de arriba).</li><li>Todo el mes de <b>agosto</b>.</li><li>Todos los días <b>del 24 de diciembre al 6 de enero</b>, ambos incluidos, desde la reforma de diciembre de 2022.</li></ul>
+<p>Agosto y la Navidad son inhábiles salvo para las actuaciones que las leyes procesales declaran urgentes. En la jurisdicción social siguen siendo hábiles, entre otras, las modalidades de despido, extinción del contrato, movilidad geográfica, modificación sustancial, vacaciones, materia electoral, conflictos colectivos, impugnación de convenios y tutela de derechos fundamentales: para ellas elige «urgente». En penal, la instrucción de las causas se hace todos los días del año, pero eso no amplía los plazos de las partes para presentar escritos.</p>
+<h2>Cómo se cuenta un plazo procesal</h2><ol><li>El plazo empieza a correr <b>el día siguiente</b> a la notificación (art. 133.1 LEC).</li><li>En los plazos por días <b>se saltan los inhábiles</b> (art. 133.2 LEC): solo se cuentan los días hábiles.</li><li>El último día del plazo termina a las 24:00, y además el escrito se puede presentar <b>hasta las 15:00 del día hábil siguiente</b> (día de gracia, art. 135.5 LEC).</li></ol>
+<p><b>Ejemplo:</b> una sentencia notificada el viernes 27 de noviembre de 2026 con 20 días hábiles para recurrir. Se cuentan desde el lunes 30; se descuentan los fines de semana, el 8 de diciembre (Inmaculada Concepción) y todo el periodo del 24 de diciembre al 6 de enero. El plazo vence el <b>lunes 11 de enero de 2027</b> y el día de gracia llega hasta las 15:00 del martes 12 de enero. Sin la Navidad inhábil, habría vencido el 29 de diciembre.</p>
+<p>Las notificaciones electrónicas (LexNET) se entienden hechas cuando accedes a su contenido; si pasan tres días sin acceder, se tienen por hechas igualmente (art. 162.2 LEC). En los plazos administrativos ante la Administración (Ley 39/2015) las reglas son distintas: agosto y la Navidad sí son hábiles. Para esos usa la <a href="dias-habiles.html">calculadora de días hábiles</a>, y para plazos en días naturales, <a href="sumar-dias.html">sumar días a una fecha</a>.</p>""",
+[("¿Es inhábil la Navidad a efectos procesales?", "Sí. Desde diciembre de 2022, todos los días del 24 de diciembre al 6 de enero, ambos inclusive, son inhábiles para las actuaciones judiciales (art. 183 LOPJ y art. 130.2 LEC), salvo las urgentes. Los plazos se paran el 23 de diciembre y siguen corriendo el 7 de enero si es hábil."),
+ ("¿Cuenta agosto para los plazos judiciales?", "No. Agosto es inhábil para todas las actuaciones judiciales salvo las que las leyes procesales declaran urgentes (por ejemplo, en lo social, el despido o las vacaciones). En cambio, en los plazos administrativos ante la Administración agosto sí cuenta."),
+ ("¿Hasta qué hora puedo presentar un escrito el último día del plazo?", "El plazo vence a las 24:00 del último día, y además la ley permite presentarlo hasta las 15:00 del día hábil siguiente al vencimiento (día de gracia del art. 135.5 LEC)."),
+ ("¿Cuántos días tengo para demandar por despido?", "20 días hábiles desde el día siguiente al despido, y es un plazo de caducidad: no se interrumpe. Los sábados, domingos y festivos no cuentan, pero agosto y la Navidad sí, porque el despido es un procedimiento urgente. Elige «urgente» en la calculadora.")],
+"Calculadora de plazos procesales",
+DATEJS + """function inh(d,u,h){const g=d.getDay();if(g==0||g==6)return 'fin de semana';if(h.has(iso(d)))return 'festivo';if(!u){const m=d.getMonth(),x=d.getDate();if(m==7)return 'agosto';if((m==11&&x>=24)||(m==0&&x<=6))return 'Navidad (24 dic-6 ene)';}return '';}
+function calc(){const a=pd('a');if(!a){show('r','Elige la fecha de la notificación.');return;}const n=Math.round(v('n'));if(n<1||n>400){show('r','Escribe un plazo de 1 a 400 días hábiles.');return;}
+const u=document.getElementById('j').value=='u',h=hol(),cnt={};let d=new Date(a),c=0,f=null;
+while(c<n){d.setDate(d.getDate()+1);const r=inh(d,u,h);if(r){cnt[r]=(cnt[r]||0)+1;continue;}c++;if(!f)f=new Date(d);}
+const g=new Date(d);do{g.setDate(g.getDate()+1);}while(inh(g,u,h));
+const ex=Object.keys(cnt).map(k=>cnt[k]+' por '+k).join(', ');
+let t='Último día del plazo:<b class="big">'+fmt(d)+'</b>Día de gracia: hasta las <b>15:00 del '+fmt(g)+'</b><br>Primer día del plazo: '+fmt(f)+' · '+diff(a,d)+' días naturales desde la notificación'+(ex?'<br>Días descontados: '+ex:'');
+if(inh(a,u,h))t+='<br>La notificación cae en día inhábil: el plazo empieza a contar el primer día hábil siguiente.';
+if(d.getFullYear()>2027)t+='<br>El plazo llega a 2028: añade los festivos de ese año en la casilla de festivos.';
+show('r',t);}
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("dias-habiles", "sumar-dias", "indemnizacion-despido"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Es un plazo judicial? En los juzgados agosto y del 24 de diciembre al 6 de enero son inhábiles: calcula el vencimiento con la <a href="plazos-procesales.html">calculadora de plazos procesales</a>, con el día de gracia incluido.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (27/11/2026, 21:23): sumar días a una fecha con resultado al cargar, tabla rápida de plazos, ejemplo, más FAQ y título con la búsqueda principal ---
+for _k, _t in enumerate(P):
+    if _t[0] == "sumar-dias":
+        _l = list(_t)
+        _l[1] = "Sumar días a una fecha: qué día será dentro de 30, 60 o 90 días | CalculadoraDías"
+        _l[2] = "Suma o resta días a una fecha y te decimos qué día será (o fue) con el día de la semana: dentro de 15, 30, 60 o 90 días naturales o hábiles, sin festivos. Para plazos, devoluciones, contratos y recetas."
+        _l[3] = _l[3].replace('<p class="lead">Calcula la fecha de vencimiento de un plazo sumando o restando días naturales o hábiles.</p>',
+            '<p class="lead">Pon una fecha y cuántos días quieres sumar o restar. Te decimos qué día será con el día de la semana, en días naturales o en días hábiles (sin fines de semana ni festivos), y una tabla con los plazos más usados.</p>', 1)
+        _l[3] = _l[3] + """<h2>Días naturales o hábiles</h2><p>Los <b>días naturales</b> son todos los del calendario, incluidos fines de semana y festivos: así se cuentan, por ejemplo, los 14 días para devolver una compra online o los plazos de muchos contratos. Los <b>días hábiles</b> son de lunes a viernes sin festivos: así se cuentan los plazos administrativos (Ley 39/2015) y los judiciales, en los que además agosto y del 24 de diciembre al 6 de enero no cuentan.</p>
+<p><b>Ejemplo:</b> desde el viernes 27 de noviembre de 2026, 30 días naturales llevan al <b>domingo 27 de diciembre de 2026</b>. Los mismos 30 días contados como hábiles, sin fines de semana ni festivos nacionales (8 y 25 de diciembre y 1 y 6 de enero), llevan al <b>jueves 14 de enero de 2027</b>.</p>
+<h2>Plazos más habituales</h2><table><tr><th>Plazo</th><th>Cómo se cuenta</th></tr><tr><td>Devolver una compra a distancia</td><td>14 días naturales desde que recibes el producto</td></tr><tr><td>Recurso de alzada o reposición</td><td>1 mes, de fecha a fecha</td></tr><tr><td>Alegaciones en un procedimiento administrativo</td><td>10 o 15 días hábiles</td></tr><tr><td>Demanda por despido</td><td>20 días hábiles</td></tr><tr><td>Garantía de un producto nuevo</td><td>3 años desde la entrega (mira el <a href="plazo-devolucion-garantia.html">plazo de devolución y garantía</a>)</td></tr></table>"""
+        _l[4] = list(_l[4]) + [("¿Qué día será dentro de 90 días?", "Depende de la fecha de inicio: pon la fecha, 90 días y «sumar». Como referencia, 90 días naturales son unos 3 meses menos 1 o 2 días; contando solo días hábiles, son más de 4 meses."),
+                               ("¿Se cuenta el primer día al sumar días?", "No. Al sumar días, la fecha de inicio es el día 0 y el primer día que cuenta es el siguiente. En los plazos legales, el cómputo empieza el día siguiente a la notificación o publicación."),
+                               ("¿Qué pasa si el plazo termina en sábado o festivo?", "En los plazos administrativos y judiciales se pasa al siguiente día hábil. En un plazo de días naturales de un contrato privado depende de lo que diga el contrato.")]
+        _l[6] = _l[6] + """
+function tab(){const a=pd('a');if(!a)return;let h='<table><tr><th>Desde '+a.toLocaleDateString('es-ES')+'</th><th>Naturales</th><th>Hábiles</th></tr>';const hs=hol();
+[7,15,30,60,90,180].forEach(n=>{const x=new Date(a);x.setDate(x.getDate()+n);const y=new Date(a);let c=0;while(c<n){y.setDate(y.getDate()+1);const g=y.getDay();if(g==0||g==6||hs.has(iso(y)))continue;c++;}
+h+='<tr><td>+'+n+' días</td><td>'+x.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'</td><td>'+y.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short',year:'numeric'})+'</td></tr>';});
+document.getElementById('r').insertAdjacentHTML('beforeend',h+'</table>');}
+const _c0=calc;calc=function(){_c0();tab();};calc();"""
+        P[_k] = tuple(_l)
