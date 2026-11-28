@@ -1078,3 +1078,102 @@ document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',(
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;document.getElementById('pn').innerHTML='Precio: media de las gasolineras de España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). Si repostas en otra, escribe tu precio.';pz();}).catch(()=>{});
 calc();"""
         P[_k] = tuple(_l)
+
+# --- Nueva (28/11/2026, 6:23): cuándo cambiar los neumáticos: fecha DOT (semana y año), edad (ETRTO: no más de 10 años), km que les quedan hasta 1,6 mm (mínimo legal) y 3 mm ---
+S['tools'].insert(8, ("cuando-cambiar-neumaticos", "¿Cuándo cambiar los neumáticos?", "Lee la fecha DOT, la edad de tus ruedas y los km que les quedan hasta el mínimo legal de 1,6 mm.", "Neumáticos"))
+S['aff']["cuando-cambiar-neumaticos"] = amz("medidor profundidad dibujo neumatico", "Medidores de dibujo del neumático") + amz("neumaticos all season", "Neumáticos all season (todo tiempo)") + amz("compresor aire coche portatil", "Compresores portátiles") + amz("cadenas nieve textiles coche", "Cadenas de nieve textiles")
+P.append(("cuando-cambiar-neumaticos", "¿Cuándo cambiar los neumáticos? Fecha DOT, edad y km que les quedan | CocheCuentas",
+"Escribe las 4 cifras del código DOT y la profundidad del dibujo: te decimos la fecha de fabricación del neumático, su edad y cuántos km y meses le quedan hasta el mínimo legal de 1,6 mm y hasta los 3 mm recomendados en invierno.",
+"""<p class="lead">Mira el flanco de la rueda: las 4 cifras dentro de un óvalo al final del código DOT son la semana y el año de fabricación. Escríbelas junto a la profundidad del dibujo y te decimos cuántos años tiene el neumático y cuántos kilómetros le quedan.</p>
+<div class="card"><div class="row"><div><label for="dot">Fecha DOT (4 cifras)</label><input id="dot" inputmode="numeric" maxlength="4" value="2321" style="font-size:1.3rem;letter-spacing:3px;text-align:center"></div>
+<div><label for="pa">Profundidad actual del dibujo (mm)</label><input id="pa" inputmode="decimal" value="4,5"></div>
+<div><label for="pn0">Profundidad cuando eran nuevos (mm)</label><input id="pn0" inputmode="decimal" value="8"></div>
+<div><label for="kh">Km recorridos con estos neumáticos</label><input id="kh" inputmode="numeric" value="30000"></div>
+<div><label for="ka">Km que haces al año</label><input id="ka" inputmode="numeric" value="12000"></div>
+<div><label for="ti">Tipo de neumático</label><select id="ti"><option value="v">Verano (el normal)</option><option value="a">All season o todo tiempo</option><option value="i">Invierno</option></select></div></div>
+<button onclick="calc()">Ver estado de mis neumáticos</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">La profundidad se mide en las ranuras principales con un medidor de dibujo (cuesta pocos euros) o con los testigos de desgaste: unos tacos dentro de las ranuras, marcados en el flanco con un triángulo o «TWI», que quedan a ras cuando el dibujo llega a 1,6 mm. Un neumático nuevo de turismo tiene unos 7-8 mm; mira el de la otra rueda del mismo eje si no lo sabes.</p>
+<h2>Cómo leer la fecha DOT de un neumático</h2><p>En el flanco aparece «DOT» seguido de letras y números. Las <b>cuatro últimas cifras</b>, normalmente dentro de un óvalo, son la fecha de fabricación: las dos primeras indican la <b>semana</b> y las dos últimas el <b>año</b>. Así, <b>2321</b> significa semana 23 de 2021, es decir, primeros de junio de 2021. A veces el código completo solo está en una cara: si no lo ves, mira el flanco interior.</p>
+<table><tr><th>Código</th><th>Fabricado</th></tr><tr><td>0119</td><td>Semana 1 de 2019 (principios de enero)</td></tr><tr><td>2321</td><td>Semana 23 de 2021 (principios de junio)</td></tr><tr><td>4825</td><td>Semana 48 de 2025 (finales de noviembre)</td></tr><tr><td>3 cifras, p. ej. 389</td><td>Anterior al año 2000: cámbialo</td></tr></table>
+<h2>¿Cuándo hay que cambiarlos?</h2><ul><li><b>Por desgaste:</b> la profundidad mínima legal en España es de <b>1,6 mm</b> en las ranuras principales. Por debajo, la ITV sale desfavorable y circular con ellos se sanciona con multa de 200 €. Con lluvia, nieve o barro el agarre empeora mucho antes, por eso se suele recomendar cambiarlos hacia los <b>3 mm</b>, y en neumáticos de invierno hacia los <b>4 mm</b>.</li>
+<li><b>Por edad:</b> los neumáticos no tienen una fecha de caducidad legal, pero la goma se endurece con los años aunque apenas se usen. La asociación europea de fabricantes (ETRTO) recomienda no pasar de <b>10 años</b> desde la fecha de fabricación, y a partir de los 5 años conviene que un profesional los revise cada año.</li>
+<li><b>Por daños:</b> grietas en el flanco, bultos o chichones, cortes o desgaste irregular son motivo para cambiarlos ya, tengan los años que tengan.</li></ul>
+<p><b>Ejemplo:</b> unos neumáticos DOT 2321 con 4,5 mm que empezaron con 8 mm y llevan 30.000 km se gastan unos 0,12 mm cada 1.000 km. Les quedan unos <b>12.900 km hasta los 3 mm</b> (alrededor de un año a 12.000 km/año) y unos 24.900 km hasta el mínimo legal. Tienen 5 años: toca revisarlos cada año.</p>
+<h2>Consejos para que duren más</h2><ul><li>Revisa la presión una vez al mes y antes de un viaje largo, con las ruedas en frío. Con poca presión se gastan por los hombros y el consumo sube.</li><li>Rota delanteras y traseras cada 10.000 km si el fabricante lo permite: en un tracción delantera las de delante se gastan bastante más rápido.</li><li>Si solo cambias dos, monta las <b>nuevas detrás</b>: evitan que el coche se vaya de atrás en mojado.</li><li>Haz la alineación si el coche tira hacia un lado o una rueda se gasta más por un borde.</li></ul>
+<p>¿Quieres montar otra medida? Comprueba si es compatible con la <a href="equivalencia-neumaticos.html">equivalencia de neumáticos</a>. Mira cuánto más necesitas para parar con hielo en la <a href="distancia-frenado.html">distancia de frenado</a> y cuándo te toca la próxima inspección con <a href="cuando-pasar-itv.html">¿cuándo me toca pasar la ITV?</a></p>""",
+[("¿Cómo sé de qué año es un neumático?", "Busca en el flanco el código DOT y mira sus 4 últimas cifras: las dos primeras son la semana y las dos últimas el año de fabricación. 1824 significa semana 18 de 2024 (finales de abril o principios de mayo de 2024)."),
+ ("¿Cuál es la profundidad mínima legal de los neumáticos?", "1,6 mm en las ranuras principales de la banda de rodadura. Por debajo, la ITV es desfavorable y la multa por circular con neumáticos en mal estado es de 200 €. Para lluvia y nieve se recomienda cambiarlos antes, hacia los 3 mm."),
+ ("¿Cada cuántos años hay que cambiar los neumáticos?", "No hay un plazo legal. Los fabricantes europeos (ETRTO) recomiendan no usarlos más de 10 años desde su fabricación y revisarlos cada año a partir de los 5, aunque tengan dibujo de sobra."),
+ ("¿Cuántos kilómetros dura un neumático?", "Depende del coche, la conducción y el neumático: en turismos suele estar entre 30.000 y 50.000 km, menos en las ruedas de tracción. La forma fiable de saberlo es medir el dibujo y calcular cuánto se gasta cada 1.000 km, como hace esta calculadora.")],
+"¿Cuándo cambiar los neumáticos?",
+"""function semana(w,y){const j=new Date(y,0,4),m=new Date(j);m.setDate(j.getDate()-((j.getDay()+6)%7)+(w-1)*7);return m;}
+function am(m){m=Math.max(0,Math.floor(m));const a=Math.floor(m/12),r=m%12;return (a?a+' año'+(a>1?'s':''):'')+(a&&r?' y ':'')+(r||!a?r+' mes'+(r==1?'':'es'):'');}
+function calc(){const raw=String(document.getElementById('dot').value).replace(/\\D/g,''),hoy=new Date();let h='',edad=null;
+if(raw.length==3){h+='Código de 3 cifras: <b>fabricado antes del año 2000</b>. Tiene más de 25 años: cámbialo ya aunque parezca nuevo.<br>';edad=300;}
+else if(raw.length==4){const w=+raw.slice(0,2),y=2000+ +raw.slice(2);const f=semana(w,y);
+if(w<1||w>53||f>hoy)h+='Revisa las 4 cifras: <b>'+raw+'</b> no es una fecha DOT válida (semana 01-53 y un año que ya haya pasado).<br>';
+else{edad=(hoy-f)/(864e5*30.4375);h+='Fabricado la <b>semana '+w+' de '+y+'</b> (hacia el '+f.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})+')<b class="big">'+am(edad)+'</b>';
+h+=edad>=120?'<b style="color:#e03131">Más de 10 años: cámbialo.</b> Es el máximo que recomiendan los fabricantes, aunque le quede dibujo.':edad>=60?'Más de 5 años: que un profesional lo revise cada año (grietas, goma endurecida, deformaciones). Máximo recomendado: 10 años, en '+new Date(f.getFullYear()+10,f.getMonth(),f.getDate()).toLocaleDateString('es-ES',{month:'long',year:'numeric'})+'.':'Edad sin problema. Máximo recomendado: 10 años desde la fabricación.';h+='<br>';}}
+else h+='Escribe las 4 cifras de la fecha DOT (por ejemplo 2321) para saber la edad del neumático.<br>';
+const pa=v('pa'),p0=v('pn0'),kh=v('kh'),ka=v('ka'),ti=document.getElementById('ti').value,rec=ti=='i'?4:3;
+if(pa>0){if(pa<=1.6)h+='<br><b style="color:#e03131">Dibujo de '+nf(pa,1)+' mm: por debajo o en el mínimo legal (1,6 mm).</b> Cámbialo cuanto antes: no pasa la ITV y la multa es de 200 €.';
+else if(p0>pa&&kh>0){const g=(p0-pa)/kh,k1=(pa-1.6)/g,k3=Math.max(0,(pa-rec)/g),mes=k=>ka>0?k/ka*12:null;
+h+='<br>Desgaste: <b>'+nf(g*1000,2)+' mm cada 1.000 km</b><table><tr><th>Hasta</th><th>Km que quedan</th><th>Tiempo aprox.</th></tr>';
+h+='<tr><td>'+rec+' mm (recomendado'+(ti=='i'?' en invierno':' con lluvia')+')</td><td>'+(k3>0?nf(Math.round(k3/100)*100,0)+' km':'<b>ya</b>')+'</td><td>'+(k3>0&&ka>0?am(mes(k3)):'—')+'</td></tr>';
+h+='<tr><td>1,6 mm (mínimo legal)</td><td>'+nf(Math.round(k1/100)*100,0)+' km</td><td>'+(ka>0?am(mes(k1)):'—')+'</td></tr></table>';
+if(edad!==null&&ka>0&&edad+mes(k1)>120)h+='Ojo: cumplirá 10 años antes de gastarse del todo, así que el límite te lo marcará la edad.';
+if(pa<=rec)h+='Ya está por debajo de '+rec+' mm: con lluvia o nieve frena bastante peor. Valora cambiarlo antes del invierno.';}
+else h+='<br>Dibujo: '+nf(pa,1)+' mm. Pon la profundidad que tenía nuevo y los km recorridos para calcular cuánto le queda.';}
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("equivalencia-neumaticos", "distancia-frenado", "cuando-pasar-itv"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Tus ruedas aguantan otro invierno? Lee la fecha DOT y calcula los km que les quedan hasta el mínimo legal en <a href="cuando-cambiar-neumaticos.html">¿cuándo cambiar los neumáticos?</a></p>'
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="calculadora-anticongelante.html">Anticongelante</a>', '<a href="cuando-cambiar-neumaticos.html">Neumáticos en invierno</a>', 1)
+
+# --- Mejora (28/11/2026, 6:23): eléctrico vs gasolina o diésel con combustible a elegir (medias del Ministerio), mezcla de carga en casa y en la calle, mantenimiento e impuesto, tabla por km al año y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "electrico-vs-gasolina":
+        _l = list(_t)
+        _l[1] = "¿Coche eléctrico o de gasolina? Calculadora de ahorro al año y cuándo compensa | CocheCuentas"
+        _l[2] = "¿Compensa un coche eléctrico? Calcula cuánto ahorras al año frente a uno de gasolina o diésel con el precio medio de hoy, cargando en casa o en la calle, con mantenimiento e impuesto, y en cuántos años recuperas la diferencia de precio."
+        _l[3] = """<p class="lead">Compara lo que gastas al año con un coche de gasolina o diésel frente a uno eléctrico: energía (cargando en casa y en la calle), mantenimiento e impuesto de circulación. Te decimos cuánto ahorras y en cuántos años recuperas lo que cuesta de más el eléctrico.</p>
+<div class="card"><div class="row"><div><label for="k">Kilómetros al año</label><input id="k" inputmode="numeric" value="15000"></div>
+<div><label for="cb">Tu coche de combustión</label><select id="cb" onchange="pz()"><option value="g95">Gasolina 95</option><option value="gA">Diésel (gasóleo A)</option></select></div>
+<div><label for="cc">Consumo combustión (L/100 km)</label><input id="cc" inputmode="decimal" value="6,5"></div>
+<div><label for="pc">Precio del litro (€)</label><input id="pc" inputmode="decimal" value="1,55"></div>
+<div><label for="ce">Consumo eléctrico (kWh/100 km)</label><input id="ce" inputmode="decimal" value="17"></div>
+<div><label for="ph">Precio del kWh cargando en casa (€)</label><input id="ph" inputmode="decimal" value="0,12"></div>
+<div><label for="pp">Precio del kWh en cargadores públicos (€)</label><input id="pp" inputmode="decimal" value="0,45"></div>
+<div><label for="pcasa">% de cargas en casa</label><input id="pcasa" inputmode="numeric" value="85"></div>
+<div><label for="mt">Ahorro en mantenimiento al año (€)</label><input id="mt" inputmode="numeric" value="250"></div>
+<div><label for="iv">Ahorro en impuesto de circulación al año (€)</label><input id="iv" inputmode="numeric" value="60"></div>
+<div><label for="dp">El eléctrico cuesta más (€, ya con ayudas)</label><input id="dp" inputmode="numeric" value="5000"></div></div>
+<p class="note" id="pn">Precio del litro: escribe el de tu gasolinera.</p><button onclick="calc()">Comparar</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Cargar en casa por la noche con una tarifa con horario valle o con el PVPC sale mucho más barato que en la calle; en cargadores rápidos de autovía el kWh puede costar 0,50-0,70 €. Mira cuánto cuesta llenar la batería en casa con la <a href="https://gastoluz.es/coste-cargar-coche-electrico.html">calculadora de carga del coche eléctrico</a> de GastoLuz.</p>
+<h2>Cómo se calcula</h2><p><b>Coste por km de combustión</b> = litros/100 km ÷ 100 × precio del litro. <b>Coste por km eléctrico</b> = kWh/100 km ÷ 100 × precio medio del kWh, donde el precio medio mezcla lo que cargas en casa y en la calle. La diferencia por km, multiplicada por los km del año, es el ahorro en energía; a eso sumamos lo que dejas de pagar en taller (sin cambios de aceite, filtros, embrague ni correa de distribución, y frenos que duran más) y la bonificación del impuesto de circulación, que muchos ayuntamientos aplican a los eléctricos (hasta el 75 %).</p>
+<p><b>Ejemplo:</b> 15.000 km al año con un gasolina de 6,5 L/100 km a 1,55 € el litro cuestan 1.511 € de combustible. Un eléctrico de 17 kWh/100 km cargando el 85 % en casa a 0,12 € y el resto a 0,45 € sale a 0,17 € el kWh de media: 432 € al año. Con 250 € menos de taller y 60 € de impuesto, el ahorro es de unos <b>1.390 € al año</b>, y 5.000 € de diferencia de precio se recuperan en unos 3 años y medio.</p>
+<table><tr><th>Km al año</th><th>Gasolina (6,5 L a 1,55 €)</th><th>Eléctrico (17 kWh, carga en casa a 0,12 €)</th><th>Ahorro en energía</th></tr>
+<tr><td>8.000</td><td>806 €</td><td>163 €</td><td>643 €</td></tr><tr><td>12.000</td><td>1.209 €</td><td>245 €</td><td>964 €</td></tr><tr><td>15.000</td><td>1.511 €</td><td>306 €</td><td>1.205 €</td></tr><tr><td>20.000</td><td>2.015 €</td><td>408 €</td><td>1.607 €</td></tr><tr><td>30.000</td><td>3.023 €</td><td>612 €</td><td>2.411 €</td></tr></table>
+<h2>Cuándo compensa el eléctrico y cuándo no</h2><ul><li><b>Compensa</b> si puedes cargar en casa o en el trabajo, haces bastantes kilómetros al año y la mayoría de tus trayectos caben en la autonomía: el ahorro en energía es muy alto.</li><li><b>Compensa menos</b> si dependes de cargadores públicos rápidos: el kWh puede costar 3-5 veces más que en casa y el ahorro se reduce mucho.</li><li><b>En invierno</b> el eléctrico gasta más por la calefacción y el frío en la batería: calcula cuánto pierde con la <a href="autonomia-coche-electrico-invierno.html">autonomía del eléctrico en invierno</a>.</li><li><b>Otras ventajas</b>: etiqueta 0 emisiones para entrar en las zonas de bajas emisiones y, en muchas ciudades, aparcamiento regulado gratis o más barato. En contra, el seguro puede ser algo más caro y el valor de reventa es más incierto.</li></ul>
+<p>Compara el coste completo de cada coche en <a href="coste-anual-coche.html">cuánto cuesta mantener un coche al año</a>, cuánto perderá de valor con la <a href="depreciacion-coche.html">calculadora de depreciación</a> y la cuota si lo financias en la <a href="cuota-financiacion-coche.html">calculadora de financiación de coche</a>.</p>"""
+        _l[4] = [("¿Compensa comprar un coche eléctrico?", "Compensa sobre todo si puedes cargar en casa y haces bastantes kilómetros: con 15.000 km al año, un eléctrico que carga en casa ahorra alrededor de 1.200 € al año en energía frente a un gasolina de 6,5 L/100 km, más el ahorro en taller e impuesto. Si dependes de cargadores rápidos, el ahorro baja mucho."),
+                 ("¿Cuánto cuesta hacer 100 km en un coche eléctrico?", "Con un consumo de 17 kWh/100 km, unos 2 € cargando en casa a 0,12 €/kWh, frente a unos 10 € de un gasolina que gaste 6,5 litros a 1,55 €/l. En cargadores rápidos de carretera, a 0,50-0,60 €/kWh, cuesta 8,50-10 €, casi lo mismo que la gasolina."),
+                 ("¿Cuánto cuesta cargar un coche eléctrico en casa?", "Multiplica los kWh que cargas por el precio del kWh de tu tarifa. Una batería de 60 kWh de 10 a 80 % son unos 42 kWh más un 10 % de pérdidas: a 0,12 €/kWh, alrededor de 5,50 €."),
+                 ("¿En cuántos años se amortiza un coche eléctrico?", "Divide lo que cuesta de más (ya restadas las ayudas) entre lo que ahorras cada año. Con 5.000 € de diferencia y unos 1.400 € de ahorro anual, en unos 3 años y medio. Con pocos kilómetros o carga pública, puede tardar más de 8-10 años."),
+                 ("¿Qué gasta menos, un eléctrico o un híbrido?", "En energía, el eléctrico cargado en casa: un híbrido no enchufable gasta unos 4,5-5 L/100 km, unos 7-8 € cada 100 km, frente a unos 2 € del eléctrico. Puedes compararlo poniendo el consumo del híbrido en la casilla de combustión.")]
+        _l[5] = "¿Coche eléctrico o de gasolina? Calculadora de ahorro"
+        _l[6] = """let MED=null;function pz(){const k=document.getElementById('cb').value;if(MED&&MED[k])document.getElementById('pc').value=MED[k].toFixed(3).replace('.',',');calc();}
+function calc(){const k=v('k'),ca=Math.min(100,Math.max(0,v('pcasa'))),pm=(v('ph')*ca+v('pp')*(100-ca))/100,e=v('ce')/100*pm,c=v('cc')/100*v('pc'),en=(c-e)*k,mt=v('mt'),iv=v('iv'),a=en+mt+iv,dp=v('dp');
+if(k<=0||v('cc')<=0||v('ce')<=0){show('r','Escribe los km al año y los consumos de los dos coches.');return;}
+let h='Ahorro al año con el eléctrico:<b class="big">'+eur(a)+'</b>Energía: combustión '+eur(c*k)+' ('+nf(c,3)+' €/km) · eléctrico '+eur(e*k)+' ('+nf(e,3)+' €/km, kWh medio a '+nf(pm,3)+' €)<br>Ahorro en energía: <b>'+eur(en)+'</b> · taller: '+eur(mt)+' · impuesto: '+eur(iv)+'<br>En 5 años: <b>'+eur(a*5)+'</b> · En 10 años: '+eur(a*10);
+if(dp>0)h+=a>0?'<br>Recuperas los '+eur(dp)+' de diferencia en <b>'+nf(dp/a,1)+' años</b> (unos '+nf(Math.round(dp/a*k/1000)*1000,0)+' km).':'<br>Con estos datos el eléctrico no ahorra, así que la diferencia de precio no se recupera.';
+if(e>=c)h+='<br>Con este precio de carga, el eléctrico gasta tanto o más que el de combustión: el ahorro está en cargar en casa.';
+show('r',h);}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));
+fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;document.getElementById('pn').innerHTML='Precio del litro: media en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). ¿No sabes cuánto gasta tu coche? Calcúlalo con tu <a href="consumo-real-coche.html">consumo real</a>.';pz();}).catch(()=>{});
+calc();"""
+        P[_k] = tuple(_l)

@@ -823,3 +823,73 @@ h+='<tr><td>+'+n+' días</td><td>'+x.toLocaleDateString('es-ES',{weekday:'short'
 document.getElementById('r').insertAdjacentHTML('beforeend',h+'</table>');}
 const _c0=calc;calc=function(){_c0();tab();};calc();"""
         P[_k] = tuple(_l)
+
+# --- Nueva (28/11/2026, 6:23): antigüedad en la empresa en años, meses y días, trienios/quinquenios/sexenios cumplidos, fecha del próximo e importe del plus (art. 25 ET) ---
+S['tools'].insert(6, ("calcular-antiguedad-laboral", "Calcular antigüedad en la empresa y trienios", "Años, meses y días que llevas en la empresa, trienios o quinquenios cumplidos, cuándo cobras el siguiente y cuánto suma.", "Antigüedad y trienios"))
+S['aff']["calcular-antiguedad-laboral"] = amz("estatuto de los trabajadores 2026", "Estatuto de los Trabajadores") + amz("archivador documentos", "Archivadores para nóminas y contratos")
+P.append(("calcular-antiguedad-laboral", "Calcular antigüedad en la empresa y trienios: años, meses y días | CalculadoraDías",
+"Calcula tu antigüedad laboral en años, meses y días desde la fecha de alta, cuántos trienios, quinquenios o sexenios llevas, cuándo cumples el siguiente y cuánto cobras de plus de antigüedad al mes y al año.",
+"""<p class="lead">Pon la fecha en que entraste en la empresa. Te decimos cuánto tiempo llevas en años, meses y días, cuántos trienios (o quinquenios, o sexenios) tienes cumplidos, en qué fecha llega el siguiente y, si sabes lo que paga tu convenio por cada uno, cuánto suma al mes y al año.</p>
+<div class="card"><div class="row"><div><label for="a">Fecha de alta en la empresa</label><input id="a" type="date" value="2017-03-15"></div>
+<div><label for="b">Calcular a fecha de</label><input id="b" type="date" data-today></div>
+<div><label for="pe">Tu convenio paga por</label><select id="pe"><option value="3">Trienios (cada 3 años)</option><option value="5">Quinquenios (cada 5 años)</option><option value="6">Sexenios (cada 6 años)</option><option value="2">Bienios (cada 2 años)</option><option value="4">Cuatrienios (cada 4 años)</option></select></div>
+<div><label for="im">Importe de cada uno al mes (€, opcional)</label><input id="im" inputmode="decimal" value="30"></div>
+<div><label for="pg">Pagas al año que lo incluyen</label><input id="pg" inputmode="numeric" value="14"></div>
+<div><label for="mx">Máximo de periodos del convenio (0 = sin tope)</label><input id="mx" inputmode="numeric" value="0"></div>
+<div><label for="ex">Días que no cuentan (excedencia voluntaria, huecos entre contratos)</label><input id="ex" inputmode="numeric" value="0"></div></div>
+<button onclick="calc()">Calcular antigüedad</button><div class="res" id="r" aria-live="polite"></div></div>
+<h2>Cómo se calcula la antigüedad</h2><p>La antigüedad se cuenta <b>desde el día de alta en la empresa</b> hasta hoy (o hasta la fecha que elijas), de fecha a fecha: del 15 de marzo de 2017 al 15 de marzo de 2026 son 9 años exactos. Se cuenta también el periodo de prueba y, si cambias de empresa por una subrogación o una venta del negocio, la nueva empresa respeta tu antigüedad (artículo 44 del Estatuto de los Trabajadores).</p>
+<p>El <b>plus de antigüedad</b> no es obligatorio por ley: el artículo 25 del Estatuto de los Trabajadores dice que la promoción económica es la que fije el <b>convenio colectivo o tu contrato</b>. Por eso unos convenios pagan trienios, otros quinquenios o sexenios, unos fijan una cantidad por cada uno y otros un porcentaje del salario base, y algunos lo congelaron hace años. El importe aparece en tu nómina como «antigüedad» y se cobra desde el mes en que cumples el periodo, salvo que el convenio diga otra cosa (algunos lo pagan desde el mes siguiente o desde el 1 de enero).</p>
+<p><b>Ejemplo:</b> si entraste el 15 de marzo de 2017, el 28 de noviembre de 2026 llevas <b>9 años, 8 meses y 13 días</b>. Tienes 3 trienios (cumplidos el 15 de marzo de 2020, 2023 y 2026) y el cuarto llega el <b>15 de marzo de 2029</b>. Si tu convenio paga 30 € por trienio, cobras 90 € al mes de antigüedad: 1.260 € al año en 14 pagas.</p>
+<h2>Qué periodos cuentan y cuáles no</h2><table><tr><th>Situación</th><th>¿Cuenta para la antigüedad?</th></tr>
+<tr><td>Periodo de prueba</td><td>Sí</td></tr><tr><td>Baja por enfermedad o accidente, permiso por nacimiento, vacaciones</td><td>Sí</td></tr>
+<tr><td>Excedencia por cuidado de hijos o familiares</td><td>Sí (art. 46.3 ET)</td></tr><tr><td>Excedencia forzosa (cargo público o sindical)</td><td>Sí</td></tr>
+<tr><td>Excedencia voluntaria</td><td>No</td></tr><tr><td>Contratos temporales seguidos en la misma empresa</td><td>Normalmente sí, si los huecos entre contratos son cortos (los tribunales hablan de «unidad esencial del vínculo»)</td></tr>
+<tr><td>Cambio de empresa por subrogación o traspaso</td><td>Sí (art. 44 ET)</td></tr></table>
+<p class="note">Si tienes periodos que no cuentan, escribe el total de días en la casilla «días que no cuentan» y la calculadora retrasa la fecha de cada trienio. Revisa lo que dice tu convenio: es el que manda.</p>
+<p>La antigüedad también sirve para calcular la <a href="indemnizacion-despido.html">indemnización por despido</a> y entra en el <a href="calcular-finiquito.html">finiquito</a>. Si solo quieres saber el tiempo exacto entre dos fechas, usa <a href="dias-entre-fechas.html">días entre dos fechas</a>.</p>""",
+[("¿Cómo se calcula la antigüedad en una empresa?", "Se cuenta de fecha a fecha desde el día de alta hasta hoy. Incluye el periodo de prueba, las bajas, los permisos y las excedencias por cuidado de familiares; no cuenta la excedencia voluntaria. Si encadenaste contratos temporales con huecos cortos, normalmente cuenta desde el primero."),
+ ("¿Cuánto se cobra por trienio?", "Depende del convenio colectivo: no hay un importe fijado por ley. Unos convenios pagan una cantidad fija por trienio (a menudo entre 15 y 60 € al mes) y otros un porcentaje del salario base, normalmente en 14 pagas. Mira la tabla salarial de tu convenio o la línea «antigüedad» de tu nómina."),
+ ("¿Desde cuándo se cobra un trienio nuevo?", "Por lo general, desde el mes en que se cumple. Algunos convenios lo pagan desde el mes siguiente o desde el 1 de enero del año siguiente: revisa el artículo de antigüedad de tu convenio."),
+ ("¿Es obligatorio pagar la antigüedad?", "Solo si lo dice tu convenio colectivo o tu contrato (artículo 25 del Estatuto de los Trabajadores). Si tu convenio no lo recoge, la empresa no está obligada a pagar un plus de antigüedad, aunque la antigüedad sigue contando para la indemnización por despido.")],
+"Calcular antigüedad en la empresa y trienios",
+DATEJS + """function addY(d,n){const x=new Date(d.getFullYear()+n,d.getMonth(),1),dm=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();x.setDate(Math.min(d.getDate(),dm));return x;}
+function ymd(a,b){let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}return [y,m,d];}
+const pl=(n,s,p)=>n+' '+(n==1?s:p);
+function calc(){const a0=pd('a'),b=pd('b');if(!a0||!b){show('r','Pon la fecha de alta.');return;}if(b<a0){show('r','La fecha de alta es posterior a la fecha de cálculo.');return;}
+const ex=Math.max(0,Math.round(v('ex'))),a=new Date(a0);a.setDate(a.getDate()+ex);const pe=+document.getElementById('pe').value,im=v('im'),pg=v('pg')||14,mx=Math.max(0,Math.round(v('mx')));
+const nm={2:['bienio','bienios'],3:['trienio','trienios'],4:['cuatrienio','cuatrienios'],5:['quinquenio','quinquenios'],6:['sexenio','sexenios']}[pe];
+if(b<a){show('r','Con '+ex+' días que no cuentan, todavía no tienes antigüedad computable.');return;}
+const [y,m,d]=ymd(a,b);let n=Math.floor(y/pe);const tope=mx>0&&n>=mx;if(mx>0)n=Math.min(n,mx);
+let h='Antigüedad:<b class="big">'+pl(y,'año','años')+', '+pl(m,'mes','meses')+' y '+pl(d,'día','días')+'</b>'+nf(diff(a,b),0)+' días en total'+(ex?' (descontados '+ex+' días que no cuentan)':'')+' · '+nf(diff(a,b)/365,2).replace('.',',')+' años con decimales';
+h+='<br>'+nm[1].charAt(0).toUpperCase()+nm[1].slice(1)+' cumplidos: <b>'+n+'</b>';
+const nx=addY(a,(Math.floor(y/pe)+1)*pe);if(!tope)h+=' · El siguiente '+nm[0]+' llega el <b>'+fmt(nx)+'</b> (faltan '+nf(diff(b,nx),0)+' días)';else h+=' · Has llegado al máximo de tu convenio';
+if(im>0)h+='<br>Plus de antigüedad: <b>'+eur(n*im)+' al mes</b> · '+eur(n*im*pg)+' al año en '+pg+' pagas'+(!tope?' · Con el siguiente: '+eur((n+1)*im)+' al mes':'');
+const L=Math.min(n+2,(mx>0?mx:99));if(L>0){h+='<table><tr><th>'+nm[0].charAt(0).toUpperCase()+nm[0].slice(1)+'</th><th>Fecha</th><th>Estado</th></tr>';for(let i=1;i<=L;i++){const f=addY(a,i*pe);h+='<tr><td>'+i+'.º</td><td>'+f.toLocaleDateString('es-ES')+'</td><td>'+(f<=b?'Cumplido':'Pendiente')+'</td></tr>';}h+='</table>';}
+show('r',h);}
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("indemnizacion-despido", "calcular-finiquito", "dias-entre-fechas"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Cuánto tiempo llevas exactamente en la empresa? Calcula tu antigüedad en años, meses y días y los trienios que tienes con la calculadora de <a href="calcular-antiguedad-laboral.html">antigüedad en la empresa y trienios</a>.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (28/11/2026, 6:23): días hábiles con resultado al cargar, título con la búsqueda principal, tabla de días hábiles de cada mes de 2027 y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "dias-habiles":
+        _l = list(_t)
+        _l[1] = "Calcular días hábiles entre dos fechas: días laborables sin festivos | CalculadoraDías"
+        _l[2] = "Cuenta los días hábiles y laborables entre dos fechas sin sábados, domingos ni festivos nacionales de 2026 y 2027, y añade los de tu comunidad. Con los días hábiles de cada mes de 2027 y cómo se cuentan los plazos administrativos."
+        _l[3] = _l[3].replace('<p class="lead">Calcula los días laborables entre dos fechas, ambas incluidas, quitando fines de semana y festivos.</p>',
+            '<p class="lead">Pon dos fechas y te decimos cuántos días hábiles (laborables) hay entre ellas, ambas incluidas, sin sábados, domingos ni festivos nacionales. Añade los festivos de tu comunidad o tu municipio para afinar el resultado.</p>', 1)
+        _l[3] = _l[3].replace('<div class="res" id="r"></div></div>', '<div class="res" id="r" aria-live="polite"></div></div>', 1)
+        _l[3] = _l[3] + """<h2>Días hábiles de cada mes de 2027</h2><p>Días de lunes a viernes de cada mes de 2027 y los que quedan quitando los festivos nacionales que caen entre semana. Si en tu comunidad hay otros festivos (Jueves Santo, el día de la comunidad, los locales), réstalos o añádelos en la calculadora.</p>
+<table><tr><th>Mes de 2027</th><th>Lunes a viernes</th><th>Días hábiles</th><th>Festivos nacionales entre semana</th></tr>
+<tr><td>Enero</td><td>21</td><td><b>19</b></td><td>1 y 6</td></tr><tr><td>Febrero</td><td>20</td><td><b>20</b></td><td>—</td></tr><tr><td>Marzo</td><td>23</td><td><b>22</b></td><td>26 (Viernes Santo)</td></tr><tr><td>Abril</td><td>22</td><td><b>22</b></td><td>—</td></tr><tr><td>Mayo</td><td>21</td><td><b>21</b></td><td>— (el 1 cae en sábado)</td></tr><tr><td>Junio</td><td>22</td><td><b>22</b></td><td>—</td></tr><tr><td>Julio</td><td>22</td><td><b>22</b></td><td>—</td></tr><tr><td>Agosto</td><td>22</td><td><b>22</b></td><td>— (el 15 cae en domingo)</td></tr><tr><td>Septiembre</td><td>22</td><td><b>22</b></td><td>—</td></tr><tr><td>Octubre</td><td>21</td><td><b>20</b></td><td>12</td></tr><tr><td>Noviembre</td><td>22</td><td><b>21</b></td><td>1</td></tr><tr><td>Diciembre</td><td>23</td><td><b>21</b></td><td>6 y 8 (el 25 cae en sábado)</td></tr>
+<tr><td><b>Todo 2027</b></td><td>261</td><td><b>254</b></td><td>7</td></tr></table>
+<p class="note">Festivos nacionales comunes a toda España en 2027. El Jueves Santo (25 de marzo) es festivo en la mayoría de comunidades, pero no en todas; los de tu comunidad están en el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>.</p>
+<h2>Días hábiles, laborables y naturales</h2><p>Los <b>días naturales</b> son todos los del calendario. Los <b>días hábiles</b>, en los plazos de la Administración, son de lunes a viernes que no sean festivos: el sábado es inhábil desde la Ley 39/2015. Los <b>días laborables</b> son los que se trabaja según tu convenio: en comercio u hostelería, por ejemplo, el sábado suele serlo. Para tus vacaciones, mira qué días cuenta tu convenio con la <a href="calculadora-vacaciones.html">calculadora de vacaciones</a>.</p>"""
+        _l[4] = list(_l[4]) + [("¿Cuántos días laborables tiene 2027?", "2027 tiene 261 días de lunes a viernes. Quitando los 7 festivos nacionales que caen entre semana (1 y 6 de enero, Viernes Santo, 12 de octubre, 1 de noviembre y 6 y 8 de diciembre), quedan 254 días hábiles, menos los festivos autonómicos y locales de cada zona."),
+                               ("¿Se cuentan el primer y el último día?", "En esta calculadora sí: cuenta los días hábiles entre las dos fechas, ambas incluidas. En un plazo administrativo, en cambio, el primer día que cuenta es el siguiente a la notificación: para eso usa la calculadora de sumar días hábiles.")]
+        _l[6] = _l[6] + "\ncalc();"
+        P[_k] = tuple(_l)
