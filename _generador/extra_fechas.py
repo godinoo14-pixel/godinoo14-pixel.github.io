@@ -1,4 +1,4 @@
-import json
+import json, datetime
 from gen import amz, ext
 S['aff'] = {
     "index": amz("agenda 2027", "Agendas 2027") + amz("calendario pared 2027", "Calendarios 2027"),
@@ -893,3 +893,71 @@ for _k, _t in enumerate(P):
                                ("¿Se cuentan el primer y el último día?", "En esta calculadora sí: cuenta los días hábiles entre las dos fechas, ambas incluidas. En un plazo administrativo, en cambio, el primer día que cuenta es el siguiente a la notificación: para eso usa la calculadora de sumar días hábiles.")]
         _l[6] = _l[6] + "\ncalc();"
         P[_k] = tuple(_l)
+
+# --- Horas de trabajo en 2027: días laborables y jornada anual por comunidad (usa FEST27 del BOE-A-2026-21254) ---
+S['tools'].insert(2, ("horas-trabajo-2027", "Horas de trabajo en 2027", "Días laborables y horas que trabajas en 2027 según tu comunidad, tu jornada y tus vacaciones.", "Horas 2027"))
+S['aff']["horas-trabajo-2027"] = amz("calendario pared 2027", "Calendarios 2027") + amz("agenda 2027 semana vista", "Agendas 2027 semana vista")
+_opts3 = "".join(f'<option value="{c}"{" selected" if c=="MD" else ""}>{n}</option>' for c, n in CCAA)
+_lab27 = []
+for _c, _n in CCAA:
+    _ds = set(d for d, _x, cs in FEST27 if _c in cs.split())
+    _wd = sum(1 for d in _ds if datetime.date.fromisoformat(d).weekday() < 5)
+    _lab27.append((_n, 261 - _wd))
+_tab27 = "".join(f"<tr><td>{n}</td><td>{l}</td><td>{l-2}</td><td>{(l-2-22)*8:,}".replace(",", ".") + " h</td></tr>" for n, l in _lab27)
+P.append(("horas-trabajo-2027", "¿Cuántas horas se trabajan en 2027? Días laborables por comunidad | CalculadoraDías",
+"Calcula cuántos días laborables tiene 2027 en tu comunidad y cuántas horas trabajarás en el año y en cada mes según tu jornada semanal, tus festivos locales y tus vacaciones. Festivos oficiales del BOE.",
+"""<p class="lead">Elige tu comunidad, tu jornada semanal y los días de vacaciones. Te decimos cuántos días laborables tiene 2027 para ti, cuántas horas trabajarás en todo el año y en cada mes, y lo comparamos con el máximo legal de 40 horas semanales.</p>
+<div class="card"><div class="row"><div><label for="cc">Comunidad autónoma</label><select id="cc">""" + _opts3 + """</select></div>
+<div><label for="hs">Horas a la semana</label><input id="hs" inputmode="decimal" value="40"></div>
+<div><label for="ds">Días que trabajas a la semana</label><select id="ds"><option value="5">5 días (lunes a viernes)</option><option value="6">6 días (lunes a sábado)</option></select></div>
+<div><label for="fl">Festivos locales entre semana</label><input id="fl" inputmode="numeric" value="2"></div>
+<div><label for="va">Días laborables de vacaciones</label><input id="va" inputmode="numeric" value="22"></div>
+<div><label for="cv">Jornada anual de tu convenio (horas, opcional)</label><input id="cv" inputmode="numeric" placeholder="p. ej. 1752"></div></div>
+<button onclick="calc()">Calcular horas de 2027</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Los festivos nacionales y autonómicos son los de la relación oficial publicada en el BOE (Resolución de 8 de octubre de 2026). Cada municipio fija además 2 festivos locales: búscalos en el boletín de tu provincia o en tu ayuntamiento. En Canarias hay que sumar el festivo de tu isla.</p>
+<h2>Cómo se calcula</h2><p><b>Días laborables</b> = días de lunes a viernes de 2027 (261, o 312 si trabajas también los sábados) − festivos nacionales y de tu comunidad que caen en esos días − festivos locales. <b>Horas al año</b> = (días laborables − vacaciones) × horas por día, donde las horas por día son tu jornada semanal dividida entre los días que trabajas. Con 40 horas de lunes a viernes, 8 horas al día.</p>
+<p><b>Ejemplo:</b> en la Comunidad de Madrid, 2027 tiene 261 días de lunes a viernes y 10 festivos que caen entre semana (2 de los 12 festivos de la comunidad caen en sábado: el 1 de mayo y el 25 de diciembre). Quedan 251 días; con 2 festivos locales, 249. Restando 22 días laborables de vacaciones (el equivalente a los 30 días naturales del Estatuto de los Trabajadores), trabajarás <b>227 días: 1.816 horas</b> con una jornada de 40 horas.</p>
+<h2>Días laborables de 2027 por comunidad</h2><p>De lunes a viernes, según los festivos oficiales del BOE. La última columna supone 2 festivos locales entre semana, 22 días de vacaciones y 8 horas al día.</p>
+<div style="overflow-x:auto"><table style="font-size:.9rem"><tr><th>Comunidad</th><th>Laborables sin locales</th><th>Con 2 locales</th><th>Horas (40 h/sem.)</th></tr>""" + _tab27 + """</table></div>
+<p class="note">Canarias: además de estos festivos tiene el de cada isla (el 2 de febrero en Tenerife, el 8 de septiembre en Gran Canaria…), que cuenta como uno de los locales. Cataluña y la Comunitat Valenciana tienen un día laborable más porque tres de sus festivos caen en sábado.</p>
+<h2>Lo que dice la ley sobre la jornada</h2><ul><li><b>Máximo de 40 horas semanales</b> de trabajo efectivo de promedio en cómputo anual (artículo 34 del Estatuto de los Trabajadores). El convenio puede fijar menos y repartir la jornada de forma irregular a lo largo del año.</li><li><b>Máximo de 9 horas ordinarias al día</b>, salvo que el convenio o un acuerdo de empresa digan otra cosa, y al menos <b>12 horas de descanso</b> entre el final de una jornada y el comienzo de la siguiente.</li><li><b>Vacaciones:</b> al menos 30 días naturales al año (artículo 38), que equivalen a unos 22 días laborables.</li><li><b>Festivos:</b> hasta 14 al año retribuidos y no recuperables, de los que 2 son locales (artículo 37).</li></ul>
+<p>Si tu convenio fija una jornada anual (por ejemplo, 1.752 o 1.780 horas), escríbela arriba y te diremos cuántas horas te sobran o te faltan con tu calendario. Las horas de más que trabajes son horas extra: calcula las tuyas con la <a href="calculadora-horas.html">calculadora de horas trabajadas</a>.</p>
+<p>Consulta todos los festivos de tu comunidad en el <a href="calendario-laboral-2027.html">calendario laboral 2027</a>, encuentra qué días pedir en los <a href="puentes-2027.html">puentes de 2027</a> y cuenta los <a href="dias-habiles.html">días hábiles entre dos fechas</a>.</p>""",
+[("¿Cuántos días laborables tiene 2027?", "2027 tiene 261 días de lunes a viernes. Quitando los festivos nacionales y autonómicos que caen entre semana, quedan 251 días en la mayoría de comunidades y 252 en Canarias, Cataluña y la Comunitat Valenciana. Con los 2 festivos locales, 249 o 250 días."),
+ ("¿Cuántas horas se trabajan al año con 40 horas semanales?", "En 2027, en una comunidad con 251 días laborables, 2 festivos locales y 22 días de vacaciones, trabajas 227 días de 8 horas: 1.816 horas al año. Cada día de vacaciones o festivo más que tengas son 8 horas menos."),
+ ("¿Cuántas horas al año marca el Estatuto de los Trabajadores?", "El Estatuto no fija una cifra anual: establece un máximo de 40 horas semanales de promedio en cómputo anual. Las cifras de jornada anual (1.752, 1.780 o 1.800 horas, por ejemplo) las fijan los convenios colectivos."),
+ ("¿Cuántos días de vacaciones son 30 días naturales?", "Unos 22 días laborables si trabajas de lunes a viernes, porque 30 días naturales incluyen 4 fines de semana. Si las vacaciones se cuentan en días laborables, el convenio suele fijar 22 o 23.")],
+"¿Cuántas horas se trabajan en 2027?",
+"""const F=""" + _fj + """;
+const MES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function calc(){const cc=document.getElementById('cc').value,hs=v('hs'),ds=+document.getElementById('ds').value,fl=Math.max(0,Math.round(v('fl'))),va=Math.max(0,Math.round(v('va'))),cv=v('cv');
+if(hs<=0||hs>60){show('r','Escribe tu jornada semanal en horas (por ejemplo, 40 o 37,5).');return;}
+const fs=new Set(F.filter(x=>x[2].includes(cc)).map(x=>x[0])),hd=hs/ds;let tot=0,fe=0,fsab=0;const pm=[];
+for(let m=0;m<12;m++){let n=0,f=0;const dm=new Date(2027,m+1,0).getDate();for(let d=1;d<=dm;d++){const x=new Date(2027,m,d),w=x.getDay();if(w==0||(w==6&&ds==5))continue;const k='2027-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');if(fs.has(k)){f++;continue;}n++;}
+pm.push([n,f]);tot+=n;fe+=f;}
+F.filter(x=>x[2].includes(cc)).forEach(x=>{const w=new Date(x[0]).getUTCDay();if(w==6&&ds==5)fsab++;});
+const lab=tot-fl,tr=Math.max(0,lab-va),h=tr*hd;
+let t='Días laborables en 2027:<b class="big">'+lab+' días</b>Trabajarás <b>'+tr+' días</b> después de '+va+' de vacaciones: <b>'+nf(h,1)+' horas</b> en el año ('+nf(hd,2)+' h al día).<br>Festivos de tu comunidad que caen en tus días de trabajo: '+fe+(fsab?' · '+fsab+' caen en sábado y no te quitan ningún día':'')+(fl?' · festivos locales: '+fl:'');
+if(cv>0){const df=h-cv;t+='<br>Frente a las '+nf(cv,0)+' horas de tu convenio: <b>'+(Math.abs(df)<1?'te salen justas':df>0?'te sobran '+nf(df,1)+' horas':'te faltan '+nf(-df,1)+' horas')+'</b>'+(df>0?' (unos '+nf(df/hd,1)+' días de ajuste o de libranza)':'')+'.';}
+t+='<div style="overflow-x:auto"><table style="font-size:.9rem"><tr><th>Mes</th><th>Laborables</th><th>Festivos</th><th>Horas</th></tr>'+pm.map((x,i)=>'<tr><td>'+MES[i]+'</td><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+nf(x[0]*hd,1)+'</td></tr>').join('')+'<tr><td><b>Total</b></td><td><b>'+tot+'</b></td><td><b>'+fe+'</b></td><td><b>'+nf(tot*hd,1)+'</b></td></tr></table></div><p class="note">La tabla por meses no descuenta los festivos locales ni las vacaciones, porque dependen de tu municipio y de cuándo las cojas.</p>';
+show('r',t);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("calendario-laboral-2027", "puentes-2027", "calculadora-horas"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Cuántas horas trabajarás el año que viene? Calcula los días laborables y la jornada anual de tu comunidad en <a href="horas-trabajo-2027.html">horas de trabajo en 2027</a>.</p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (28/11/2026, 13:23): calendario laboral 2027 con la búsqueda principal al principio del título, tabla de festivos que caen en fin de semana y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "calendario-laboral-2027":
+        _l = list(_t)
+        _l[1] = "Calendario laboral 2027 por comunidades: festivos, puentes y días laborables | CalculadoraDías"
+        _l[2] = "Calendario laboral 2027 oficial del BOE: los 12 festivos de tu comunidad autónoma, los puentes del año, los días laborables de cada mes (251 en la mayoría de comunidades) y tus festivos locales."
+        _l[3] = _l[3] + """<h2>Festivos de 2027 que caen en fin de semana</h2><p>En 2027, el <b>1 de mayo</b> (Fiesta del Trabajo) y el <b>25 de diciembre</b> (Navidad) caen en <b>sábado</b>. Como cada comunidad puede sustituir algunos festivos nacionales por fiestas propias hasta completar sus 12, el número de días laborables apenas cambia entre comunidades: 251 de lunes a viernes en casi todas y 252 en Canarias (más el festivo de cada isla), Cataluña y la Comunitat Valenciana. Si trabajas los sábados, esos dos festivos sí te dan un día libre.</p>
+<table><tr><th>Festivo nacional</th><th>Día de la semana en 2027</th></tr><tr><td>1 de enero, Año Nuevo</td><td>Viernes</td></tr><tr><td>6 de enero, Reyes</td><td>Miércoles</td></tr><tr><td>26 de marzo, Viernes Santo</td><td>Viernes</td></tr><tr><td>1 de mayo, Fiesta del Trabajo</td><td>Sábado</td></tr><tr><td>15 de agosto, Asunción</td><td>Domingo (varias comunidades lo pasan al lunes 16)</td></tr><tr><td>12 de octubre, Fiesta Nacional</td><td>Martes</td></tr><tr><td>1 de noviembre, Todos los Santos</td><td>Lunes</td></tr><tr><td>6 de diciembre, Constitución</td><td>Lunes</td></tr><tr><td>8 de diciembre, Inmaculada</td><td>Miércoles</td></tr><tr><td>25 de diciembre, Navidad</td><td>Sábado</td></tr></table>"""
+        _l[4] = list(_l[4]) + [("¿Cuántos días laborables tiene 2027?", "261 días de lunes a viernes, de los que hay que restar los festivos que caen entre semana: quedan 251 días laborables en la mayoría de comunidades y 252 en Canarias, Cataluña y la Comunitat Valenciana, antes de descontar los 2 festivos locales."),
+                               ("¿Qué festivos caen en sábado en 2027?", "El 1 de mayo (Fiesta del Trabajo) y el 25 de diciembre (Navidad). En Cataluña y la Comunitat Valenciana también cae en sábado algún festivo propio, por eso tienen un día laborable más.")]
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="hora-amanecer-anochecer.html">Hora de anochecer</a>', '<a href="horas-trabajo-2027.html">Horas de trabajo 2027</a>', 1)

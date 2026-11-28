@@ -1177,3 +1177,81 @@ document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',(
 fetch('carb/index.json').then(r=>r.json()).then(j=>{if(!j.medias)return;MED=j.medias;document.getElementById('pn').innerHTML='Precio del litro: media en España según el Ministerio para la Transición Ecológica ('+(j.fecha||'').split(' ')[0]+'). ¿No sabes cuánto gasta tu coche? Calcúlalo con tu <a href="consumo-real-coche.html">consumo real</a>.';pz();}).catch(()=>{});
 calc();"""
         P[_k] = tuple(_l)
+
+# --- Puntos del carnet: cuándo recuperas el saldo, curso de recuperación parcial (4 puntos) y pérdida total (fuentes: dgt.es, RACE y Mapfre, nov. 2026) ---
+S['tools'].insert(9, ("recuperar-puntos-carnet", "¿Cuándo recupero los puntos del carnet?", "Fecha en la que vuelves a tener tus 12 puntos, cuánto te da el curso y qué pasa si los pierdes todos.", "Puntos del carnet"))
+S['aff']["recuperar-puntos-carnet"] = ext("https://sede.dgt.gob.es/es/permisos-de-conducir/permiso-por-puntos/consulta-de-puntos/", "Consulta tus puntos en la sede de la DGT") + SEG + amz("kit emergencia coche triangulos v16", "Luz V16 homologada")
+P.append(("recuperar-puntos-carnet", "¿Cuándo recupero los puntos del carnet? Calculadora de puntos DGT | CocheCuentas",
+"Calcula en qué fecha recuperas los 12 puntos del carnet (2 años sin sanciones o 3 si fue muy grave), cuántos te devuelve el curso de recuperación parcial y qué pasa si los pierdes todos. Con la tabla de puntos por infracción.",
+"""<p class="lead">Dinos cuántos puntos te quedan y la fecha en que fue firme tu última sanción con pérdida de puntos. Te decimos el día en que recuperas tu saldo completo, cuántos puntos te devuelve el curso y, si los has perdido todos, cuándo podrás volver a conducir.</p>
+<div class="card"><div class="row"><div><label for="pa">Puntos que te quedan</label><input id="pa" inputmode="numeric" value="7"></div>
+<div><label for="si">Tu saldo inicial</label><select id="si"><option value="12">12 puntos (más de 3 años de carnet)</option><option value="8">8 puntos (carnet de menos de 3 años o recuperado tras perderlo)</option></select></div>
+<div><label for="fs">Fecha en que fue firme la última sanción con puntos</label><input id="fs" type="date"></div>
+<div><label for="gr">Esa sanción fue por</label><select id="gr"><option value="2">Infracción grave</option><option value="3">Infracción muy grave</option></select></div>
+<div><label for="pr">¿Eres conductor profesional?</label><select id="pr"><option value="0">No</option><option value="1">Sí (camión, autobús, taxi, VTC…)</option></select></div>
+<div><label for="re">¿Has perdido antes todos los puntos?</label><select id="re"><option value="0">No, nunca</option><option value="1">Sí, ya me pasó otra vez</option></select></div></div>
+<button onclick="calc()">Calcular mis puntos</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">Tu saldo y la fecha de cada sanción aparecen en la <a href="https://sede.dgt.gob.es/es/permisos-de-conducir/permiso-por-puntos/consulta-de-puntos/" rel="noopener" target="_blank">consulta de puntos de la sede de la DGT</a> (con certificado, Cl@ve o en la app miDGT). La fecha que cuenta no es la de la multa, sino la de la <b>firmeza</b> de la sanción en vía administrativa: cuando ya no se puede recurrir o se ha pagado.</p>
+<h2>Cómo se recuperan los puntos</h2><ul><li><b>Por tiempo:</b> si pasas <b>2 años sin sanciones firmes que te quiten puntos</b>, recuperas tu saldo inicial completo (12 puntos, u 8 si tu carnet tiene menos de 3 años). Si la última pérdida fue por una <b>infracción muy grave</b>, el plazo es de <b>3 años</b>. Cada nueva sanción con puntos reinicia la cuenta.</li>
+<li><b>Con el curso de recuperación parcial</b> (curso de sensibilización y reeducación vial): devuelve <b>hasta 4 puntos</b>, sin pasar nunca de tu saldo inicial. Dura 10 horas en un centro autorizado por la DGT y se puede hacer <b>una vez cada 2 años</b> (una vez al año los conductores profesionales). El precio lo fija cada centro: según el RACE, suele estar entre 200 y 400 €.</li>
+<li><b>Puntos extra:</b> sin infracciones con pérdida de puntos se puede llegar a un máximo de 15 puntos, y los cursos voluntarios de conducción segura y eficiente reconocidos por la DGT suman 2 puntos, también hasta 15.</li></ul>
+<p><b>Ejemplo:</b> te quedan 7 de 12 puntos y tu última sanción (grave) fue firme el 15 de marzo de 2026. Si no vuelves a perder puntos, recuperas los 12 el <b>15 de marzo de 2028</b>. Si antes haces el curso de recuperación parcial, sube a 11 puntos en cuanto la DGT lo anote.</p>
+<h2>Si pierdes todos los puntos</h2><p>La DGT declara la pérdida de vigencia del permiso y no puedes sacar uno nuevo hasta pasados <b>6 meses</b> (3 meses si eres conductor profesional), o <b>12 meses</b> (6 para profesionales) si ya lo habías perdido antes. Para recuperarlo tienes que hacer el <b>curso de recuperación total</b> de 20 horas, pasar el reconocimiento médico en un centro de conductores y aprobar un examen teórico en Tráfico. Vuelves a conducir con <b>8 puntos</b>.</p>
+<h2>Cuántos puntos quita cada infracción</h2><table><tr><th>Infracción</th><th>Puntos</th></tr>
+<tr><td>Alcohol por encima de 0,50 mg/l en aire (0,30 en noveles y profesionales) o conducir con drogas</td><td>6</td></tr>
+<tr><td>Alcohol entre 0,25 y 0,50 mg/l en aire (0,15 a 0,30 en noveles y profesionales)</td><td>4</td></tr>
+<tr><td>Usar el móvil sujetándolo con la mano</td><td>6</td></tr>
+<tr><td>Llevar detectores o inhibidores de radar</td><td>6</td></tr>
+<tr><td>Conducción temeraria, circular en sentido contrario o participar en carreras</td><td>6</td></tr>
+<tr><td>Adelantar a ciclistas sin dejar 1,5 m o poniéndolos en peligro</td><td>6</td></tr>
+<tr><td>No llevar el cinturón, el casco o la sillita del niño</td><td>4</td></tr>
+<tr><td>Saltarse un semáforo en rojo, un stop o un ceda el paso</td><td>4</td></tr>
+<tr><td>No respetar la distancia de seguridad</td><td>4</td></tr>
+<tr><td>Tirar a la vía objetos que puedan causar incendios o accidentes</td><td>4</td></tr>
+<tr><td>Exceso de velocidad</td><td>2 a 6, según cuánto te pases</td></tr></table>
+<p>Calcula la multa y los puntos exactos de un exceso de velocidad con la <a href="multa-exceso-velocidad.html">calculadora de multas por velocidad</a> o en un <a href="radar-de-tramo.html">radar de tramo</a>, y mira cuándo bajará tu tasa con la <a href="calculadora-alcoholemia.html">calculadora de alcoholemia</a>.</p>""",
+[("¿Cuánto tiempo tarda en recuperar los puntos del carnet?", "2 años sin sanciones firmes con pérdida de puntos para recuperar el saldo inicial completo, o 3 años si la última pérdida fue por una infracción muy grave. El plazo cuenta desde la firmeza de la última sanción, y se reinicia si te quitan puntos otra vez."),
+ ("¿Cuántos puntos se recuperan con el curso?", "El curso de recuperación parcial devuelve hasta 4 puntos, sin superar tu saldo inicial, y solo se puede hacer una vez cada 2 años (una vez al año los conductores profesionales). Antes devolvía hasta 6 puntos."),
+ ("¿Qué pasa si me quedo sin puntos?", "Pierdes el permiso y no puedes obtener otro hasta pasados 6 meses (3 si eres profesional), o 12 meses (6) si ya te había pasado. Después tienes que hacer el curso de recuperación total de 20 horas y aprobar un examen teórico. Vuelves con 8 puntos."),
+ ("¿Cómo sé cuántos puntos tengo?", "En la sede electrónica de la DGT o en la app miDGT, identificándote con Cl@ve, certificado o DNI electrónico. También en cualquier Jefatura de Tráfico con cita previa.")],
+"¿Cuándo recupero los puntos del carnet?",
+"""const fd=d=>d.toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+const addM=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth()+n,1),dm=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();x.setDate(Math.min(d.getDate(),dm));return x;};
+(function(){const e=document.getElementById('fs');if(!e.value){const d=addM(new Date(),-8);e.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}})();
+function calc(){const pa=Math.round(v('pa')),si=+document.getElementById('si').value,gr=+document.getElementById('gr').value,pr=document.getElementById('pr').value=='1',re=document.getElementById('re').value=='1',s=document.getElementById('fs').value,hoy=new Date();hoy.setHours(0,0,0,0);
+let f=null;if(s){const [y,m,d]=s.split('-').map(Number);f=new Date(y,m-1,d);}
+if(pa<0||pa>15){show('r','Escribe los puntos que te quedan (de 0 a 15).');return;}
+if(pa==0){const me=re?(pr?6:12):(pr?3:6);let h='Has perdido todos los puntos:<b class="big">'+me+' meses sin carnet</b>';
+h+=(f?'Si la pérdida de vigencia se te notificó el '+fd(f)+', podrás pedir un permiso nuevo a partir del <b>'+fd(addM(f,me))+'</b>.<br>':'')+'Antes tienes que hacer el curso de recuperación total (20 horas, se puede hacer mientras dura la prohibición), pasar el reconocimiento médico y aprobar el examen teórico en Tráfico. Volverás a conducir con <b>8 puntos</b>.';show('r',h);return;}
+if(pa>=si){let h='Tienes tu saldo completo:<b class="big">'+pa+' puntos</b>';h+=pa>=15?'Ya tienes el máximo de 15 puntos.':'Sin infracciones con pérdida de puntos puedes llegar hasta 15. Un curso voluntario de conducción segura y eficiente reconocido por la DGT suma 2 puntos, también hasta 15.';show('r',h);return;}
+const fa=pa+4>si?si:pa+4;let h='';
+if(f){const fr=addM(f,gr*12),q=Math.round((fr-hoy)/864e5);
+h='Recuperas tus '+si+' puntos el:<b class="big">'+fd(fr)+'</b>'+(q>0?'Faltan <b>'+q.toLocaleString('es-ES')+' días</b> (unos '+nf(q/30.44,0)+' meses), siempre que no te quiten puntos antes: cada nueva sanción reinicia el plazo de '+gr+' años.':'Ese plazo ya ha pasado: si no has tenido sanciones con puntos desde entonces, la DGT ya debería mostrarte '+si+' puntos. Compruébalo en la sede.');}
+else h='Pon la fecha de firmeza de tu última sanción para saber cuándo recuperas tus '+si+' puntos.';
+h+='<br><br>Con el <b>curso de recuperación parcial</b> pasarías de '+pa+' a <b>'+fa+' puntos</b> (hasta 4, sin pasar de tu saldo inicial). Puedes hacerlo una vez cada '+(pr?'año':'2 años')+'.';
+if(pa<=4)h+='<br><b style="color:#e03131">Te quedan muy pocos puntos:</b> una infracción de 4 o 6 puntos te dejaría sin carnet durante '+(re?(pr?6:12):(pr?3:6))+' meses. Valora hacer el curso cuanto antes.';
+show('r',h);}
+document.querySelectorAll('.card input,.card select').forEach(x=>x.addEventListener(x.tagName=='SELECT'?'change':'input',()=>calc()));
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("multa-exceso-velocidad", "calculadora-alcoholemia", "radar-de-tramo"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Te han quitado puntos? Mira en qué fecha recuperas tu saldo y cuántos te devuelve el curso en <a href="recuperar-puntos-carnet.html">¿cuándo recupero los puntos del carnet?</a></p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (28/11/2026, 13:23): última matrícula con la búsqueda principal al principio del título, cuántas matrículas hay por letra, cómo saber el año por la matrícula, tipos de placas y más FAQ (sin tocar la carga de dgt/ultima.json) ---
+for _k, _t in enumerate(P):
+    if _t[0] == "ultima-matricula":
+        _l = list(_t)
+        _l[1] = "¿Por qué letra van las matrículas? Última matrícula en España hoy | CocheCuentas"
+        _l[2] = "¿Por qué letra van las matrículas hoy? Última serie asignada en España según el registro de la DGT, actualizada cada día, cuántas matrículas se dan al mes, cuándo llega la siguiente letra y de qué año es un coche por sus letras."
+        _l[3] = _l[3].replace('<p class="note">Fuente: fichero abierto', """<h2>¿Cuántas matrículas hay por cada letra?</h2><p>Con 20 letras posibles (las consonantes sin Ñ ni Q), cada primera letra abarca 20 × 20 = <b>400 combinaciones</b> de letras, y cada combinación tiene 10.000 números (0000 a 9999). Es decir, <b>4 millones de matrículas por letra</b>. Según la tabla de primeras series de cada año, una letra completa dura de 2 a 3 años: la K empezó a finales de 2017, la L a finales de 2019, la M a finales de 2022 y la N en 2025.</p>
+<h2>Cómo saber el año de un coche por la matrícula</h2><p>Busca en la tabla de arriba la primera serie de cada año: un coche cuya matrícula está entre la serie de un año y la del siguiente se matriculó ese año. Por ejemplo, una matrícula con letras <b>MRT</b> está entre MMN (primera de 2024) y MXP (primera de 2025): es de 2024. Ten en cuenta que es la fecha de la <b>primera matriculación en España</b>: un coche importado usado lleva matrícula nueva aunque tenga años.</p>
+<h2>Otras matrículas que puedes ver</h2><ul><li><b>Ciclomotores:</b> placa amarilla con una C delante (C-1234-BCD) y su propia serie de letras.</li><li><b>Remolques:</b> fondo rojo con una R delante.</li><li><b>Provisionales y temporales:</b> fondo verde (vehículos de empresas en pruebas o en tránsito) o con una P o una S delante.</li><li><b>Históricos:</b> letra H delante del número, para vehículos catalogados como históricos.</li><li><b>Diplomáticas:</b> fondo rojo o verde con las letras CD, CC u OI.</li></ul>
+<p>Para saber más de un coche en concreto, consulta su año, su etiqueta y su próxima ITV en el <a href="historial-coche-matricula.html">historial por matrícula</a>, mira su <a href="etiqueta-dgt.html">etiqueta DGT</a> o calcula cuánto cuesta ponerlo a tu nombre con la <a href="transferencia-coche.html">calculadora de transferencia</a>.</p>
+<p class="note">Fuente: fichero abierto""", 1)
+        _l[4] = list(_l[4]) + [("¿Cuántas matrículas hay por letra?", "4 millones: cada primera letra tiene 400 combinaciones de tres letras (20 × 20) y cada combinación va del 0000 al 9999. Al ritmo de matriculaciones de los últimos años, una letra dura de 2 a 3 años."),
+                               ("¿Cómo sé de qué año es un coche por la matrícula?", "Compara sus letras con la primera serie de cada año de la tabla de esta página. Indica el año de la primera matriculación en España; en un coche importado de segunda mano, será el año en que llegó a España.")]
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="etiqueta-dgt.html">Etiqueta DGT</a>', '<a href="recuperar-puntos-carnet.html">Puntos del carnet</a><a href="etiqueta-dgt.html">Etiqueta DGT</a>', 1)
+S['home_intro'] = S['home_intro'].replace('<a href="coste-viaje-coche.html">Gasolina del viaje</a>', '', 1)

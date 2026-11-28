@@ -874,3 +874,68 @@ for _k, _t in enumerate(P):
         _l[4] = list(_l[4]) + [("¿Cuánto cuesta el kWh de luz con impuestos?", "En el PVPC, multiplica el precio de cada hora por 1,27 para sumar el impuesto eléctrico (5,11 %) y el IVA (21 %). Si el precio medio de hoy es 0,20 €/kWh sin impuestos, con impuestos son unos 0,25 €/kWh, sin contar el término de potencia."),
                                ("¿Por qué la luz está más cara unos días que otros?", "Porque el PVPC sigue al mercado mayorista, que cambia con la demanda y con cuánta electricidad llega de renovables. Los días con mucho viento o sol y los fines de semana suelen ser más baratos; los días fríos, sin viento y laborables, más caros, sobre todo por la tarde-noche.")]
         P[_k] = tuple(_l)
+
+# --- Estufa de pellets: sacos, coste y luz que gasta frente a radiador, bomba de calor y butano (pellet: índice AVEBIOM 3T 2026, 5,92 €/saco y 4,76 kWh/kg; butano: BOE-A-2026-23896) ---
+S['tools'].insert(4, ("consumo-estufa-pellets", "¿Cuánto gasta una estufa de pellets?", "Sacos al mes, coste y luz que gasta, frente a un radiador, la bomba de calor y el butano.", "Estufa de pellets"))
+S['aff']["consumo-estufa-pellets"] = amz("pellets saco 15 kg enplus a1", "Pellets ENplus A1") + amz("aspirador cenizas chimenea", "Aspiradores de cenizas") + amz("detector monoxido de carbono", "Detectores de monóxido de carbono") + amz("termometro higrometro digital", "Termómetros de interior")
+P.append(("consumo-estufa-pellets", "¿Cuánto gasta una estufa de pellets al mes? Sacos y coste frente a la luz | GastoLuz",
+"Calcula cuántos sacos de pellet gasta tu estufa al día y al mes, cuánto cuesta (saco de 15 kg a 5,92 € de media según AVEBIOM), la luz que consume y si sale más barata que un radiador, la bomba de calor o el butano.",
+"""<p class="lead">Pon la potencia a la que suele funcionar tu estufa y las horas que la enciendes. Te decimos cuántos kilos y sacos de pellet gasta, cuánto te cuesta al día, al mes y en todo el invierno, la luz que consume la propia estufa y qué pagarías por el mismo calor con radiadores, con aire acondicionado (bomba de calor) o con butano.</p>
+<div class="card"><div class="row"><div><label for="kw">Potencia de calor a la que funciona (kW)</label><input id="kw" inputmode="decimal" value="5"></div>
+<div><label for="h">Horas al día encendida</label><input id="h" inputmode="decimal" value="5"></div>
+<div><label for="d">Días de calefacción en el invierno</label><input id="d" inputmode="numeric" value="150"></div>
+<div><label for="ps">Precio del saco (€)</label><input id="ps" inputmode="decimal" value="5,92"></div>
+<div><label for="kg">Kilos por saco</label><input id="kg" inputmode="decimal" value="15"></div>
+<div><label for="re">Rendimiento de la estufa (%)</label><input id="re" inputmode="decimal" value="90"></div>
+<div><label for="we">Luz que gasta la estufa en marcha (W)</label><input id="we" inputmode="decimal" value="60"></div>
+<div><label for="p">Precio de la luz (€/kWh, con impuestos)</label><input id="p" inputmode="decimal" value="0,15"></div></div>
+<p class="note" id="pn">Precio de la luz: pon el de tu factura.</p>
+<button onclick="calc()">Calcular el gasto</button><div class="res" id="r" aria-live="polite"></div></div>
+<p class="note">La potencia nominal (la que anuncia el fabricante, por ejemplo 9 kW) es la del máximo; en el día a día la estufa modula y suele trabajar a media potencia. Si sabes cuántos kilos gastas por hora, pon una potencia que dé ese consumo: con un rendimiento del 90 %, cada kW de calor son unos 0,23 kg de pellet por hora. El rendimiento y el consumo eléctrico vienen en la ficha técnica de tu estufa.</p>
+<h2>Cuánto cuesta el pellet en 2026</h2><p>Según el índice de precios de la biomasa de <b>AVEBIOM</b> (asociación española de la bioenergía), el saco de 15 kg costó de media <b>5,92 € con IVA</b> entre julio y septiembre de 2026, casi un 16 % más que un año antes (5,12 €). Cada kilo de pellet da unos <b>4,76 kWh</b>, así que un saco tiene unos 71 kWh de energía y el kWh sale a unos <b>8,3 céntimos</b>; con una estufa del 90 % de rendimiento, cada kWh de calor útil cuesta unos <b>9,2 céntimos</b>. Comprar por palés antes del invierno o a granel suele salir más barato que el saco suelto en temporada.</p>
+<h2>Cómo se calcula</h2><p><b>Kilos al día</b> = potencia de calor (kW) × horas ÷ (4,76 kWh/kg × rendimiento). <b>Coste del pellet</b> = kilos × precio del saco ÷ kilos por saco. A eso se suma la <b>luz de la estufa</b>: el ventilador, el sinfín que mueve el pellet y la resistencia de encendido, que solo funciona unos minutos en cada arranque pero gasta bastante más que el resto. Por eso conviene no apagar y encender la estufa muchas veces al día.</p>
+<p><b>Ejemplo:</b> una estufa trabajando a 5 kW durante 5 horas da 25 kWh de calor. Con un 90 % de rendimiento quema unos <b>5,8 kg de pellet al día</b>: un saco de 15 kg dura unos 2,6 días y al mes se gastan unos <b>12 sacos (70 €)</b>, más unos 1,35 € de luz. El mismo calor con radiadores eléctricos a 0,15 €/kWh costaría unos 113 € al mes; con una bomba de calor de SCOP 3,5, unos 32 €; y con butano a 19,55 € la bombona, unos 92 €.</p>
+<table><tr><th>25 kWh de calor al día</th><th>Al día</th><th>Al mes</th></tr>
+<tr><td>Estufa de pellets (5,92 € el saco)</td><td>2,35 €</td><td>70,45 €</td></tr>
+<tr><td>Radiador eléctrico (0,15 €/kWh)</td><td>3,75 €</td><td>112,50 €</td></tr>
+<tr><td>Bomba de calor (SCOP 3,5)</td><td>1,07 €</td><td>32,14 €</td></tr>
+<tr><td>Estufa de butano (19,55 € la bombona)</td><td>3,08 €</td><td>92,36 €</td></tr></table>
+<h2>Consejos para gastar menos pellet</h2><ul><li>Usa el <b>termostato o el cronotermostato</b> de la estufa: que module la llama en vez de ir al máximo y apagarse.</li><li><b>Limpia el brasero y el cenicero</b> cada día o cada dos y el intercambiador cada semana: la ceniza acumulada baja el rendimiento y hace que gaste más.</li><li>Compra pellet con sello <b>ENplus A1</b>: menos ceniza y mejor poder calorífico. Guárdalo en un sitio seco, porque la humedad lo deshace.</li><li>Una estufa de pellets calienta muy bien la estancia donde está, pero llega poco a las habitaciones lejanas: para ellas, compara con un <a href="coste-calefaccion-electrica.html">radiador eléctrico</a> o una <a href="consumo-manta-electrica.html">manta eléctrica</a>.</li></ul>
+<p>Compara también la <a href="estufa-butano-vs-electrica.html">estufa de butano con la calefacción eléctrica</a>, lo que gasta la <a href="consumo-aerotermia.html">aerotermia</a> en toda la casa o el <a href="coste-aire-acondicionado.html">aire acondicionado en modo calor</a>, y mira a qué horas está más barata la luz en el <a href="precio-luz-hoy.html">precio de la luz hoy</a>.</p>""",
+[("¿Cuántos sacos de pellets se gastan al mes?", "Depende de la potencia y las horas: una estufa que trabaja a 5 kW durante 5 horas al día gasta unos 5,8 kg diarios, unos 12 sacos de 15 kg al mes. Si funciona 10 horas al día, unos 23 sacos."),
+ ("¿Cuánto cuesta un saco de pellets en 2026?", "Según el índice de AVEBIOM, el saco de 15 kg costó de media 5,92 € con IVA entre julio y septiembre de 2026, un 16 % más que un año antes. En temporada alta y en saco suelto puede costar más; por palés o a granel, menos."),
+ ("¿Qué es más barato, la estufa de pellets o un radiador eléctrico?", "La estufa de pellets: cada kWh de calor sale a unos 0,09 €, frente a los 0,10-0,40 € que cuesta con un radiador eléctrico según la hora de la tarifa regulada. La bomba de calor (aire acondicionado) es aún más barata, unos 0,04 € por kWh de calor."),
+ ("¿Cuánta luz gasta una estufa de pellets?", "Poca en marcha: el ventilador y el motor del sinfín consumen unas decenas de vatios. Lo que más gasta es la resistencia de encendido, durante los minutos que tarda en prender el pellet. Mira la potencia eléctrica en la ficha técnica de tu estufa.")],
+"¿Cuánto gasta una estufa de pellets?",
+"""function calc(){const kw=v('kw'),h=v('h'),dd=v('d'),ps=v('ps'),kg=v('kg')||15,re=(v('re')||90)/100,we=v('we'),p=v('p'),e=kw*h;
+if(e<=0||ps<=0){show('r','Escribe la potencia, las horas al día y el precio del saco.');return;}
+const kd=e/(4.76*re),cp=kd*ps/kg,el=we/1000*h*p,tot=cp+el,cr=e*p,cb=e*p/3.5,cbu=e/12.7*19.55/12.5;
+const o=[['Estufa de pellets (con su luz)',tot],['Radiador o calefactor eléctrico',cr],['Bomba de calor (SCOP 3,5)',cb],['Estufa de butano (19,55 € la bombona)',cbu]];
+let t='<div style="overflow-x:auto"><table style="font-size:.9rem"><tr><th>Mismo calor con…</th><th>Día</th><th>Mes</th><th>Invierno</th></tr>'+o.map(x=>'<tr><td>'+x[0]+'</td><td>'+eur(x[1])+'</td><td>'+eur(x[1]*30)+'</td><td><b>'+eur(x[1]*dd)+'</b></td></tr>').join('')+'</table></div>';
+show('r','Tu estufa de pellets te cuesta:<b class="big">'+eur(tot*30)+' al mes</b>Gasta <b>'+nf(kd,1)+' kg de pellet al día</b> ('+nf(kd/h,2)+' kg/h): un saco de '+nf(kg,0)+' kg te dura <b>'+nf(kg/kd,1)+' días</b> · '+nf(kd*30/kg,1)+' sacos al mes · <b>'+nf(Math.ceil(kd*dd/kg),0)+' sacos en el invierno</b> ('+eur(cp*dd)+').<br>Luz de la estufa: '+nf(we/1000*h,2)+' kWh al día, '+eur(el*30)+' al mes.<br>Cada kWh de calor te sale a <b>'+nf(tot/e,3)+' €</b>.'+t+(cr>tot?'<br>Frente a los radiadores eléctricos ahorras <b>'+eur((cr-tot)*dd)+'</b> en el invierno.':''));}
+document.querySelectorAll('.card input').forEach(x=>x.addEventListener('input',()=>calc()));
+fetch('pvpc.json',{cache:'no-store'}).then(r=>r.json()).then(j=>{const k=Object.keys(j.dias).sort(),d=new Date(),t=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),H=j.dias[t]||j.dias[k[k.length-1]];if(!H||H.length<20)return;
+const m=H.reduce((a,x)=>a+x[1],0)/H.length*1.0511*1.21;document.getElementById('p').value=m.toFixed(3).replace('.',',');document.getElementById('pn').innerHTML='Precio de la luz: media de hoy de la tarifa regulada (PVPC, Red Eléctrica) con impuesto eléctrico e IVA. Si tienes tarifa de mercado libre, pon el precio de tu factura.';calc();}).catch(()=>{});
+calc();"""))
+for _k, _t in enumerate(P):
+    if _t[0] in ("estufa-butano-vs-electrica", "consumo-aerotermia"):
+        _l = list(_t)
+        _l[3] = _l[3] + '<p>¿Tienes o piensas comprar una estufa de pellets? Calcula cuántos sacos gasta al mes y si te sale más barata que la luz en <a href="consumo-estufa-pellets.html">¿cuánto gasta una estufa de pellets?</a></p>'
+        P[_k] = tuple(_l)
+
+# --- Mejora (28/11/2026, 13:23): calefacción eléctrica con la búsqueda principal al principio del título, comparativa del coste del kWh de calor de cada sistema y más FAQ ---
+for _k, _t in enumerate(P):
+    if _t[0] == "coste-calefaccion-electrica":
+        _l = list(_t)
+        _l[1] = "¿Cuánto gasta un radiador eléctrico al mes? Coste de la calefacción eléctrica | GastoLuz"
+        _l[2] = "¿Cuánto gasta un radiador eléctrico, de aceite, un calefactor o un emisor térmico? Calcula el coste por hora, al mes y en el invierno con el precio de la luz de hoy, y compáralo con la bomba de calor, el butano y los pellets."
+        _l[3] = _l[3] + """<h2>¿Qué calefacción es más barata?</h2><p>Lo que de verdad importa es cuánto te cuesta cada <b>kWh de calor</b> que llega a la habitación. Todos los radiadores, calefactores, emisores y estufas eléctricas dan 1 kWh de calor por cada kWh de luz, así que gastan lo mismo para el mismo calor: lo que cambia es lo rápido que calientan y si tienen buen termostato.</p>
+<table><tr><th>Sistema</th><th>Coste por kWh de calor</th></tr>
+<tr><td>Bomba de calor o aire acondicionado (SCOP 3,5, luz a 0,15 €)</td><td>unos 0,04 €</td></tr>
+<tr><td>Estufa de pellets (saco de 15 kg a 5,92 €, rendimiento 90 %)</td><td>unos 0,09 €</td></tr>
+<tr><td>Estufa de butano (bombona a 19,55 €)</td><td>unos 0,12 €</td></tr>
+<tr><td>Radiador, calefactor o emisor eléctrico (luz a 0,15 €)</td><td>0,15 € (de 0,10 a 0,40 € según la hora en la tarifa regulada)</td></tr></table>
+<p class="note">Precio del pellet: índice de AVEBIOM del tercer trimestre de 2026. Precio de la bombona: precio máximo regulado desde el 17 de noviembre de 2026 (BOE). Calcula cada caso en <a href="consumo-estufa-pellets.html">¿cuánto gasta una estufa de pellets?</a> y <a href="estufa-butano-vs-electrica.html">butano o calefacción eléctrica</a>.</p>"""
+        _l[4] = list(_l[4]) + [("¿Qué calefacción gasta menos luz?", "La bomba de calor (el aire acondicionado en modo calor): da de 3 a 4 kWh de calor por cada kWh de luz. Todos los radiadores, calefactores y emisores eléctricos gastan lo mismo para dar el mismo calor, 1 kWh de luz por cada kWh de calor; un radiador de bajo consumo no consume menos, solo reparte mejor el calor con su termostato.")]
+        P[_k] = tuple(_l)
+S['home_intro'] = S['home_intro'].replace('<a href="consumo-horno-electrico.html">Horno en Navidad</a>', '<a href="consumo-estufa-pellets.html">Estufa de pellets</a>', 1)
