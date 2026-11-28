@@ -1,6 +1,8 @@
 # Visitas (contador Abacus)
 
 Fuente: https://abacus.jasoncameron.dev/get/<dominio>/<clave> (total, d-AAAAMMDD, u-AAAAMMDD, p-<slug>). Panel privado en /estadisticas.html de cada web.
+
+**Desde el 28/11/2026 los datos están en _generador/visitas.json**, que guarda cada noche (hacia las 5:12, hora de Madrid) el workflow "Guardar visitas (contador Abacus)" de este repo: vistas y únicos de los últimos 14 días por web, total y vistas por página desde siempre. Léelo con git (no hace falta abrir abacus.jasoncameron.dev). Si un día falta, es que esa lectura falló: se rellena en la siguiente.
 Formato: fecha del dato · web · vistas del día · únicos · páginas con más vistas
 
 ## Registro
@@ -9,3 +11,4 @@ Formato: fecha del dato · web · vistas del día · únicos · páginas con má
 - 2026-11-27 (ejecución 13:23): sin datos del 26/11. La lectura de abacus.jasoncameron.dev vuelve a fallar (PROVENANCE_REQUIRED: el permiso de lectura web no se responde en la tarea programada). Se decide por temporada e investigación de búsquedas hasta tener datos.
 - 2026-11-27 (ejecución 21:23): sin datos del 26/11. La lectura de abacus.jasoncameron.dev sigue fallando (PROVENANCE_REQUIRED en la tarea programada). Se decide por temporada e investigación de búsquedas.
 - 2026-11-28 (ejecución 6:23): sin datos del 27/11. La lectura de abacus.jasoncameron.dev sigue fallando (PROVENANCE_REQUIRED en la tarea programada; el shell no llega a ese dominio). Se decide por temporada e investigación de búsquedas.
+- 2026-11-28 (11:30, primera lectura con el workflow): vistas por día (cochecuentas / calculadoradias / gastoluz): 24/11: 19 / 6 / 6 · 25/11: 5 / 11 / 7 · 26/11: 9 / sin dato / 2 · 27/11: 7 / 1 / 1. Antes del 24/11, 0 (el contador se instaló ese día). Únicos con cookies aceptadas: 0. Totales desde siempre: 49 / 21 / 19. Páginas: casi todo portada (cochecuentas 33, calculadoradias 15, gastoluz 17); después historial-coche-matricula 7, ultima-matricula 2, precio-luz-hoy 2 y visitas sueltas de 1 en depreciación, alcoholemia, contrato de compraventa, semana del año, qué día de la semana, calendario laboral 2027, jubilación y ahorro LED. Lectura: tráfico mínimo y sobre todo de portada (probablemente revisiones propias): las webs aún no reciben visitas de Google. Prioridad: que se indexen y posicionen las páginas de herramientas (títulos, contenido y enlaces internos), empezando por historial por matrícula y precio de la luz hoy, que son las únicas con visitas reales.
