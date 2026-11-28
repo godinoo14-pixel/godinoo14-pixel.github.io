@@ -1,0 +1,224 @@
+{
+ "dias": {
+  "2026-11-14": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-15": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-16": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-17": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-18": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-19": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-20": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-21": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-22": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": 0
+   }
+  },
+  "2026-11-23": {
+   "cochecuentas.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 0,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 0,
+    "unicos": null
+   }
+  },
+  "2026-11-24": {
+   "cochecuentas.es": {
+    "vistas": 19,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 6,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 6,
+    "unicos": 0
+   }
+  },
+  "2026-11-25": {
+   "cochecuentas.es": {
+    "vistas": 5,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 11,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 7,
+    "unicos": 0
+   }
+  },
+  "2026-11-26": {
+   "cochecuentas.es": {
+    "vistas": 9,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 2,
+    "unicos": 0
+   }
+  },
+  "2026-11-27": {
+   "cochecuentas.es": {
+    "vistas": 7,
+    "unicos": 0
+   },
+   "calculadoradias.es": {
+    "vistas": 1,
+    "unicos": 0
+   },
+   "gastoluz.es": {
+    "vistas": 1,
+    "unicos": 0
+   }
+  }
+ },
+ "total": {
+  "cochecuentas.es": 49,
+  "calculadoradias.es": 21,
+  "gastoluz.es": 19
+ },
+ "paginas_desde_siempre": {
+  "cochecuentas.es": {
+   "index": 33,
+   "historial-coche-matricula": 7,
+   "ultima-matricula": 2,
+   "depreciacion-coche": 1,
+   "calculadora-alcoholemia": 1,
+   "contrato-compraventa-coche": 1
+  },
+  "calculadoradias.es": {
+   "index": 15,
+   "semana-del-ano": 1,
+   "que-dia-de-la-semana": 1,
+   "calendario-laboral-2027": 1,
+   "calculadora-jubilacion": 1
+  },
+  "gastoluz.es": {
+   "index": 17,
+   "precio-luz-hoy": 2,
+   "ahorro-led": 1
+  }
+ },
+ "actualizado": "2026-11-28 11:30"
+}
