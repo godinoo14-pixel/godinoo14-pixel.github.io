@@ -1,0 +1,78 @@
+name: Guardar visitas (contador Abacus)
+# Lee cada noche el contador anónimo de visitas de CocheCuentas, CalculadoraDías y GastoLuz
+# y lo guarda en _generador/visitas.json para que la tarea programada pueda usarlo.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "12 4 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: visitas
+  cancel-in-progress: false
+jobs:
+  leer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Leer contador
+        run: |
+          python3 - <<'PY'
+          import json, os, re, time, urllib.request, urllib.error
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+          F = "_generador/visitas.json"
+          data = json.load(open(F)) if os.path.exists(F) else {}
+          data.setdefault("dias", {})
+          def get(dom, key):
+              for _ in range(3):
+                  try:
+                      r = urllib.request.urlopen(f"https://abacus.jasoncameron.dev/get/{dom}/{key}", timeout=20)
+                      return json.loads(r.read()).get("value", 0) or 0
+                  except urllib.error.HTTPError as e:
+                      if e.code == 404:
+                          return 0
+                  except Exception:
+                      pass
+                  time.sleep(2)
+              return None
+          hoy = datetime.now(ZoneInfo("Europe/Madrid")).date()
+          tot, pag = {}, {}
+          for dom in ["cochecuentas.es", "calculadoradias.es", "gastoluz.es"]:
+              # últimos 14 días cerrados (rellena huecos y corrige días ya guardados)
+              for i in range(1, 15):
+                  d = hoy - timedelta(days=i)
+                  k = d.strftime("%Y%m%d")
+                  vis, uni = get(dom, "d-" + k), get(dom, "u-" + k)
+                  if vis is None:
+                      continue
+                  data["dias"].setdefault(d.isoformat(), {})[dom] = {"vistas": vis, "unicos": uni}
+                  time.sleep(0.3)
+              tot[dom] = get(dom, "total")
+              try:
+                  xml = urllib.request.urlopen(f"https://{dom}/sitemap.xml", timeout=30).read().decode()
+                  slugs = ["index"] + [u.rsplit("/", 1)[1][:-5] for u in re.findall(r"<loc>([^<]+\.html)</loc>", xml)]
+              except Exception:
+                  slugs = ["index"]
+              p = {}
+              for s in slugs:
+                  n = get(dom, "p-" + s)
+                  if n:
+                      p[s] = n
+                  time.sleep(0.3)
+              pag[dom] = dict(sorted(p.items(), key=lambda x: -x[1]))
+          data["dias"] = dict(sorted(data["dias"].items()))
+          data["total"] = tot
+          data["paginas_desde_siempre"] = pag
+          data["actualizado"] = datetime.now(ZoneInfo("Europe/Madrid")).strftime("%Y-%m-%d %H:%M")
+          json.dump(data, open(F, "w"), ensure_ascii=False, indent=1)
+          print(json.dumps({k: data[k] for k in ("total", "actualizado")}, ensure_ascii=False))
+          PY
+      - name: Guardar
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _generador/visitas.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Visitas del contador actualizadas"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin main && break; sleep 5; done
